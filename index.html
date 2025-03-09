@@ -388,8 +388,6 @@ const flashcards = [
     { term: "Kenyérmező", definition: "Major clash between Matthias Hunyadi and the Ottoman Turks in 1479" },
     { term: "Ottoman Empire", definition: "Islamic state founded by Osman in northwestern Anatolia. After the fall of the Byzantine Empire, the Ottoman Empire was based at Istanbul (formerly Constantinople) from 1453-1922. It encompassed lands in the Middle East, North Africa, the Caucasus, and eastern Europe." }
 ];
-// Flashcard adatok
-// Ide kerülne a flashcards tömb a fogalmakkal és definíciókkal
 
 // Alkalmazás változók
 let currentIndex = 0;
@@ -400,6 +398,8 @@ let incorrectAnswers = []; // Hibás válaszok tárolása
 let questionCounter = 0; // Kérdésszámláló
 let isReviewMode = false; // Jelzi, hogy ismétlési módban vagyunk-e
 let reviewCounter = 0; // Aktuális ismétlési kérdés száma
+let learnedTerms = new Set(); // A megtanult fogalmak halmaza
+let availableTerms = []; // Az aktuálisan tanulható fogalmak
 
 // DOM elemek
 const studyContainer = document.getElementById('studyContainer');
@@ -435,7 +435,21 @@ function initApp() {
     switchToStudyMode();
 }
 
-// Következő kérdés kezelése (új)
+// Tanulási haladás inicializálása
+function initLearningProgress() {
+    learnedTerms = new Set();
+    availableTerms = [];
+    
+    // Minden fogalom indexét hozzáadjuk a tanulható fogalmakhoz
+    for (let i = 0; i < flashcards.length; i++) {
+        availableTerms.push(i);
+    }
+    
+    // Keverés a véletlenszerű sorrendhez
+    shuffleArray(availableTerms);
+}
+
+// Következő kérdés kezelése
 function handleNextQuestion() {
     if (isReviewMode) {
         showNextReviewQuestion();
@@ -447,12 +461,82 @@ function handleNextQuestion() {
         if (questionCounter % 5 === 0 && incorrectAnswers.length > 0) {
             startReviewSession();
         } else {
-            generateStudyQuestion();
+            // Ellenőrizzük, hogy maradt-e tanulható fogalom
+            if (availableTerms.length === 0 && learnedTerms.size === flashcards.length) {
+                // Minden fogalmat megtanult a felhasználó
+                showCompletionMessage();
+            } else if (availableTerms.length === 0) {
+                // Ha elfogytak a tanulható fogalmak, de még nem tanult meg mindent,
+                // akkor az ismétlési listából veszünk elemeket
+                resetAvailableTerms();
+                generateStudyQuestion();
+            } else {
+                generateStudyQuestion();
+            }
         }
     }
 }
 
-// Ismétlési mód indítása (új)
+// Tanulás befejezésének jelzése
+function showCompletionMessage() {
+    // Visszajelzés terület tisztítása
+    feedbackArea.innerHTML = '';
+    
+    // Következő gomb elrejtése
+    nextQuestionBtn.style.display = 'none';
+    
+    // Opciók elrejtése
+    const optionButtons = document.querySelectorAll('.optionBtn');
+    optionButtons.forEach(btn => {
+        btn.style.display = 'none';
+    });
+    
+    // "Nem tudom" gomb elrejtése
+    dontKnowBtn.style.display = 'none';
+    
+    // Gratulációs üzenet megjelenítése
+    const completionMessage = document.createElement('div');
+    completionMessage.id = 'completionMessage';
+    completionMessage.innerHTML = `
+        <h2>Gratulálunk!</h2>
+        <p>Sikeresen megtanultad az összes fogalmat!</p>
+        <p>Fogalmak száma: ${flashcards.length}</p>
+        <button id="restartBtn">Újrakezdés</button>
+    `;
+    completionMessage.className = 'completion-message';
+    studyContainer.appendChild(completionMessage);
+    
+    // Újrakezdés gomb eseménykezelője
+    document.getElementById('restartBtn').addEventListener('click', () => {
+        // Opciók megjelenítése újra
+        optionButtons.forEach(btn => {
+            btn.style.display = 'block';
+        });
+        
+        // "Nem tudom" gomb megjelenítése újra
+        dontKnowBtn.style.display = 'block';
+        
+        // Tanulási haladás alaphelyzetbe állítása
+        initLearningProgress();
+        
+        // Új kérdés generálása
+        generateStudyQuestion();
+    });
+}
+
+// Tanulható fogalmak visszaállítása
+function resetAvailableTerms() {
+    availableTerms = [];
+    for (let i = 0; i < flashcards.length; i++) {
+        // Csak azokat a fogalmakat adjuk hozzá, amelyeket még nem tanult meg
+        if (!learnedTerms.has(i)) {
+            availableTerms.push(i);
+        }
+    }
+    shuffleArray(availableTerms);
+}
+
+// Ismétlési mód indítása
 function startReviewSession() {
     console.log("Ismétlési mód indítása");
     isReviewMode = true;
@@ -465,7 +549,7 @@ function startReviewSession() {
     showNextReviewQuestion();
 }
 
-// Következő ismétlési kérdés mutatása (új)
+// Következő ismétlési kérdés mutatása
 function showNextReviewQuestion() {
     // Ha minden ismétlési kérdés végigért, visszatérünk a normál módhoz
     if (reviewCounter >= incorrectAnswers.length) {
@@ -527,7 +611,7 @@ function showNextReviewQuestion() {
     reviewCounter++;
 }
 
-// Ismétlési opció kezelése (új)
+// Ismétlési opció kezelése
 function handleReviewOptionClick(event) {
     const isCorrect = event.target.dataset.correct === 'true';
     const optionButtons = document.querySelectorAll('.optionBtn');
@@ -552,6 +636,9 @@ function handleReviewOptionClick(event) {
     if (isCorrect) {
         feedbackMessage.textContent = "Great job! You got it right this time!";
         feedbackMessage.style.color = '#27ae60';
+        
+        // Ha helyes, hozzáadjuk a megtanult fogalmakhoz
+        learnedTerms.add(currentIndex);
     } else {
         feedbackMessage.textContent = "Keep practicing, you'll get it next time!";
         feedbackMessage.style.color = '#e74c3c';
@@ -579,8 +666,20 @@ function generateStudyQuestion() {
     // Következő gomb elrejtése
     nextQuestionBtn.style.display = 'none';
     
-    // Véletlenszerűen kiválasztunk egy fogalmat
-    currentIndex = Math.floor(Math.random() * flashcards.length);
+    // Ha nincs több tanulható fogalom, újraindítjuk
+    if (availableTerms.length === 0) {
+        resetAvailableTerms();
+        
+        // Ha még mindig nincs tanulható fogalom, akkor minden fogalmat megtanult
+        if (availableTerms.length === 0) {
+            showCompletionMessage();
+            return;
+        }
+    }
+    
+    // Véletlenszerűen kiválasztunk egy fogalmat a tanulhatók közül
+    const randomIndex = Math.floor(Math.random() * availableTerms.length);
+    currentIndex = availableTerms[randomIndex];
     const correctAnswer = flashcards[currentIndex].term;
 
     // Véletlenszerű válaszlehetőségek generálása
@@ -597,6 +696,14 @@ function generateStudyQuestion() {
 
     // Definíció megjelenítése
     definitionText.textContent = flashcards[currentIndex].definition;
+    
+    // Ha már megtanulta ezt a fogalmat, jelezzük
+    if (learnedTerms.has(currentIndex)) {
+        const learnedBadge = document.createElement('span');
+        learnedBadge.textContent = "Már ismered";
+        learnedBadge.className = 'learned-badge';
+        feedbackArea.appendChild(learnedBadge);
+    }
 
     // Válaszlehetőségek megjelenítése
     const optionButtons = document.querySelectorAll('.optionBtn');
@@ -605,17 +712,19 @@ function generateStudyQuestion() {
         btn.dataset.correct = options[index] === correctAnswer ? 'true' : 'false';
         btn.className = 'optionBtn'; // Reseteljük az osztályokat
         btn.disabled = false; // Engedélyezzük a gombokat
+        btn.style.display = 'block'; // Biztosítjuk, hogy látható
         
         // Eseménykezelők tisztítása és újra hozzáadása
         btn.removeEventListener('click', handleReviewOptionClick);
         btn.addEventListener('click', handleOptionClick);
     });
     
-    // "Nem tudom" gomb engedélyezése
+    // "Nem tudom" gomb engedélyezése és megjelenítése
     dontKnowBtn.disabled = false;
+    dontKnowBtn.style.display = 'block';
 }
 
-// Válaszlehetőség kezelése - MÓDOSÍTVA a hibás válaszok rögzítéséhez
+// Válaszlehetőség kezelése - MÓDOSÍTVA a tanulás követéséhez
 function handleOptionClick(event) {
     const isCorrect = event.target.dataset.correct === 'true';
     const optionButtons = document.querySelectorAll('.optionBtn');
@@ -638,6 +747,14 @@ function handleOptionClick(event) {
         }
     });
     
+    // Ha helyes a válasz, hozzáadjuk a megtanult fogalmakhoz
+    if (isCorrect) {
+        learnedTerms.add(currentIndex);
+        
+        // Eltávolítjuk a tanulhatók közül
+        availableTerms = availableTerms.filter(index => index !== currentIndex);
+    }
+    
     // "Nem tudom" gomb letiltása
     dontKnowBtn.disabled = true;
 
@@ -649,12 +766,19 @@ function handleOptionClick(event) {
         : "No sweat, you're still learning!";
     feedbackMessage.style.color = isCorrect ? '#27ae60' : '#e74c3c';
     feedbackArea.appendChild(feedbackMessage);
+    
+    // Haladási statisztika megjelenítése
+    const progressMessage = document.createElement('p');
+    progressMessage.id = 'progressMessage';
+    progressMessage.textContent = `Haladás: ${learnedTerms.size}/${flashcards.length} fogalom`;
+    progressMessage.style.color = '#3498db';
+    feedbackArea.appendChild(progressMessage);
 
     // Következő gomb megjelenítése
     nextQuestionBtn.style.display = 'block';
 }
 
-// "Nem tudom" gomb kezelése - MÓDOSÍTVA a hibás válaszok rögzítéséhez
+// "Nem tudom" gomb kezelése - MÓDOSÍTVA
 function handleDontKnow() {
     const optionButtons = document.querySelectorAll('.optionBtn');
     
@@ -686,6 +810,13 @@ function handleDontKnow() {
     feedbackMessage.style.color = '#3498db'; // Kék szín a "Nem tudom" esetén
     feedbackArea.appendChild(feedbackMessage);
     
+    // Haladási statisztika megjelenítése
+    const progressMessage = document.createElement('p');
+    progressMessage.id = 'progressMessage';
+    progressMessage.textContent = `Haladás: ${learnedTerms.size}/${flashcards.length} fogalom`;
+    progressMessage.style.color = '#3498db';
+    feedbackArea.appendChild(progressMessage);
+    
     // Következő gomb megjelenítése
     nextQuestionBtn.style.display = 'block';
 }
@@ -707,6 +838,11 @@ function switchToStudyMode() {
     // Konténerek láthatósága
     studyContainer.style.display = 'block';
     testContainer.style.display = 'none';
+    
+    // Tanulási haladás inicializálása, ha még nincs beállítva
+    if (!learnedTerms || learnedTerms.size === 0) {
+        initLearningProgress();
+    }
     
     // Tanulás kérdés generálása
     generateStudyQuestion();
