@@ -451,10 +451,10 @@ function handleReviewOptionClick(event) {
     feedbackMessage.id = 'feedbackMessage';
     
     if (isCorrect) {
-        feedbackMessage.textContent = "Great job! You got it right this time!";
+        feedbackMessage.textContent = "Széééép! Ezúttal eltaláltad!";
         feedbackMessage.style.color = '#27ae60';
     } else {
-        feedbackMessage.textContent = "Keep practicing, you'll get it next time!";
+        feedbackMessage.textContent = "Nem baj, legközelebb menni fog!";
         feedbackMessage.style.color = '#e74c3c';
         
         // Ha ismét helytelenül válaszolt, hagyjuk benne a hibás válaszok között
@@ -546,8 +546,8 @@ function handleOptionClick(event) {
     const feedbackMessage = document.createElement('p');
     feedbackMessage.id = 'feedbackMessage';
     feedbackMessage.textContent = isCorrect 
-        ? "Great job! You got it right!" 
-        : "No sweat, you're still learning!";
+        ? "Szééép! Csak így tovább! :D" 
+        : "Nem baj, ez még nem dolgozat!";
     feedbackMessage.style.color = isCorrect ? '#27ae60' : '#e74c3c';
     feedbackArea.appendChild(feedbackMessage);
 
