@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Történelmi Fogalmak - Flashcard Alkalmazás</title>
+    <style>
+        /* Általános beállítások */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1e294a;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #2c3e50;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Cím stílusa */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+/* Definíció szöveg */
+#definitionText {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Opciók konténer */
+#optionsContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+/* Opció gombok */
+.optionBtn {
+    padding: 15px 20px;
+    background-color: #34495e;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease-in-out;
+}
+
+.optionBtn:hover {
+    background-color: #1abc9c; /* Hover szín */
+    transform: scale(1.05); /* Kicsit nagyobb méret hover esetén */
+}
+
+.optionBtn.correct {
+    background-color: #27ae60; /* Helyes válasz színe */
+}
+
+.optionBtn.incorrect {
+    background-color: #e74c3c; /* Helytelen válasz színe */
+}
+
+/* "Nem tudom" gomb */
+#dontKnowBtn {
+    display: block;
+    margin: 20px auto 0 auto;
+    padding: 10px 15px;
+    background-color: transparent;
+    color: #1abc9c; /* Zöld szín */
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#dontKnowBtn:hover {
+    text-decoration: underline; /* Hover alatt aláhúzás */
+}
+
+/* Módváltó gombok */
+.mode-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.mode-controls button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    background-color: #34495e; /* Alapértelmezett szín */
+    color: white;
+    border-radius: 5px;
+    border: none;
+}
+
+.mode-controls button.active {
+    background-color: #1abc9c; /* Aktív mód színe */
+}
+
+.mode-controls button:hover {
+    background-color: #16a085; /* Hover szín */
+}
+/* Opció gombok */
+.optionBtn {
+    padding: 15px 20px;
+    background-color: #34495e;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease-in-out, border 0.3s ease;
+}
+
+.optionBtn:hover {
+    background-color: #1abc9c; /* Hover szín */
+}
+
+.optionBtn.correct {
+    background-color: #27ae60; /* Helyes válasz színe */
+    border: 2px solid #2ecc71; /* Zöld keret */
+}
+
+.optionBtn.incorrect {
+    background-color: #e74c3c; /* Helytelen válasz színe */
+    border: 2px solid #c0392b; /* Piros keret */
+}
+
+#feedbackMessage {
+    margin-top: 20px;
+    font-size: 18px;
+}
+/* Következő gomb stílusa */
+#nextQuestionBtn {
+    display: none; /* Alapértelmezetten rejtett */
+    margin: 20px auto 0 auto;
+    padding: 10px 20px;
+    background-color: #1abc9c; /* Zöld szín */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#nextQuestionBtn:hover {
+    background-color: #16a085; /* Sötétebb zöld hover esetén */
+}
+
+/* Visszajelzés terület */
+#feedbackArea {
+    margin-top: 20px;
+    text-align: center;
+    min-height: 30px;
+}
+
+#feedbackMessage {
+    font-size: 18px;
+    font-weight: bold;
+}
+/* "Nézzük meg újra" felirat stílusa */
+.review-label {
+    display: inline-block;
+    background-color: #e74c3c;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-right: 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+.review-title {
+    color: #e67e22;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+    padding: 5px;
+    background-color: rgba(230, 126, 34, 0.1);
+    border-radius: 5px;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Történelmi Fogalmak</h1>
+
+        <!-- Tanulás felület -->
+        <div id="studyContainer">
+            <p id="definitionText">Definíció itt jelenik meg...</p>
+            <div id="optionsContainer">
+                <!-- Válaszlehetőségek -->
+                <button class="optionBtn" data-index="0"></button>
+                <button class="optionBtn" data-index="1"></button>
+                <button class="optionBtn" data-index="2"></button>
+                <button class="optionBtn" data-index="3"></button>
+            </div>
+            <div id="feedbackArea"></div>
+            <button id="dontKnowBtn">Nem tudom</button>
+            <!-- Új következő gomb -->
+            <button id="nextQuestionBtn" style="display: none;">Következő kérdés</button>
+        </div>
+
+        <!-- Teszt felület -->
+        <div id="testContainer" class="hidden">
+            <!-- Teszt mód kódja... -->
+        </div>
+
+        <!-- Módváltó gombok -->
+        <div class="mode-controls">
+            <button id="studyModeBtn" class="active">Tanulás</button>
+            <button id="testModeBtn">Teszt</button>
+        </div>
+    </div>
+    
+    <script>
+        // Flashcard adatok
+const flashcards = [
+    { term: "Islam", definition: "A religion based on the teachings of the prophet Muhammad. Submission to the will of Allah" },
+    { term: "Qur'an", definition: "The sacred writings of Islam revealed by God to the prophet Muhammad during his life at Mecca and Medina" },
+    { term: "Caliph", definition: "Successor to Muhammad as political and religious leader of the Muslims" },
+    { term: "Justinian", definition: "Byzantine emperor in the 6th century A.D. who reconquered much of the territory previously ruler by Rome, initiated an ambitious building program, including Hagia Sofia, as well as a new legal code" },
+    { term: "Muhammad", definition: "The Arab prophet who founded Islam (570-632)" },
+    { term: "Charlemagne", definition: "King of the Franks (r. 768-814); emperor (r. 800-814). Through a series of military conquests he established the Carolingian Empire, which encompassed all of Gaul and parts of Germany and Italy. Illiterate, though started an intellectual revival." },
+    { term: "Otto I", definition: "Crowned emperor by pope in 962 CE; first emperor of the Holy Roman Empire." },
+    { term: "622 AD", definition: "Hijra; First year of the Muslim calendar" },
+    { term: "732 AD", definition: "Charles Martel turns back the Muslims at the Battle of Tours (Poitiers)" },
+    { term: "Constantinople", definition: "City founded as the second capital of the Roman Empire; later became the capital of the Byzantine Empire" },
+    { term: "Byzantine Empire", definition: "(330-1453) The eastern half of the Roman Empire, which survived after the fall of the Western Empire at the end of the 5th century C.E. Its capital was Constantinople, named after the Emperor Constantine." },
+    { term: "Mecca", definition: "City in western Arabia; birthplace of the Prophet Muhammad, and ritual center of the Islamic religion." },
+    { term: "Poitiers", definition: "Charles Martel met the Moors here in 732 and his neew cavalry had a decisive victory." },
+    { term: "Frankish Empire", definition: "The Frankish Kingdom transformed into an empire with high level administration under the rule of Charlemagne." },
+    { term: "Holy Roman Empire", definition: "An empire established in Europe in the 10th century A.D., originally consisting mainly of lands in what is now Germany and Italy" },
+    { term: "Demesne land", definition: "Land that the lord held for his own crops and profit. Serfs worked this land." },
+    { term: "Manorial Lands", definition: "Economic system during the Middle Ages that revolved around self-sufficient farming estates where lords and peasants shared the land." },
+    { term: "landlord", definition: "The person who owns the land" },
+    { term: "Serf", definition: "A person who is bound to the land and owned by the feudal lord" },
+    { term: "Corvee", definition: "Unpaid labor (as for the maintenance of roads) required by a lord of his vassals in lieu of taxes" },
+    { term: "Estates", definition: "Social classes: the clergy, nobility, and commoners." },
+    { term: "Middle Ages", definition: "Also known as the medieval period, the time between the collapse of the Roman Empire in the fifth century AD and the beginning of the Renaissance in the fourteenth century." },
+    { term: "1347", definition: "Black Death arrives in Europe" },
+    { term: "privilege", definition: "A special favor, right, immunity or advantage given to a person or group." },
+    { term: "Pope", definition: "Head of the Roman Catholic Church" },
+    { term: "archbishop", definition: "A bishop of the highest rank, generally the bishop of an archdiocese." },
+    { term: "Celibacy", definition: "The state of abstaining from marriage and sexual relations" },
+    { term: "monk", definition: "A man who devotes his life to a religious group, often giving up all he owns." },
+    { term: "Benedictine Order", definition: "Monastic order founded by St. Benedict; monks take vows of personal poverty, chastity and obedience to their Abbot and the Benedictine rule" },
+    { term: "Franciscan Order", definition: "A group of Catholic priests who took a vow of poverty, chastity, and obedience and worked with the poor and lower classes" },
+    { term: "Heretics", definition: "Those who hold to a belief opposed to the established teachings of a church" },
+    { term: "Inquisition", definition: "A Church court set up to try people accused of heresy" },
+    { term: "cloister", definition: "Monastery or convent" },
+    { term: "Catholic", definition: "Universal" },
+    { term: "saint", definition: "Christian holy person" },
+    { term: "Codex", definition: "A manuscript book" },
+    { term: "Romanesque", definition: "Style of church architecture using round arches, domes, thick walls, and small windows" },
+    { term: "Gothic", definition: "A style of architecture developed in northern France that spread throughout Europe between the 12th and 16th centuries" },
+    { term: "Renaissance", definition: "\"rebirth\"; following the Middle Ages, a movement that centered on the revival of interest in the classical learning of Greece and Rome" },
+    { term: "Knight", definition: "A man who received honor and land in exchange for serving a lord as a soldier." },
+    { term: "noble", definition: "A person of high rank by birth or title" },
+    { term: "Feudalism", definition: "A political system in which nobles are granted the use of lands that legally belong to their king, in exchange for their loyalty, military service, and protection of the people who live on the land" },
+    { term: "king", definition: "Highest-ranking leader of a group of people" },
+    { term: "Feudal Monarchy", definition: "(In order from biggest to smallest) Kings, Lords, Knights, Peasants" },
+    { term: "Crusades", definition: "A series of holy wars from 1096-1270 AD undertaken by European Christians to free the Holy Land from Muslim rule." },
+    { term: "Guild", definition: "In medieval Europe, an association of men (rarely women), such as merchants, artisans, or professors, who worked in a particular trade and created an organized institution to promote their economic and political interests." },
+    { term: "Burghers", definition: "A medieval merchant-class town dweller." },
+    { term: "Saint Benedict", definition: "Italian monk who founded the Benedictine order about 540 (480-547)" },
+    { term: "Gregory VII", definition: "Pope during the 11th century who attempted to free Church from interference of feudal lords; quarreled with Holy Roman Emperor Henry IV over practice of lay investiture." },
+    { term: "Francis of Assissi", definition: "Saint Francis of Assisi was an Italian Roman Catholic friar and preacher." },
+    { term: "Thomas Aquinas", definition: "Scholar who argued that the most basic religious truths could be proved by sound reasoning" },
+    { term: "Leonardo da Vinci", definition: "A well known Italian Renaissance artist, architect, musician, mathemetician, engineer, and scientist. Known for the Mona Lisa." },
+    { term: "Gutenberg", definition: "Inventor of the printing press" },
+    { term: "György Dózsa", definition: "Leader of the Dózsa-revolt in Hungary (1514)" },
+    { term: "1054 AD", definition: "The year that the Christian church split (Great Schism)" },
+    { term: "Papal States", definition: "A region around Rome that was captured from the Lombards by Pepin the Short and given to the pope" },
+    { term: "Levantine", definition: "An Eastern Mediterranean" },
+    { term: "Venice", definition: "An Italian city that by 1000 C.E. emerged as a major center of Mediterranean trade." },
+    { term: "Florence", definition: "A city in the Tuscany region of northern Italy that was the center of the Italian Renaissance" },
+    { term: "Hansaetic League", definition: "Trade network in the Baltic and North Sea which embraced many cities. This encouraged economic, social, and banking growth." },
+    { term: "Holy Land", definition: "Jerusalem and other places in Palestine where Christians believe Jesus had lived and preached" },
+    { term: "Finno-Ugric", definition: "1. Finnish, Hungarian 2. Eastern European and Northern Russia" },
+    { term: "tribe", definition: "A group of related families" },
+    { term: "grand prince", definition: "Ruler" },
+    { term: "Kabars", definition: "Group of nomadic people under the rule of the Khazar Khaganate then rebelled against it and joined the Magyar tribes in the steppes." },
+    { term: "blood oath", definition: "A solemn promise, made with blood" },
+    { term: "Hungarian conquest", definition: "Hungarian tribes arrived in and conquered the Carpathian Basin" },
+    { term: "doble conquest", definition: "Smalleer proportion of the Hungarian people had entered the Carpathian Basin before 895" },
+    { term: "Avars", definition: "A people originally from western Asia who settled in eastern Europe in the sixth century" },
+    { term: "Hungarian runic script", definition: "Ancient writing system" },
+    { term: "Hungarian Invasion", definition: "Series of plundering raids in the 10th century" },
+    { term: "Szeklers", definition: "The Székelys have historically claimed descent from Attila's Huns and believed they played a special role in shaping Hungary." },
+    { term: "royal counties", definition: "Administrative units consisting of royal land, private lands of the landlord and church lands" },
+    { term: "Diocese", definition: "A church district controlled by a bishop" },
+    { term: "archbishopric", definition: "The area governed by an archbishop" },
+    { term: "Tithe", definition: "One tenth of annual produce or earnings, formerly taken as a tax for the support of the church and clergy." },
+    { term: "Palatine", definition: "They had various tasks: representatives of the king in the counties, they were responsible for the administration of the royal domain and for protecting and guiding the legal system" },
+    { term: "Bailiff", definition: "An officer of the court" },
+    { term: "chancellery", definition: "The position, office, or department of a chancellor." },
+    { term: "double-cross", definition: "It is a royal emblem; symbolizes the country" },
+    { term: "Saxons", definition: "A group of Germanic people" },
+    { term: "Cumans", definition: "Semi-nomadic Turkic people who settled in Hungary during the medieval period" },
+    { term: "Tartars", definition: "The European name for the Mongol forces that invaded eastern Europe." },
+    { term: "Álmos", definition: "One of the chieftains, Grand Prince of the Magyars" },
+    { term: "Árpád", definition: "The leaer of the Hungarians during the conquest" },
+    { term: "Arpad Dynasty", definition: "Came as nomadic pagans, settled down in Europe, vonverted to Christianity and ruledd Hungary until 1301" },
+    { term: "Grand Prince Geza", definition: "Stopped the invasions, made peace with the Holy Roman Empire and started the conversion to Christianity" },
+    { term: "St. Stephen", definition: "First king of Hungary" },
+    { term: "Koppany", definition: "Relative of St Stepehen, calimed the Hungarian throne but was defeated" },
+    { term: "St. Gerard", definition: "Benedictine monk, first bishop of Csanád, tutor of Emeric" },
+    { term: "St Emeric", definition: "Son of St. Stephen and Gizella, heir to the Hungarian throne after St. Stephen, however this plan has never been fulfilled. He was canonised for his pious life and purity along with his father and Bishop Gerard in 1083" },
+    { term: "St. Ladislaus", definition: "King of Hungary and Croatia" },
+    { term: "Coloman Beauclerc", definition: "1095-1116, was educated, king of Hungary and Croatia" },
+    { term: "Bela III", definition: "1172-1196; etablished the Royal Chancellery, making ech and every decision written down; Hungary reached the height of her power during his reign." },
+    { term: "Andrew II", definition: "Signed the Golden Bull of 1222 CE allowing for limits to be placed upon his own monarchy" },
+    { term: "Bela IV", definition: "He supported Christian missions among the pagan Cumans who dwelled in the plains to the east of his province. He attempted to restore royal authority, which had diminished under his father. He revised his predecessors' land grants and reclaimed former royal estates, causing discontent among the noblemen and the prelates. He wasfighting against the Mongols in 1241-1242" },
+    { term: "St. Margaret", definition: "Bela IV's daughter, a Dominnican nun" },
+    { term: "895", definition: "The conquest of the Carpathian Basin began" },
+    { term: "907", definition: "The battle of Pozsony where the Hungarians defeated the Bavarians (bajorok)" },
+    { term: "1222", definition: "Golden Bull" },
+    { term: "1241-1242", definition: "Tartar invasion of Hungary" },
+    { term: "997/1000-1038", definition: "The reign of St Stephen" },
+    { term: "Etelkoz", definition: "The place where the Hungarians lived right before the conquest; here the blood oath was made by the 7 chieftains" },
+    { term: "Verecke pass", definition: "The Hungarians started to push into the basin throug it in 895" },
+    { term: "Carpathian Basin", definition: "The final settlement of the Hungarian tribes" },
+    { term: "Pannonhalma", definition: "A Benedictine monastery was built here in the 10th century" },
+    { term: "Esztergom", definition: "The archbishopric of Hungary" },
+    { term: "Székesfehérvár", definition: "Royal residence of the Hungarian kings; place of coronation" },
+    { term: "Buda", definition: "Royal reidence of the Hungarian kings, founded by Bela IV after the Tartar invasion" },
+    { term: "Muhi", definition: "The Hungarian army was defeated by the Tartars 11th April, 1241" },
+    { term: "Transylvania", definition: "During the late 9th century, it was reached and conquered by the Hungarian tribes, and Gyula's family from the seven chieftains of the Hungarians ruled it in the 10th century." },
+    { term: "Pozsony", definition: "In 907 the Bavarians were defeated here" },
+    { term: "golden florins", definition: "Valuable coins; intorduced by Caroberto (Charles I)" },
+    { term: "Royal Revenue", definition: "Income of the king" },
+    { term: "gate tax", definition: "First national tax of Hungarian serfs introduced by Caroberto (Charles I)" },
+    { term: "nona", definition: "The 2nd tithe / the ninth tenth; every landowner had to collect it" },
+    { term: "banderium", definition: "The body of a noble military unit in medieval Hungary" },
+    { term: "Personal Union", definition: "Two (or more) independent states where they have the same king" },
+    { term: "free royal town", definition: "Towns with privileges granted by the king, typically for economic activities." },
+    { term: "Mining Towns", definition: "It is a community that houses miners. Mining communities are usually created around a mine or a quarry." },
+    { term: "cardinal rights of the nobility", definition: "Exemption from taxation, no rrest without warrant, fight only to defend the country, one and the same nobility, the lw of entailment" },
+    { term: "market town", definition: "A place of moderate size in a rural area where a regular market is held" },
+    { term: "regent", definition: "A person who rules a country for someone who is unable to rule alone" },
+    { term: "War wagon", definition: "Fighting vehicle involving an armed or armored animal-drawn cart or wagon. It was developed in the Hussite Wars" },
+    { term: "border castle system", definition: "Defence system of fortified castles on the strategic points on the Southern areas of Hungary (Szerémség, Bácska and Bánát). Started to be built by Sigismund" },
+    { term: "Sultan", definition: "Military and political leader with absolute authority over a Muslim country" },
+    { term: "spahi", definition: "Cavalry soldier of the Ottoman empire. Payment included land grant from the occupied areas." },
+    { term: "Janissaires", definition: "Highly trained soldiers in the elite guard of the Ottoman Empire" },
+    { term: "extraordinary war tax", definition: "One forint per serf's plot to cover military expenses" },
+    { term: "Hearth Tax", definition: "Tax paid on each fireplace in a building." },
+    { term: "black army", definition: "Mercenary army of King Matthias" },
+    { term: "mercenary", definition: "A professional soldier hired by a foreign army" },
+    { term: "Corvina", definition: "Codex from the library of King Matthias" },
+    { term: "Holy Crown principle", definition: "The Crown symbolized the King's authority over the Lands of the Hungarian Crown (the Carpathian Basin), and it was a key mark of legitimacy. The Holy Crown is the ultimate owner of the power, the owner of sovereignty." },
+    { term: "Illuminated Chronicle", definition: "It is a medieval illustrated chronicle from the Kingdom of Hungary from the 14th century. It represents the artistic style of the royal court of King Louis I of Hungary. The codex is a unique source of art, medieval and cultural history." },
+    { term: "Caroberto", definition: "King of Hungary from the Angevin house" },
+    { term: "Louis the Great", definition: "Ruled Kingdom of Hungary at its most powerful, introduced Entail system; the chivalric king" },
+    { term: "Sigismund of Luxembourg", definition: "Hungarian king (1387-1437), he was also Czech king and the emperor of the Holy Roman Empire" },
+    { term: "János Hunyadi", definition: "A warrior aristocrat, a regent; had several victories over the Ottoman Turks" },
+    { term: "Matthias Hunyadi", definition: "Hungarian king (1458-1490), son of John Hunyadi and Elizabeth Szilágyi, he was elected King of Hungary in his absence, he was elected King of Bohemia, he had occupied much of Austria, His second wife was Beatrice of Aragon. He had no children from his marriages, but his illegitimate son was John Corvinus." },
+    { term: "1301", definition: "End of the Árpád dynasty" },
+    { term: "1308", definition: "Caroberto was crowned as king of Hungary" },
+    { term: "1335", definition: "Royal summit in Visegrád - to bypass the staple right of Vienna and to slow down the emergence of Habsburg power" },
+    { term: "1351", definition: "Diet of Buda; the Laws of 1351 - equality of the nobles" },
+    { term: "1396", definition: "The Battle of Nicopolis. The Turks defeated the crusaders led by Sigismund." },
+    { term: "1443-44", definition: "Long campaign of János Hunyadi" },
+    { term: "1444", definition: "Battle of Várna" },
+    { term: "1453 AD", definition: "Constantinople falls to the Ottoman Turks" },
+    { term: "1456", definition: "Battle of Nándorfehérvár" },
+    { term: "1458-1490", definition: "Reign of Matthias Hunyadi" },
+    { term: "Visegrád", definition: "Royal city from 1323 to 1408" },
+    { term: "Hereditary Provinces of Austria", definition: "The \"original\" Habsburg territories, principally the Archduchy of Austria (Oesterreich), Duchy of Styria (Steiermark), Duchy of Carinthia (Kaernten), Duchy of Carniola (Krain), County of Tyrol (Tirol) and Vorarlberg." },
+    { term: "Nicopolis", definition: "Where the Turks defeated the crusaders led by Siigismund" },
+    { term: "Varna", definition: "Ottoman victory in 1444 and the massare of the Christian army" },
+    { term: "Nándorfehérvár (Belgrade)", definition: "Hungarian victory against the Ottoman Turks in 1456" },
+    { term: "Kolozsvár", definition: "The birthplace of Matthias Hunyadi" },
+    { term: "Kenyérmező", definition: "Major clash between Matthias Hunyadi and the Ottoman Turks in 1479" },
+    { term: "Ottoman Empire", definition: "Islamic state founded by Osman in northwestern Anatolia. After the fall of the Byzantine Empire, the Ottoman Empire was based at Istanbul (formerly Constantinople) from 1453-1922. It encompassed lands in the Middle East, North Africa, the Caucasus, and eastern Europe." }
+];
+// Flashcard adatok
+// Ide kerülne a flashcards tömb a fogalmakkal és definíciókkal
+
+// Alkalmazás változók
+let currentIndex = 0;
+let isTestMode = false;
+let currentTestIndex = 0;
+let testOrder = [];
+let incorrectAnswers = []; // Hibás válaszok tárolása
+let questionCounter = 0; // Kérdésszámláló
+let isReviewMode = false; // Jelzi, hogy ismétlési módban vagyunk-e
+let reviewCounter = 0; // Aktuális ismétlési kérdés száma
+
+// DOM elemek
+const studyContainer = document.getElementById('studyContainer');
+const testContainer = document.getElementById('testContainer');
+const definitionText = document.getElementById('definitionText');
+const optionsContainer = document.getElementById('optionsContainer');
+const dontKnowBtn = document.getElementById('dontKnowBtn');
+const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+const feedbackArea = document.getElementById('feedbackArea');
+const studyModeBtn = document.getElementById('studyModeBtn');
+const testModeBtn = document.getElementById('testModeBtn');
+const questionTermElement = document.getElementById('questionTerm');
+const answerInput = document.getElementById('answerInput');
+const checkAnswerBtn = document.getElementById('checkAnswerBtn');
+const resultContainer = document.getElementById('resultContainer');
+const resultTextElement = document.getElementById('resultText');
+const correctAnswerElement = document.getElementById('correctAnswer');
+const testNextQuestionBtn = document.getElementById('testNextQuestionBtn');
+
+// Inicializálás
+function initApp() {
+    console.log("Alkalmazás inicializálása");
+    
+    // Eseménykezelők hozzáadása
+    studyModeBtn.addEventListener('click', switchToStudyMode);
+    testModeBtn.addEventListener('click', switchToTestMode);
+    nextQuestionBtn.addEventListener('click', handleNextQuestion);
+    dontKnowBtn.addEventListener('click', handleDontKnow);
+    checkAnswerBtn.addEventListener('click', checkAnswer);
+    testNextQuestionBtn.addEventListener('click', nextTestQuestion);
+    
+    // Alapértelmezetten tanulás mód
+    switchToStudyMode();
+}
+
+// Következő kérdés kezelése (új)
+function handleNextQuestion() {
+    if (isReviewMode) {
+        showNextReviewQuestion();
+    } else {
+        // Növeljük a kérdésszámlálót
+        questionCounter++;
+        
+        // 5 kérdésenként ellenőrizzük, hogy van-e ismétlendő kérdés
+        if (questionCounter % 5 === 0 && incorrectAnswers.length > 0) {
+            startReviewSession();
+        } else {
+            generateStudyQuestion();
+        }
+    }
+}
+
+// Ismétlési mód indítása (új)
+function startReviewSession() {
+    console.log("Ismétlési mód indítása");
+    isReviewMode = true;
+    reviewCounter = 0;
+    
+    // Keverés az ismétlési kérdésekhez
+    shuffleArray(incorrectAnswers);
+    
+    // Megjeleníti az első ismétlési kérdést
+    showNextReviewQuestion();
+}
+
+// Következő ismétlési kérdés mutatása (új)
+function showNextReviewQuestion() {
+    // Ha minden ismétlési kérdés végigért, visszatérünk a normál módhoz
+    if (reviewCounter >= incorrectAnswers.length) {
+        isReviewMode = false;
+        incorrectAnswers = []; // Töröljük a hibás válaszokat, hiszen végigmentünk rajtuk
+        generateStudyQuestion();
+        return;
+    }
+    
+    // Visszajelzés terület tisztítása
+    feedbackArea.innerHTML = '';
+    
+    // Következő gomb elrejtése
+    nextQuestionBtn.style.display = 'none';
+    
+    // Aktuális ismétlési kérdés beállítása
+    currentIndex = incorrectAnswers[reviewCounter].index;
+    const correctAnswer = flashcards[currentIndex].term;
+    
+    // "Nézzük meg újra" felirat létrehozása
+    const reviewTitle = document.createElement('div');
+    reviewTitle.id = 'reviewTitle';
+    reviewTitle.textContent = "Nézzük meg újra";
+    reviewTitle.className = 'review-title';
+    feedbackArea.appendChild(reviewTitle);
+
+    // Véletlenszerű válaszlehetőségek generálása
+    const options = [correctAnswer];
+    while (options.length < 4) {
+        const randomTerm = flashcards[Math.floor(Math.random() * flashcards.length)].term;
+        if (!options.includes(randomTerm)) {
+            options.push(randomTerm);
+        }
+    }
+
+    // Válaszlehetőségek keverése
+    shuffleArray(options);
+
+    // Definíció megjelenítése
+    definitionText.textContent = flashcards[currentIndex].definition;
+
+    // Válaszlehetőségek megjelenítése
+    const optionButtons = document.querySelectorAll('.optionBtn');
+    optionButtons.forEach((btn, index) => {
+        btn.textContent = options[index];
+        btn.dataset.correct = options[index] === correctAnswer ? 'true' : 'false';
+        btn.className = 'optionBtn'; // Reseteljük az osztályokat
+        btn.disabled = false; // Engedélyezzük a gombokat
+        
+        // Eseménykezelők tisztítása és újra hozzáadása
+        btn.removeEventListener('click', handleOptionClick);
+        btn.addEventListener('click', handleReviewOptionClick);
+    });
+    
+    // "Nem tudom" gomb engedélyezése
+    dontKnowBtn.disabled = false;
+    
+    // Növeljük az ismétlési számlálót
+    reviewCounter++;
+}
+
+// Ismétlési opció kezelése (új)
+function handleReviewOptionClick(event) {
+    const isCorrect = event.target.dataset.correct === 'true';
+    const optionButtons = document.querySelectorAll('.optionBtn');
+
+    // Minden gombot letiltunk
+    optionButtons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.correct === 'true') {
+            btn.classList.add('correct'); // Helyes válasz kiemelése
+        } else if (btn === event.target && !isCorrect) {
+            btn.classList.add('incorrect'); // Helytelen válasz kiemelése
+        }
+    });
+    
+    // "Nem tudom" gomb letiltása
+    dontKnowBtn.disabled = true;
+
+    // Üzenet megjelenítése
+    const feedbackMessage = document.createElement('p');
+    feedbackMessage.id = 'feedbackMessage';
+    
+    if (isCorrect) {
+        feedbackMessage.textContent = "Great job! You got it right this time!";
+        feedbackMessage.style.color = '#27ae60';
+    } else {
+        feedbackMessage.textContent = "Keep practicing, you'll get it next time!";
+        feedbackMessage.style.color = '#e74c3c';
+        
+        // Ha ismét helytelenül válaszolt, hagyjuk benne a hibás válaszok között
+        const wrongAnswer = {
+            index: currentIndex,
+            term: flashcards[currentIndex].term,
+            definition: flashcards[currentIndex].definition
+        };
+        incorrectAnswers.push(wrongAnswer);
+    }
+    
+    feedbackArea.appendChild(feedbackMessage);
+
+    // Következő gomb megjelenítése
+    nextQuestionBtn.style.display = 'block';
+}
+
+// Véletlenszerű kérdés generálása tanulás módban
+function generateStudyQuestion() {
+    // Visszajelzés terület tisztítása
+    feedbackArea.innerHTML = '';
+    
+    // Következő gomb elrejtése
+    nextQuestionBtn.style.display = 'none';
+    
+    // Véletlenszerűen kiválasztunk egy fogalmat
+    currentIndex = Math.floor(Math.random() * flashcards.length);
+    const correctAnswer = flashcards[currentIndex].term;
+
+    // Véletlenszerű válaszlehetőségek generálása
+    const options = [correctAnswer];
+    while (options.length < 4) {
+        const randomTerm = flashcards[Math.floor(Math.random() * flashcards.length)].term;
+        if (!options.includes(randomTerm)) {
+            options.push(randomTerm);
+        }
+    }
+
+    // Válaszlehetőségek keverése
+    shuffleArray(options);
+
+    // Definíció megjelenítése
+    definitionText.textContent = flashcards[currentIndex].definition;
+
+    // Válaszlehetőségek megjelenítése
+    const optionButtons = document.querySelectorAll('.optionBtn');
+    optionButtons.forEach((btn, index) => {
+        btn.textContent = options[index];
+        btn.dataset.correct = options[index] === correctAnswer ? 'true' : 'false';
+        btn.className = 'optionBtn'; // Reseteljük az osztályokat
+        btn.disabled = false; // Engedélyezzük a gombokat
+        
+        // Eseménykezelők tisztítása és újra hozzáadása
+        btn.removeEventListener('click', handleReviewOptionClick);
+        btn.addEventListener('click', handleOptionClick);
+    });
+    
+    // "Nem tudom" gomb engedélyezése
+    dontKnowBtn.disabled = false;
+}
+
+// Válaszlehetőség kezelése - MÓDOSÍTVA a hibás válaszok rögzítéséhez
+function handleOptionClick(event) {
+    const isCorrect = event.target.dataset.correct === 'true';
+    const optionButtons = document.querySelectorAll('.optionBtn');
+
+    // Minden gombot letiltunk
+    optionButtons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.correct === 'true') {
+            btn.classList.add('correct'); // Helyes válasz kiemelése
+        } else if (btn === event.target && !isCorrect) {
+            btn.classList.add('incorrect'); // Helytelen válasz kiemelése
+            
+            // Hibás válasz rögzítése
+            const wrongAnswer = {
+                index: currentIndex,
+                term: flashcards[currentIndex].term,
+                definition: flashcards[currentIndex].definition
+            };
+            incorrectAnswers.push(wrongAnswer);
+        }
+    });
+    
+    // "Nem tudom" gomb letiltása
+    dontKnowBtn.disabled = true;
+
+    // Üzenet megjelenítése
+    const feedbackMessage = document.createElement('p');
+    feedbackMessage.id = 'feedbackMessage';
+    feedbackMessage.textContent = isCorrect 
+        ? "Great job! You got it right!" 
+        : "No sweat, you're still learning!";
+    feedbackMessage.style.color = isCorrect ? '#27ae60' : '#e74c3c';
+    feedbackArea.appendChild(feedbackMessage);
+
+    // Következő gomb megjelenítése
+    nextQuestionBtn.style.display = 'block';
+}
+
+// "Nem tudom" gomb kezelése - MÓDOSÍTVA a hibás válaszok rögzítéséhez
+function handleDontKnow() {
+    const optionButtons = document.querySelectorAll('.optionBtn');
+    
+    // Minden gombot letiltunk
+    optionButtons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.correct === 'true') {
+            btn.classList.add('correct'); // Helyes válasz kiemelése
+        }
+    });
+    
+    // "Nem tudom" gomb letiltása
+    dontKnowBtn.disabled = true;
+    
+    // Hibás válasz rögzítése
+    if (!isReviewMode) {
+        const wrongAnswer = {
+            index: currentIndex,
+            term: flashcards[currentIndex].term,
+            definition: flashcards[currentIndex].definition
+        };
+        incorrectAnswers.push(wrongAnswer);
+    }
+    
+    // Üzenet megjelenítése
+    const feedbackMessage = document.createElement('p');
+    feedbackMessage.id = 'feedbackMessage';
+    feedbackMessage.textContent = `A helyes válasz: ${flashcards[currentIndex].term}`;
+    feedbackMessage.style.color = '#3498db'; // Kék szín a "Nem tudom" esetén
+    feedbackArea.appendChild(feedbackMessage);
+    
+    // Következő gomb megjelenítése
+    nextQuestionBtn.style.display = 'block';
+}
+
+// Módváltás tanulás módra
+function switchToStudyMode() {
+    console.log("Váltás tanulás módra");
+    
+    // Állítsuk be a módot
+    isTestMode = false;
+    isReviewMode = false;
+    questionCounter = 0;
+    incorrectAnswers = [];
+    
+    // Gombok állapota
+    studyModeBtn.classList.add('active');
+    testModeBtn.classList.remove('active');
+    
+    // Konténerek láthatósága
+    studyContainer.style.display = 'block';
+    testContainer.style.display = 'none';
+    
+    // Tanulás kérdés generálása
+    generateStudyQuestion();
+    
+    console.log("Tanulás mód beállítva");
+}
+
+// Módváltás teszt módra
+function switchToTestMode() {
+    console.log("Váltás teszt módra");
+    
+    // Állítsuk be a módot
+    isTestMode = true;
+    
+    // Gombok állapota
+    studyModeBtn.classList.remove('active');
+    testModeBtn.classList.add('active');
+    
+    // Konténerek láthatósága
+    studyContainer.style.display = 'none';
+    testContainer.style.display = 'block';
+    
+    // Teszt inicializálása
+    initializeTest();
+    
+    console.log("Teszt mód beállítva");
+}
+
+// Teszt inicializálása
+function initializeTest() {
+    testOrder = [...Array(flashcards.length).keys()];
+    
+    // Teszt sorrend keverése
+    for (let i = testOrder.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [testOrder[i], testOrder[j]] = [testOrder[j], testOrder[i]];
+    }
+    
+    currentTestIndex = 0;
+    showQuestion();
+}
+
+// Kérdés megjelenítése teszt módban
+function showQuestion() {
+    const index = testOrder[currentTestIndex];
+    questionTermElement.textContent = flashcards[index].term;
+    answerInput.value = '';
+    
+    resultContainer.style.display = 'none';
+    document.getElementById('questionContainer').style.display = 'block';
+}
+
+// Válasz ellenőrzése teszt módban
+function checkAnswer() {
+    const index = testOrder[currentTestIndex];
+    const userAnswer = answerInput.value.trim().toLowerCase();
+    const correctAnswer = flashcards[index].definition.toLowerCase();
+    
+    // Intelligens ellenőrzés
+    const isCorrect = userAnswer.length > 0 && correctAnswer.includes(userAnswer) || 
+                     userAnswer.length > 10 && similarity(userAnswer, correctAnswer) > 0.5;
+    
+    document.getElementById('questionContainer').style.display = 'none';
+    resultContainer.style.display = 'block';
+    
+    if (isCorrect) {
+        resultContainer.classList.add('correct');
+        resultContainer.classList.remove('incorrect');
+        resultTextElement.textContent = "Helyes válasz!";
+        correctAnswerElement.textContent = "";
+    } else {
+        resultContainer.classList.add('incorrect');
+        resultContainer.classList.remove('correct');
+        resultTextElement.textContent = "Helytelen válasz!";
+        correctAnswerElement.textContent = `A helyes válasz: ${flashcards[index].definition}`;
+    }
+}
+
+// Következő teszt kérdés
+function nextTestQuestion() {
+    currentTestIndex++;
+    if (currentTestIndex >= flashcards.length) {
+        // Teszt vége
+        resultContainer.style.display = 'none';
+        alert('Gratuláció! Végeztél az összes kérdéssel!');
+        switchToStudyMode();
+    } else {
+        showQuestion();
+    }
+}
+
+// Szöveg hasonlóság kiszámítása (Levenshtein távolság)
+function similarity(s1, s2) {
+    let longer = s1;
+    let shorter = s2;
+    if (s1.length < s2.length) {
+        longer = s2;
+        shorter = s1;
+    }
+    let longerLength = longer.length;
+    if (longerLength == 0) {
+        return 1.0;
+    }
+    return (longerLength - levenshteinDistance(longer, shorter)) / parseFloat(longerLength);
+}
+
+function levenshteinDistance(s1, s2) {
+    s1 = s1.toLowerCase();
+    s2 = s2.toLowerCase();
+
+    let costs = new Array();
+    for (let i = 0; i <= s1.length; i++) {
+        let lastValue = i;
+        for (let j = 0; j <= s2.length; j++) {
+            if (i == 0)
+                costs[j] = j;
+            else {
+                if (j > 0) {
+                    let newValue = costs[j - 1];
+                    if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                        newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                    costs[j - 1] = lastValue;
+                    lastValue = newValue;
+                }
+            }
+        }
+        if (i > 0)
+            costs[s2.length] = lastValue;
+    }
+    return costs[s2.length];
+}
+
+// Segédfüggvény: Tömb keverése (Fisher-Yates algoritmus)
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+// Alkalmazás indítása
+window.onload = initApp;
+
+
+    </script>
+</body>
+</html>
