@@ -57,6 +57,7 @@
         
         nav ul li {
             margin: 0 15px;
+            position: relative;
         }
         
         nav ul li a {
@@ -66,10 +67,46 @@
             padding: 8px 15px;
             border-radius: 4px;
             transition: all 0.3s ease;
+            display: block;
         }
         
         nav ul li a:hover {
             background-color: var(--accent-blue);
+        }
+        
+        /* Legördülő menü stílus */
+        nav ul li ul.dropdown {
+            display: none;
+            position: absolute;
+            background-color: var(--secondary-blue);
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+            padding: 8px 0;
+            left: 0;
+        }
+        
+        nav ul li:hover ul.dropdown {
+            display: block;
+        }
+        
+        nav ul li ul.dropdown li {
+            margin: 0;
+            width: 100%;
+        }
+        
+        nav ul li ul.dropdown li a {
+            padding: 10px 15px;
+            border-radius: 0;
+            display: block;
+        }
+        
+        /* Caret jelző a legördülő menühöz */
+        .has-dropdown::after {
+            content: "▼";
+            font-size: 10px;
+            padding-left: 5px;
         }
         
         /* Fő tartalom */
@@ -124,16 +161,20 @@
 <body>
     <header>
         <div class="logo">NorszStudy</div>
-        <p>A tanulás új dimenziója</p>
+        <p>A Ganz Ábrahám 12K tananyagai alapján</p>
     </header>
     
     <nav>
         <ul>
             <li><a href="index.html">Főoldal</a></li>
-            <li><a href="tortenelemquiz.html">Történelem Quiz</a></li>
-            <li><a href="tantargyak.html">Tantárgyak</a></li>
-            <li><a href="gyakorlatok.html">Gyakorlatok</a></li>
-            <li><a href="rolunk.html">Rólunk</a></li>
+            <li>
+                <a href="tantargyak.html" class="has-dropdown">Tantárgyak</a>
+                <ul class="dropdown">
+                    <li><a href="quziletTöri.html">Töri quiz</a></li>
+                    <li><a href="matematika.html">Matematika</a></li>
+                    <li><a href="webprogi.html">Webprogi</a></li>
+                </ul>
+            </li>
             <li><a href="kapcsolat.html">Kapcsolat</a></li>
         </ul>
     </nav>
@@ -141,26 +182,20 @@
     <main>
         <section class="welcome-section">
             <h1>Üdvözöljük a NorszStudy oldalán!</h1>
-            <p>Az interaktív tanulás platformja, ahol a tudás élvezetes és hatékony.</p>
+            <p>Az interaktív tanulás platformja!</p>
         </section>
         
         <div class="features">
             <div class="feature-card">
                 <h2>Történelem Quiz</h2>
-                <p>Teszteld tudásod történelmi kvízeinkkel! Különböző nehézségi szinteken és témakörökben méretheted meg magad.</p>
+                <p>Teszteld tudásod történelmi kvízeinkkel!</p>
                 <p>Fedezd fel a történelem izgalmas világát interaktív módon.</p>
             </div>
             
             <div class="feature-card">
-                <h2>Online Tananyagok</h2>
+                <h2>Online Tananyagok (Hamarosan)</h2>
                 <p>Strukturált tananyagok és magyarázatok, amelyek segítenek megérteni a bonyolult fogalmakat is.</p>
                 <p>Minden korosztály számára elérhető tartalmak.</p>
-            </div>
-            
-            <div class="feature-card">
-                <h2>Gyakorlati Feladatok</h2>
-                <p>Gyakorold az elsajátított ismereteket feladatainkkal, és készülj fel a vizsgákra.</p>
-                <p>Azonnali visszajelzés a teljesítményedről.</p>
             </div>
         </div>
     </main>
