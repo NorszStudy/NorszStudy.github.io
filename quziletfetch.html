@@ -231,58 +231,18 @@ h2 {
     </div>
     
     <script>
+        
+        
         // Flashcard adatok
         const flashcards = [
-    { term: "Ha másik szerverről próbálunk adatot kérni, de az nem engedélyezi.", definition: "Mi az a CORS hiba a fetch() esetében?" },
-    { term: "Mert megmondja a szervernek, hogy milyen formátumban küldjük az adatokat, így tudja helyesen értelmezni.", definition: "Miért fontos a Content-Type fejléc beállítása a fetch kérésben?" },
-    { term: "A kívánt válasz formátumának (pl. application/json) megadására.", definition: "Mi az az Accept fejléc, és mire használható a fetch-nél?" },
-    { term: "A response.status mezővel.", definition: "Hogyan tudjuk ellenőrizni a státuszkódot a fetch válaszban?" },
-    { term: "console.log(response.status).", definition: "Hogyan lehet a válasz státuszkódját kiírni a fetch után?" },
-    { term: "Meghatározza, hogy GET, POST, PUT vagy DELETE legyen a kérés.", definition: "Mire való a fetch kérésben a \"method\" beállítás?" },
-    { term: "Fejléceket állít be, mint például Content-Type. A headers mező szabályozza és leírja a kérésünket a szerver felé, hogy helyesen értelmezze és válaszoljon rá. Ezekből a szerver megérti, hogy: Milyen típusú adatot küldünk, Hogyan kezelje a választ (pl. milyen formátumban adja vissza), Hogy jogosultak vagyunk-e az adott erőforrás elérésére.", definition: "Mire való a \"headers\" mező a fetch kérésben?" },
-    { term: "A szervernek küldendő adatokat.", definition: "Mit határozunk meg a fetch kérés \"body\" részében?" },
-    { term: "Adatok lekérésére.", definition: "Mire használjuk a GET metódust a fetch-ben?" },
-    { term: "Új adatok küldésére a szerverre.", definition: "Mire használjuk a POST metódust a fetch-ben?" },
-    { term: "Adatok módosítására vagy cseréjére.", definition: "Mire használjuk a PUT metódust a fetch-ben?" },
-    { term: "Adatok törlésére.", definition: "Mire használjuk a DELETE metódust a fetch-ben?" },
-    { term: "Az API egy előre elkészített program, amely egy bonyolult feladatot old meg helyettünk, így nekünk már nem kell az egészet a nulláról leprogramozni, hanem elegendő meghívnunk, vagy hivatkoznunk rá. Az API (Application Programming Interface) feladata: Egy már előre megírt kapcsolódási feltételként, programrészletként, lehetőséget ad arra, hogy más programok, fejlesztők könnyen és biztonságosan elérjék egy alkalmazás, szerver vagy rendszer szolgáltatásait.", definition: "Mi az az API és mi a feladata?" },
-    { term: "Azért, hogy a weboldal és a szerver szabályosan, biztonságosan és egységes módon tudjon adatot cserélni, anélkül hogy ismerni kellene a szerver belső működését.", definition: "Miért van szükség API-ra egy weboldal és szerver között?" },
-    { term: "Mert valaminek válaszolnia kell a kérésre, a választ pedig mindig a szervertől kapjuk meg egyrészt, másrészt azért, hogy megtudjuk, sikeres volt-e az adatküldés vagy lekérés, és mert a böngésző önmagában nem fér hozzá adatokhoz, illetve nem tud logikai döntéseket hozni, ezt csak a szerver végezheti el.", definition: "Miért fontos, hogy a fetch kérésre válaszoljon a szerver?" },
-    { term: "A szerver fogadja a kérést, feldolgozza azt (pl. adatot keres, döntést hoz), és visszaküldi a választ a kliens (böngésző) számára.", definition: "Mi a szerver feladata a hálózati kommunikációban?" },
-    { term: "fetch('https://example.com/api').", definition: "Hogyan néz ki egy egyszerű fetch kérés, ami adatot kér le (GET)?" },
-    { term: "fetch('https://example.com/api', { method: 'POST', body: JSON.stringify(data)}).", definition: "Hogyan néz ki egy fetch POST kérés, ami adatot küld a szervernek?" },
-    { term: "A Response objektum tartalmazza a HTTP-válaszhoz kapcsolódó alapinformációkat (például a státuszkódot). A status adja vissza a konkrét HTTP-státuszt (200, 404 stb.), az ok igaz/hamis értékben jelzi, hogy sikeres volt-e a kérés (2xx tartományban), a json() és text() metódusok segítenek feldolgozni a válasz testét (pl. JSON-objektumként vagy szövegként).", definition: "Mi jellemző a fetch által visszaadott Response objektumra, és mire valók a főbb tulajdonságai/metódusai (status, ok, json(), text())?" },
-    { term: "A Fetch API-ban a Response objektum a szerverről érkező HTTP-válasz minden lényeges elemét (státuszkód, fejlécek, aszinkron módon olvasható body) tartalmazó struktúra.", definition: "Mi az a response objektum?" },
-    { term: "Egy eszköz, amivel adatokat kérhetünk le vagy küldhetünk weboldalakról.", definition: "Mi az a Fetch API?" },
-    { term: "Adatok lekérésére és küldésére szerverrel.", definition: "Mire használjuk a fetch() függvényt?" },
-    { term: "JSON, szöveg, képek, fájlok.", definition: "Milyen adatokat tudunk lekérni a fetch() segítségével?" },
-    { term: "Promise-t.", definition: "Mit ad vissza a fetch()?" },
-    { term: "Nem állítja meg a kód futását, amíg vár a válaszra.", definition: "Mit jelent az, hogy a fetch() aszinkron művelet?" },
-    { term: "A fetch később ad választ, amit then-el kezelünk.", definition: "Mit jelent az, hogy a fetch() egy Promise-t ad vissza?" },
-    { term: ".then() metódussal.", definition: "Hogyan tudjuk elkapni a fetch() válaszát?" },
-    { term: "A fetch által visszaadott Promise sikeres teljesülése után feldolgozza a szerver választ.", definition: "Mit csinál a .then() a fetch() után?" },
-    { term: "A response.ok tulajdonsággal.", definition: "Hogyan tudjuk megnézni, hogy a fetch() válasza sikeres volt-e?" },
-    { term: "Igaz, ha a válasz sikeres volt.", definition: "Mit jelent a response.ok tulajdonság?" },
-    { term: "response.text().", definition: "Hogyan olvashatjuk ki a válaszból a szöveget?" },
-    { term: "response.json().", definition: "Hogyan olvashatjuk ki a válaszból a JSON adatot?" },
-    { term: "A válasz szövegét JavaScript objektummá alakítja.", definition: "Mit csinál a response.json() metódus?" },
-    { term: "response.text(): A válasz törzsét nyers szövegként (string) adja vissza. Nem próbálja megérteni vagy feldolgozni a tartalmát, csak sima szöveget kapsz. response.json(): A válasz törzsét JSON formátumú szövegként olvassa be, és JavaScript objektummá alakítja.", definition: "Mi a különbség a response.text() és response.json() között?" },
-    { term: "catch() metódussal; catch() csak azokat a hibákat kapja el, amelyek a hálózati kommunikáció során keletkeznek (pl. nincs kapcsolat, időtúllépés).", definition: "Hogyan kezeljük a hibákat fetch() használatakor?" },
-    { term: "Az adatot, amit a szervernek szeretnénk elküldeni, pl. JSON formátumban.", definition: "Mit küldhetünk a body-ban?" },
-    { term: "A response.ok hamis lesz.", definition: "Mi történik, ha a fetch() hibát kap vissza, például 404?" },
-    { term: "A válasz állapotát jelző szám, pl. 200, 404, 500.", definition: "Mit jelent a HTTP státuszkód, amit a fetch() válasz ad vissza?" },
-    { term: "A fetch második paraméterében a method: 'POST' beállításával.", definition: "Hogyan tudunk POST kérést küldeni a fetch() segítségével?" },
-    { term: "A body mezőben.", definition: "Hogyan tudunk adatot küldeni a fetch POST kérésében?" },
-    { term: "A szervernek küldött adat helye.", definition: "Mit jelent a \"body\" opció a fetch-ben?" },
-    { term: "A headers mezőben, objektumként. A fetch() hívás második paramétere (az options objektum) tartalmazhat egy headers mezőt, amelyben kulcs-érték páronként adhatunk meg HTTP fejléceket. Ez például akkor fontos, ha jelezni akarjuk, hogy milyen típusú adatot küldünk (pl. JSON), vagy az elfogadott válaszformátumot, vagy hitelesítési adatokat.", definition: "Hogyan adhatunk meg HTTP fejléceket (headers) a fetch-ben?" },
-    { term: "Meghatározza, hogy milyen formátumú adatot küldünk, pl. JSON.", definition: "Mire jó a \"Content-Type\" fejléc a fetch kérésekben?" },
-    { term: "A body-ban JSON.stringify()-val átalakított adatot küldünk.", definition: "Hogyan küldünk JSON adatot a fetch POST kéréssel?" },
-    { term: "A method: 'POST' beállítással.", definition: "Hogyan kell beállítani a metódust POST-ra a fetch-ben?" },
-    { term: "Egyszerűen csak a fetch URL-jével, mert alapértelmezett a GET.", definition: "Hogyan tudunk GET kérést küldeni a fetch() használatával?" },
-    { term: "Ha nem adunk meg metódust, akkor automatikusan GET kérést küld.", definition: "Mit jelent az, hogy a fetch alapértelmezett metódusa GET?" },
-    { term: "Hibát kapunk vissza, amit el lehet kapni catch()-el.", definition: "Mi történik, ha hibás URL-t adunk meg a fetch()-nek?" },
-    { term: "Több fetch hívást írunk egymás után, vagy Promise.all()-lal párhuzamosan.", definition: "Hogyan lehet több fetch kérést egyszerre indítani?" },
-    { term: "Mindegyik párhuzamosan fut, nem várják meg egymást.", definition: "Mi történik, ha több fetch() fut egyszerre?" }
+        { term: "Egy eszköz, amivel adatokat kérhetünk le vagy küldhetünk weboldalakról.", definition: "Mi az a Fetch API?" },
+        { term: "A szervernek küldött adat helye.", definition: "Mit jelent a \"body\" opció a fetch-ben?" },
+        { term: "Meghatározza, hogy GET, POST, PUT vagy DELETE legyen a kérés.", definition: "Mire való a fetch kérésben a \"method\" beállítás?" },
+        { term: "Adatok lekérésére.", definition: "Mire használjuk a GET metódust a fetch-ben?" },
+        { term: "Új adatok küldésére a szerverre.", definition: "Mire használjuk a POST metódust a fetch-ben?" },
+        { term: "Adatok módosítására vagy cseréjére.", definition: "Mire használjuk a PUT metódust a fetch-ben?" },
+        { term: "Adatok törlésére.", definition: "Mire használjuk a DELETE metódust a fetch-ben?" },
+        { term: "A Fetch API-ban a Response objektum a szerverről érkező HTTP-válasz minden lényeges elemét (státuszkód, fejlécek, aszinkron módon olvasható body) tartalmazó struktúra.", definition: "Mi az a response objektum?" }
 ]
 
 
