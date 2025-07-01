@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lapozható üdvözlőkártya</title>
+  <style>
+    body {
+      background: #f3f6fa;
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .card-container {
+      width: 95vw;
+      max-width: 360px;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.13);
+      overflow: hidden;
+      position: relative;
+    }
+    .card-page {
+      display: none;
+      padding: 32px 20px 24px 20px;
+      min-height: 350px;
+      box-sizing: border-box;
+      text-align: center;
+      transition: opacity 0.5s;
+    }
+    .card-page.active {
+      display: block;
+      animation: fadeIn 0.6s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .nav-arrows {
+      display: flex;
+      justify-content: space-between;
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .arrow-btn {
+      background: rgba(255,255,255,0.8);
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 1.6rem;
+      color: #4a4a4a;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+      cursor: pointer;
+      pointer-events: auto;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .arrow-btn:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+    .panda-img {
+      width: 160px;
+      margin: 0 auto 18px auto;
+      display: block;
+    }
+    .greeting {
+      font-size: 1.3rem;
+      color: #3b3b3b;
+      margin-top: 40px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="card-container">
+    <!-- Oldal 1: Panda -->
+    <div class="card-page active" id="page-1">
+      <img class="panda-img" src="panda.png" alt="Rajzfilm panda bambusszal">
+      <div style="font-size:1.1rem; color:#4a4a4a;">Boooo! 👋</div>
+    </div>
+    <!-- Oldal 2: Üdvözlőszöveg -->
+    <div class="card-page" id="page-2">
+        <img class="panda-img" src="macska.png" alt="Rajzfilm tita">
+      <div class="greeting">
+        Sok szeretettel várlak macskám megdögönyözésére 2025 július 02-án, nem tudom hánytól kezdődően!<br>
+        <br><br>Norbi
+      </div>
+    </div>
+    <!-- Nyilak -->
+    <div class="nav-arrows">
+      <button class="arrow-btn" id="prev-btn" aria-label="Előző oldal" disabled>&larr;</button>
+      <button class="arrow-btn" id="next-btn" aria-label="Következő oldal">&rarr;</button>
+    </div>
+  </div>
+  <script>
+    const pages = document.querySelectorAll('.card-page');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    let currentPage = 0;
+
+    function updatePage() {
+      pages.forEach((p, i) => p.classList.toggle('active', i === currentPage));
+      prevBtn.disabled = currentPage === 0;
+      nextBtn.disabled = currentPage === pages.length - 1;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentPage > 0) {
+        currentPage--;
+        updatePage();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentPage < pages.length - 1) {
+        currentPage++;
+        updatePage();
+      }
+    });
+
+    // Swipe támogatás mobilra
+    let touchStartX = 0;
+    document.querySelector('.card-container').addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+    });
+    document.querySelector('.card-container').addEventListener('touchend', (e) => {
+      let touchEndX = e.changedTouches[0].clientX;
+      if (touchEndX - touchStartX > 60) prevBtn.click();
+      if (touchStartX - touchEndX > 60) nextBtn.click();
+    });
+  </script>
+</body>
+</html>
