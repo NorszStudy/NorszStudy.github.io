@@ -39,22 +39,24 @@
             font-weight: bold;
             letter-spacing: 1px;
         }
-        /* Hivatkozások */
+        
+        /* Globális hivatkozások (alapértelmezett viselkedés) */
         a {
-            color: inherit; /* Örökli a szöveg színét, nem változik */
+            color: inherit; /* Örökli a szöveg színét */
             text-decoration: none; /* Eltávolítja az aláhúzást */
         }
         a:visited {
-            color: inherit; /* Látogatott link is örökli a színt, nem lilul */
+            color: inherit; /* Nem lilul látogatás után */
             text-decoration: none;
         }
         a:hover {
-            color: inherit; /* Egérrel rámutatáskor sem változik */
-            text-decoration: underline; /* Opcionális: aláhúzás csak hoverkor */
+            color: inherit; /* Hoverkor sem változik */
+            text-decoration: underline; /* Opcionális aláhúzás hoverkor */
         }
         a:active {
-            color: inherit; /* Kattintáskor sem változik */
+            color: inherit; /* Aktív állapotban sem változik */
         }
+        
         /* Navigációs sáv */
         nav {
             background-color: var(--secondary-blue);
@@ -83,6 +85,11 @@
             border-radius: 4px;
             transition: all 0.3s ease;
             display: block;
+        }
+        
+        /* Specifikus visited állapot a navigáció linkjeire (hogy ne liluljanak) */
+        nav ul li a:visited {
+            color: var(--text-light); /* Fehér marad látogatás után is */
         }
         
         nav ul li a:hover {
@@ -117,11 +124,16 @@
             display: block;
         }
         
+        nav ul li ul.dropdown li a:visited {
+            color: var(--text-light); /* Dropdown linkek sem lilulnak */
+        }
+        
         /* Caret jelző a legördülő menühöz */
         .has-dropdown::after {
             content: "▼";
             font-size: 10px;
             padding-left: 5px;
+            vertical-align: middle; /* Jobb pozicionálás */
         }
         
         /* Fő tartalom */
@@ -163,6 +175,11 @@
             margin-top: 0;
         }
         
+        /* Specifikus visited állapot a feature-card linkjeire */
+        .feature-card h2 a:visited {
+            color: var(--primary-blue); /* Nem lilul, marad kék */
+        }
+        
         /* Lábléc */
         footer {
             background-color: var(--primary-blue);
@@ -171,8 +188,6 @@
             padding: 20px 0;
             margin-top: 50px;
         }
-
-        
     </style>
 </head>
 <body>
@@ -185,7 +200,7 @@
         <ul>
             <li><a href="index.html">Főoldal</a></li>
             <li>
-                <a class="has-dropdown">Tantárgyak</a>
+                <a href="#" class="has-dropdown">Tantárgyak</a> <!-- Hozzáadott placeholder href a kattinthatósághoz -->
                 <ul class="dropdown">
                     <li><a href="töri.html">Történelem</a></li>
                     <li><a href="webprogi.html">Webprogramozás</a></li>
@@ -215,7 +230,7 @@
                 <p>Ismételd át a történelem "izgalmas" világát interaktív módon.</p>
             </div>
             
-             <div class="feature-card">
+            <div class="feature-card">
                 <h2><a href="yt-to-mp3.html">Youtube to MP3 Konverter</a></h2>
                 <p>Töltsd le kedvenc zenéidet MP3 formátumban!</p>
                 <p>Alapvetően a legjobb minőség van beállítva, de ha kell tudod szabályozni azt is.</p>
@@ -233,6 +248,7 @@
     </footer>
 </body>
 </html>
+
 
 
 
