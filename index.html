@@ -39,7 +39,22 @@
             font-weight: bold;
             letter-spacing: 1px;
         }
-        
+        /* Hivatkozások */
+        a {
+            color: inherit; /* Örökli a szöveg színét, nem változik */
+            text-decoration: none; /* Eltávolítja az aláhúzást */
+        }
+        a:visited {
+            color: inherit; /* Látogatott link is örökli a színt, nem lilul */
+            text-decoration: none;
+        }
+        a:hover {
+            color: inherit; /* Egérrel rámutatáskor sem változik */
+            text-decoration: underline; /* Opcionális: aláhúzás csak hoverkor */
+        }
+        a:active {
+            color: inherit; /* Kattintáskor sem változik */
+        }
         /* Navigációs sáv */
         nav {
             background-color: var(--secondary-blue);
@@ -157,22 +172,7 @@
             margin-top: 50px;
         }
 
-        /* Hivatkozások */
-        a {
-            color: inherit; /* Örökli a szöveg színét, nem változik */
-            text-decoration: none; /* Eltávolítja az aláhúzást */
-        }
-        a:visited {
-            color: inherit; /* Látogatott link is örökli a színt, nem lilul */
-            text-decoration: none;
-        }
-        a:hover {
-            color: inherit; /* Egérrel rámutatáskor sem változik */
-            text-decoration: underline; /* Opcionális: aláhúzás csak hoverkor */
-        }
-        a:active {
-            color: inherit; /* Kattintáskor sem változik */
-        }
+        
     </style>
 </head>
 <body>
@@ -233,5 +233,6 @@
     </footer>
 </body>
 </html>
+
 
 
