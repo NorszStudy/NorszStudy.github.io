@@ -16,7 +16,7 @@
     a:hover { color:inherit; text-decoration:underline; }
     a:active { color:inherit; }
 
-    /* NAV – a sablonnal azonos */
+    /* NAV */
     nav { background-color:var(--secondary-blue); padding:10px 0; }
     nav ul { list-style-type:none; margin:0; padding:0; display:flex; justify-content:center; flex-wrap:wrap; }
     nav ul li { margin:0 15px; position:relative; }
@@ -33,13 +33,34 @@
     /* Tartalom és órarend */
     .main { max-width:1200px; margin:30px auto; padding:0 20px; }
     .card { background:#fff; border-radius:8px; padding:20px; box-shadow:0 2px 10px rgba(0,0,0,.1); }
-    .table-wrap { overflow:auto; margin-top:20px; }
 
-    /* Táblázat: asztali beállítások + sticky fejlécek/első oszlop */
-    table { width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; }
-    th, td { border:1px solid #e0e0e0; padding:10px; text-align:center; background:#fff; }
-    thead th { position:sticky; top:0; background:#f7f9fc; z-index:2; }
+    /* Görgethető táblakonténer vízszintesen (mobilon különösen hasznos) */
+    .table-wrap {
+      position: relative;
+      overflow-x: auto;              /* vízszintes görgetés */
+      overflow-y: hidden;
+      overscroll-behavior-x: contain;/* ne húzza el az egész oldalt */
+      scroll-snap-type: x proximity; /* opcionális snap */
+      touch-action: pan-x;           /* érintéses vízszintes görgetés elsődleges */
+      -webkit-overflow-scrolling: touch; /* iOS momentum scroll */
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.06);
+      background: #fff;
+    }
+
+    /* Opcionális görgetési tipp csak mobilon */
+    .scroll-notice {
+      font-size:.9rem; color:#333; padding:6px 0 8px; display:none;
+    }
+    @media (max-width:700px){ .scroll-notice { display:block; } }
+
+    /* Táblázat: széles min-width, hogy legyen mit görgetni; sticky fejlécek/első oszlop */
+    table { width:100%; min-width:820px; border-collapse:separate; border-spacing:0; table-layout:fixed; }
+    th, td { border:1px solid #e0e0e0; padding:10px; text-align:center; background:#fff; white-space:nowrap; }
+    thead th { position:sticky; top:0; background:#f7f9fc; z-index:2; scroll-snap-align:start; }
     th.time { position:sticky; left:0; background:#f7f9fc; text-align:left; width:150px; z-index:3; }
+    tbody th.time { background:#f7f9fc; }
+    td, th { scroll-snap-align:start; } /* opcionális: oszlop-kezdésre pattanjon */
 
     /* Tantárgy-színek */
     td.ak2 { background:#cfe8ff; }
@@ -53,31 +74,10 @@
     .legend { margin-top:12px; display:flex; flex-wrap:wrap; gap:8px; }
     .legend span { padding:4px 8px; border-radius:4px; border:1px solid #e0e0e0; font-size:.9rem; }
 
-    /* Mobil (<=700px): stacked/kártyás nézet data-label-lel, hozzáférhetően elrejtett thead */
+    /* Mobil finomhangolás */
     @media (max-width:700px) {
-      .table-wrap { overflow:visible; }
-      table, thead, tbody, th, td, tr { display:block; }
-      thead {
-        border:0; clip:rect(0 0 0 0); height:1px; margin:-1px;
-        overflow:hidden; padding:0; position:absolute; width:1px;
-      }
-      tr {
-        background:#fff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.06);
-        margin:12px 0; overflow:hidden;
-      }
-      th.time {
-        position:static; width:auto; background:transparent; text-align:left; padding:12px 12px 0;
-        font-weight:bold; border:none;
-      }
-      td {
-        display:flex; justify-content:space-between; gap:12px;
-        text-align:left; border-bottom:1px solid #eee; padding:10px 12px; border-left:none; border-right:none;
-      }
-      td::before {
-        content: attr(data-label);
-        font-weight:bold; color:#555; min-width:7rem;
-      }
-      td:last-child { border-bottom:0; }
+      th.time { width:120px; font-size:.9rem; }
+      th, td { padding:8px; font-size:.9rem; }
     }
   </style>
 </head>
@@ -106,6 +106,9 @@
   <main class="main">
     <section class="card">
       <h1>Órarend</h1>
+
+      <p class="scroll-notice">Tipp: húzd jobbra-balra az órarendet a teljes nézethez →</p>
+
       <div class="table-wrap">
         <table>
           <thead>
@@ -151,22 +154,6 @@
   <footer style="background-color:var(--primary-blue); color:#fff; text-align:center; padding:20px 0; margin-top:50px;">
     <p>&copy; 2025 NorszStudy. Minden jog fenntartva.</p>
   </footer>
-
-  <script>
-    // Data-label attribútumok automatikus felvétele a thead alapján (mobil stacked nézethez)
-    document.addEventListener('DOMContentLoaded', function () {
-      document.querySelectorAll('.table-wrap table').forEach(table => {
-        const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
-        table.querySelectorAll('tbody tr').forEach(row => {
-          Array.from(row.children).forEach((cell, i) => {
-            if (cell.tagName.toLowerCase() === 'td') {
-              cell.setAttribute('data-label', headers[i] || '');
-            }
-            // Az időpont fejléc (th.time) külön blokk lesz mobilon, ezért nem kell neki ::before
-          });
-        });
-      });
-    });
-  </script>
 </body>
 </html>
+
