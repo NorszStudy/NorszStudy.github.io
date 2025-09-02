@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorszStudy - Órarend</title>
+  <style>
+    :root {
+      --primary-blue: #1a4b8c;
+      --secondary-blue: #2d6ebd;
+      --light-blue: #e0f2ff;
+      --accent-blue: #0056b3;
+      --text-light: #ffffff;
+      --text-dark: #333333;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: var(--light-blue);
+      color: var(--text-dark);
+    }
+    header {
+      background: var(--primary-blue);
+      color: var(--text-light);
+      padding: 20px 0;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,.1);
+    }
+    .logo { font-size: 2.2rem; font-weight: 700; }
+
+    nav { background: var(--secondary-blue); }
+    nav ul {
+      list-style: none; margin: 0; padding: 10px;
+      display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+    }
+    nav a {
+      color: #fff; text-decoration: none; font-weight: 700;
+      padding: 8px 14px; border-radius: 4px;
+    }
+    nav a:hover { background: var(--accent-blue); }
+
+    .main {
+      max-width: 1000px; margin: 30px auto; padding: 20px;
+      background: #fff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    }
+    .table-wrap { overflow: auto; }
+    .table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .table th, .table td { border: 1px solid #e0e0e0; padding: 10px; text-align: center; }
+    .table thead th { position: sticky; top: 0; background: #f7f9fc; z-index: 1; }
+    .table th.time { position: sticky; left: 0; background: #f7f9fc; text-align: left; width: 150px; }
+
+    /* Színek a tárgyaknak */
+    .ak2 { background: #cfe8ff; }
+    .fprt { background: #e3f2fd; }
+    .bprt { background: #e8f5e9; }
+    .amaft { background: #fff3e0; }
+    .asz { background: #f3e5f5; }
+    .civ { background: #ffebee; }
+    .vf { background: #ede7f6; }
+
+    .legend { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .legend span {
+      padding: 4px 8px; border-radius: 4px; border: 1px solid #e0e0e0; font-size: .9rem;
+    }
+
+    @media (max-width:700px) {
+      .table th.time { width: 120px; font-size: .9rem; }
+      .table th, .table td { padding: 8px; font-size: .9rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">NorszStudy</div>
+    <p>A Ganz Ábrahám 12K tananyagai alapján</p>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="index.html">Főoldal</a></li>
+      <li><a href="töri.html">Történelem</a></li>
+      <li><a href="webprogi.html">Webprogramozás</a></li>
+      <li><a href="#" style="background: var(--accent-blue)">Órarend</a></li>
+    </ul>
+  </nav>
+
+  <main class="main">
+    <h1>Órarend</h1>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="time">Időpontok</th>
+            <th>Hétfő</th>
+            <th>Kedd</th>
+            <th>Szerda</th>
+            <th>Csütörtök</th>
+            <th>Péntek</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th class="time">0. 7:10-7:55</th><td></td><td></td><td></td><td></td><td class="asz">asz</td></tr>
+          <tr><th class="time">1. 8:00-8:45</th><td></td><td></td><td></td><td></td><td class="asz">asz</td></tr>
+          <tr><th class="time">2. 8:55-9:40</th><td class="ak2">ak2</td><td></td><td></td><td></td><td class="asz">asz</td></tr>
+          <tr><th class="time">3. 9:50-10:35</th><td class="ak2">ak2</td><td></td><td></td><td></td><td></td></tr>
+          <tr><th class="time">4. 10:45-11:30</th><td class="fprt">fprt</td><td></td><td></td><td class="bprt">bprt</td><td class="civ">civ</td></tr>
+          <tr><th class="time">5. 11:40-12:25</th><td class="fprt">fprt</td><td></td><td class="amaft">amaft</td><td class="bprt">bprt</td><td class="civ">civ</td></tr>
+          <tr><th class="time">6. 12:45-13:30</th><td></td><td></td><td class="amaft">amaft</td><td></td><td class="vf">vf</td></tr>
+          <tr><th class="time">7. 13:40-14:25</th><td class="bprt">bprt</td><td></td><td class="amaft">amaft</td><td class="fprt">fprt</td><td class="vf">vf</td></tr>
+          <tr><th class="time">8. 14:30-15:15</th><td class="bprt">bprt</td><td></td><td class="amaft">amaft</td><td class="fprt">fprt</td><td class="vf">vf</td></tr>
+          <tr><th class="time">9. 15:20-16:05</th><td class="bprt">bprt</td><td></td><td class="amaft">amaft</td><td class="fprt">fprt</td><td class="vf">vf</td></tr>
+          <tr><th class="time">10. 16:10-16:55</th><td class="bprt">bprt</td><td></td><td class="amaft">amaft</td><td class="fprt">fprt</td><td></td></tr>
+          <tr><th class="time">11. 17:00-17:45</th><td class="bprt">bprt</td><td></td><td class="amaft">amaft</td><td class="fprt">fprt</td><td></td></tr>
+          <tr><th class="time">12. 17:50-18:35</th><td></td><td></td><td class="amaft">amaft</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="legend">
+      <span class="ak2">ak2</span>
+      <span class="fprt">fprt</span>
+      <span class="bprt">bprt</span>
+      <span class="amaft">amaft</span>
+      <span class="asz">asz</span>
+      <span class="civ">civ</span>
+      <span class="vf">vf</span>
+    </div>
+  </main>
+
+  <footer style="background: var(--primary-blue); color: #fff; text-align: center; padding: 20px 0; margin-top: 40px;">
+    <p>&copy; 2025 NorszStudy. Minden jog fenntartva.</p>
+  </footer>
+</body>
+</html>
