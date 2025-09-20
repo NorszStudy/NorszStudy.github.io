@@ -1,352 +1,590 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NorszStudy - YouTube MP3 Konverter</title>
-    <style>
-        :root {
-            --primary-blue: #1a4b8c;
-            --secondary-blue: #2d6ebd;
-            --light-blue: #e0f2ff;
-            --accent-blue: #0056b3;
-            --text-light: #ffffff;
-            --text-dark: #333333;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>NorszStudy - YouTube MP3 Konverter</title>
 
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--light-blue);
-            color: var(--text-dark);
-            line-height: 1.6;
+  <script>
+    // FOUC elleni gyors téma beállítás
+    (function () {
+      try {
+        var saved = localStorage.getItem('theme');
+        var root = document.documentElement;
+        if (saved === 'light' || saved === 'dark') {
+          root.setAttribute('data-theme', saved);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          root.setAttribute('data-theme', 'dark');
+        } else {
+          root.setAttribute('data-theme', 'light');
         }
+      } catch (e) {}
+    })();
+  </script>
 
-        header {
-            background-color: var(--primary-blue);
-            color: var(--text-light);
-            padding: 20px 0;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+  <style>
+    :root {
+      color-scheme: light dark;
+      /* Világos téma – erős, kontrasztos paletta */
+      --bg: #f7f9ff;
+      --bg-secondary: #eef3ff;
+      --surface: #ffffff;
+      --surface-hover: #f2f6ff;
+      --text: #0b1220;
+      --text-muted: #475569;
 
-        .logo {
-            font-size: 2.5rem;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
+      --brand: #0b5cff;
+      --brand-light: #2f7aff;
+      --brand-dark: #0946cc;
 
-        nav {
-            background-color: var(--secondary-blue);
-            padding: 10px 0;
-        }
+      --border: #d7e0f2;
+      --border-soft: #e6edfb;
+      --nav-bg: #14213d;
+      --nav-text: #f8fafc;
 
-        nav ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+      --radius-s: 8px;
+      --radius-m: 12px;
+      --radius-l: 16px;
+      --space-1: 0.5rem;
+      --space-2: 0.75rem;
+      --space-3: 1rem;
+      --space-4: 1.5rem;
+      --space-5: 2rem;
+      --space-6: 3rem;
+      --maxw: 1100px;
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
 
-        nav ul li {
-            margin: 0 15px;
-            position: relative;
-        }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0b1324;
+      --bg-secondary: #0f1b33;
+      --surface: #111a2e;
+      --surface-hover: #17233f;
+      --text: #e8eefc;
+      --text-muted: #aab6d6;
 
-        nav ul li a {
-            color: var(--text-light);
-            text-decoration: none;
-            font-weight: bold;
-            padding: 8px 15px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            display: block;
-        }
+      --brand: #74a7ff;
+      --brand-light: #9bc1ff;
+      --brand-dark: #4a89ff;
 
-        nav ul li a:hover {
-            background-color: var(--accent-blue);
-        }
+      --border: #223153;
+      --border-soft: #1a2745;
+      --nav-bg: #0b1324;
+      --nav-text: #e8eefc;
+    }
 
-        /* Konverter stílusok */
-        .converter-container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 30px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+    * { box-sizing: border-box; }
 
-        .converter-box {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: var(--font);
+      background: linear-gradient(135deg, var(--bg) 0%, var(--bg-secondary) 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
 
-        .quality-selector {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin: 15px 0;
-        }
+    a {
+      color: var(--brand);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    a:hover { color: var(--brand-light); text-decoration: underline; }
+    a:visited { color: var(--brand); }
 
-        input, textarea, select, button, a.download-link {
-            padding: 12px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            font-size: 16px;
-            width: 100%;
-        }
+    /* Fejléc (egységes) */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--nav-bg);
+      color: var(--nav-text);
+      border-bottom: 2px solid var(--brand);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    .header-content {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: var(--space-3);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--space-3);
+      align-items: center;
+    }
+    .brand-area { display: flex; flex-direction: column; gap: 0.25rem; }
+    .logo { font-weight: 800; font-size: clamp(1.25rem, 1rem + 1.5vw, 1.8rem); letter-spacing: -0.025em; }
+    .tagline { font-size: 0.875rem; opacity: 0.85; margin: 0; }
+    .theme-toggle {
+      appearance: none;
+      background-color: var(--brand);
+      color: #fff;
+      border: 2px solid transparent;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-s);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      white-space: nowrap;
+    }
+    .theme-toggle:hover { background-color: var(--brand-light); transform: translateY(-1px); }
 
-        textarea {
-            height: 100px;
-            resize: vertical;
-        }
+    /* NAV */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .nav-content { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--space-3); }
+    .mobile-toggle {
+      appearance: none;
+      background-color: var(--brand);
+      color: #fff;
+      border: none;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-s);
+      font-weight: 600;
+      cursor: pointer;
+      margin: var(--space-2) 0;
+      transition: background-color 0.2s ease;
+    }
+    .mobile-toggle:hover { background-color: var(--brand-light); }
 
-        button, a.download-link {
-            background-color: var(--primary-blue);
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            text-align: center;
-            text-decoration: none;
-            display: block;
-            margin-bottom: 10px;
-        }
+    .nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: none;
+      flex-direction: column;
+    }
+    .nav-list.active { display: flex; padding-bottom: var(--space-3); }
+    .nav-item { position: relative; }
+    .nav-link, .dropdown-toggle {
+      display: block;
+      padding: var(--space-2) var(--space-3);
+      color: var(--text);
+      font-weight: 500;
+      border-radius: var(--radius-s);
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+      background: none;
+      border: none;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-link:hover, .dropdown-toggle:hover { background: var(--surface-hover); text-decoration: none; }
+    .dropdown { display: none; padding-left: var(--space-4); }
+    .dropdown.active { display: block; }
+    .dropdown .nav-link { color: var(--text-muted); font-weight: 400; }
 
-        button:hover, a.download-link:hover {
-            background-color: var(--accent-blue);
-        }
+    @media (min-width: 768px) {
+      .mobile-toggle { display: none; }
+      .nav-list { display: flex !important; flex-direction: row; align-items: center; gap: var(--space-1); padding: var(--space-2) 0; }
+      .nav-link, .dropdown-toggle { padding: var(--space-2); white-space: nowrap; }
+      .dropdown {
+        position: absolute; top: 100%; left: 0;
+        background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-s);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        min-width: 200px; padding: var(--space-1); display: none; z-index: 200;
+      }
+      .nav-item:hover .dropdown { display: block; }
+      .dropdown .nav-link { padding: var(--space-2); margin: 0; color: var(--text); }
+    }
 
-        .hidden {
-            display: none;
-        }
+    /* Fő tartalom */
+    main { max-width: var(--maxw); margin: var(--space-5) auto; padding: 0 var(--space-3); }
 
-        #errorMessage {
-            color: #d32f2f;
-            margin-top: 10px;
-        }
+    .converter-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-l);
+      padding: var(--space-5);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    .converter-container h1 { margin: 0 0 var(--space-3) 0; color: var(--brand-dark); font-size: clamp(1.4rem, 1rem + 2vw, 2rem); }
 
-        #downloadList {
-            list-style-type: none;
-            padding: 0;
-        }
+    .converter-box {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
 
-        #downloadList li {
-            margin-bottom: 10px;
-        }
+    .field { display: grid; gap: .35rem; }
+    .field label { font-weight: 700; color: var(--text); }
+    .help { color: var(--text-muted); font-size: .9rem; }
 
-        footer {
-            background-color: var(--primary-blue);
-            color: var(--text-light);
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 50px;
-        }
-        /* Legördülő menü stílus */
-        nav ul li ul.dropdown {
-            display: none;
-            position: absolute;
-            background-color: var(--secondary-blue);
-            min-width: 160px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            z-index: 1;
-            border-radius: 4px;
-            padding: 8px 0;
-            left: 0;
-        }
-        
-        nav ul li:hover ul.dropdown {
-            display: block;
-        }
-        
-        nav ul li ul.dropdown li {
-            margin: 0;
-            width: 100%;
-        }
-        
-        nav ul li ul.dropdown li a {
-            padding: 10px 15px;
-            border-radius: 0;
-            display: block;
-        }
-        /* Caret jelző a legördülő menühöz */
-        .has-dropdown::after {
-            content: "▼";
-            font-size: 10px;
-            padding-left: 5px;
-        }
-    </style>
+    .quality-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: var(--space-2);
+      align-items: center;
+    }
+    @media (max-width: 520px) {
+      .quality-row { grid-template-columns: 1fr; }
+    }
+
+    /* Form elemek */
+    textarea, input, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: var(--radius-s);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 16px;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    textarea:focus, input:focus, select:focus { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      align-items: center;
+    }
+
+    button, .download-link {
+      appearance: none;
+      border: none;
+      border-radius: var(--radius-s);
+      padding: var(--space-2) var(--space-3);
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      background: linear-gradient(135deg, var(--brand), var(--brand-light));
+      color: #fff;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    button:hover, .download-link:hover { transform: translateY(-1px); text-decoration: none; }
+    button:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    .secondary {
+      background: var(--surface-hover);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .secondary:hover { background: var(--surface); }
+
+    /* Visszajelzések */
+    .status {
+      font-size: .95rem;
+      color: var(--text-muted);
+    }
+    .error {
+      color: #ef4444;
+      background: light-dark(#ffecec, #2a1a1a);
+      border: 1px solid light-dark(#ffc5c5, #4c2626);
+      padding: var(--space-2);
+      border-radius: var(--radius-s);
+      white-space: pre-line;
+    }
+
+    /* Letöltési lista */
+    #downloadList {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    footer {
+      margin-top: var(--space-6);
+      background: var(--nav-bg);
+      color: var(--nav-text);
+      text-align: center;
+      padding: var(--space-4);
+      border-top: 2px solid var(--brand);
+    }
+
+    .hidden { display: none; }
+
+    :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 6px; }
+  </style>
 </head>
 <body>
-    <header>
+  <header>
+    <div class="header-content">
+      <div class="brand-area">
         <div class="logo">NorszStudy</div>
-        <p>A Ganz Ábrahám 12K-13K tananyagai alapján</p>
-    </header>
-    
-    <nav>
-        <ul>
-            <li><a href="index.html">Főoldal</a></li>
-            <li>
-                <a href="#" class="has-dropdown">Tantárgyak</a>
-                <ul class="dropdown">
-                    <li><a href="töri.html">Történelem</a></li>
-                    <li><a href="webprogi.html">Webprogramozás</a></li>
-                </ul>
-            </li>
-            <li><a href="orarend.html">Órarend</a></li>
-            <li><a href="yt-to-mp3.html">Youtube Konverter</a></li>
-            <li><a href="#">Kapcsolat</a></li>
-        </ul>
-    </nav>
-    
-    <div class="converter-container">
-        <h1>YouTube to MP3 Konverter</h1>
-        <div class="converter-box">
-            <textarea id="videoUrls" placeholder="Illeszd be a YouTube videó URL-jeit (soronként egyet)"></textarea>
-            <div class="quality-selector">
-                <label for="bitrate">Minőség:</label>
-                <select id="bitrate">
-                    <option value="320">320 kbps</option>
-                    <option value="256">256 kbps</option>
-                    <option value="192">192 kbps</option>
-                    <option value="128">128 kbps</option>
-                </select>
-            </div>
-            <button id="convertBtn">Konvertálás</button>
-            <div id="loading" class="hidden">Konvertálás folyamatban...</div>
-            <div id="downloadArea" class="hidden">
-                <button id="downloadAllBtn">Összes letöltése</button>
-                <ul id="downloadList"></ul>
-            </div>
-            <div id="errorArea" class="hidden">
-                <p id="errorMessage"></p>
-            </div>
-        </div>
+        <p class="tagline">A Ganz Ábrahám 12K-13K tananyagai alapján</p>
+      </div>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" title="Téma váltása">🌓 Téma</button>
     </div>
+  </header>
 
-    <footer>
-        <p>&copy; 2025 NorszStudy. Minden jog fenntartva.</p>
-    </footer>
+  <nav role="navigation" aria-label="Fő navigáció">
+    <div class="nav-content">
+      <button id="mobile-nav-toggle" class="mobile-toggle" type="button" aria-expanded="false" aria-controls="main-nav">☰ Menü</button>
+      <ul id="main-nav" class="nav-list">
+        <li class="nav-item"><a href="index.html" class="nav-link">Főoldal</a></li>
+        <li class="nav-item">
+          <button id="subjects-toggle" class="dropdown-toggle" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="subjects-dropdown">Tantárgyak ▾</button>
+          <div id="subjects-dropdown" class="dropdown" role="menu" aria-label="Tantárgyak almenü">
+            <a href="töri.html" class="nav-link" role="menuitem">Történelem</a>
+            <a href="webprogi.html" class="nav-link" role="menuitem">Webprogramozás</a>
+          </div>
+        </li>
+        <li class="nav-item"><a href="orarend.html" class="nav-link">Órarend</a></li>
+        <li class="nav-item"><a href="yt-to-mp3.html" class="nav-link">Youtube Konverter</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">Kapcsolat</a></li>
+      </ul>
+    </div>
+  </nav>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const convertBtn = document.getElementById('convertBtn');
-            const downloadAllBtn = document.getElementById('downloadAllBtn');
-            const videoUrlsInput = document.getElementById('videoUrls');
-            const bitrateSelect = document.getElementById('bitrate');
-            const loadingEl = document.getElementById('loading');
-            const downloadArea = document.getElementById('downloadArea');
-            const downloadList = document.getElementById('downloadList');
-            const errorArea = document.getElementById('errorArea');
-            const errorMessage = document.getElementById('errorMessage');
+  <main>
+    <section class="converter-container" aria-labelledby="title">
+      <h1 id="title">YouTube to MP3 Konverter</h1>
 
-            let downloadLinks = [];
+      <div class="converter-box">
+        <div class="field">
+          <label for="videoUrls">YouTube URL-ek</label>
+          <textarea id="videoUrls" placeholder="Illeszd be a YouTube videó URL-jeit (soronként egyet)"></textarea>
+          <p class="help">Több videó is megadható, egy sor = egy link.</p>
+        </div>
 
-            convertBtn.addEventListener('click', async () => {
-                const urls = videoUrlsInput.value.trim().split('\n').filter(url => url.trim() !== '');
-                const bitrate = bitrateSelect.value;
+        <div class="field">
+          <div class="quality-row">
+            <label for="bitrate">Minőség</label>
+            <select id="bitrate">
+              <option value="320">320 kbps</option>
+              <option value="256">256 kbps</option>
+              <option value="192">192 kbps</option>
+              <option value="128">128 kbps</option>
+            </select>
+          </div>
+        </div>
 
-                errorArea.classList.add('hidden');
-                downloadArea.classList.add('hidden');
-                loadingEl.classList.remove('hidden');
-                downloadList.innerHTML = '';
-                downloadLinks = [];
-                let errors = [];
+        <div class="actions">
+          <button id="convertBtn" type="button">Konvertálás</button>
+          <button id="downloadAllBtn" type="button" class="secondary hidden">Összes letöltése</button>
+        </div>
 
-                try {
-                    const promises = urls.map(async (url, index) => {
-                        try {
-                            const videoId = extractVideoId(url);
-                            if (!videoId) throw new Error(`Érvénytelen URL (${index + 1}. sor): ${url}`);
+        <div id="loading" class="status hidden" role="status" aria-live="polite">Konvertálás folyamatban…</div>
 
-                            const apiUrl = `https://youtube-mp3-2025.p.rapidapi.com/v1/social/youtube/audio?id=${videoId}&quality=${bitrate}kbps`;
-                            const options = {
-                                method: 'GET',
-                                headers: {
-                                    'x-rapidapi-key': '5882f3fef0msh57bdc68301c8109p1f8aa9jsn53db5c1ecc4c',
-                                    'x-rapidapi-host': 'youtube-mp3-2025.p.rapidapi.com'
-                                }
-                            };
+        <div id="downloadArea" class="hidden">
+          <ul id="downloadList"></ul>
+        </div>
 
-                            const response = await fetch(apiUrl, options);
-                            
-                            if (!response.ok) throw new Error(`HTTP hiba (${index + 1}. sor): ${response.status}`);
+        <div id="errorArea" class="hidden" aria-live="polite">
+          <p id="errorMessage" class="error"></p>
+        </div>
+      </div>
+    </section>
+  </main>
 
-                            const data = await response.json();
-                            
-                            if (data.linkDownload) {
-                                downloadLinks.push(data.linkDownload);
-                                const li = document.createElement('li');
-                                const a = document.createElement('a');
-                                a.href = data.linkDownload;
-                                a.classList.add('download-link');
-                                a.textContent = `Letöltés #${index + 1}`;
-                                a.target = '_blank';
-                                li.appendChild(a);
-                                downloadList.appendChild(li);
-                            } else {
-                                throw new Error(`Letöltési link nem található (${index + 1}. sor)`);
-                            }
-                        } catch (err) {
-                            errors.push(err.message);
-                        }
-                    });
+  <footer>
+    <p>&copy; 2025 NorszStudy. Minden jog fenntartva.</p>
+  </footer>
 
-                    await Promise.all(promises);
+  <script>
+    // Téma kezelés
+    (function() {
+      const btn = document.getElementById('theme-toggle');
+      const root = document.documentElement;
+      const STORAGE_KEY = 'theme';
 
-                    if (downloadLinks.length > 0) {
-                        downloadArea.classList.remove('hidden');
-                    }
+      function applyTheme(theme) {
+        root.setAttribute('data-theme', theme);
+        btn.setAttribute('aria-pressed', String(theme === 'dark'));
+      }
 
-                    if (errors.length > 0) {
-                        showError(errors.join('\n'));
-                    }
-                } catch (error) {
-                    showError(error.message);
-                } finally {
-                    loadingEl.classList.add('hidden');
+      function init() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved === 'light' || saved === 'dark') {
+          applyTheme(saved);
+        } else {
+          applyTheme(root.getAttribute('data-theme') || 'light');
+        }
+      }
+
+      btn.addEventListener('click', function() {
+        const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        try { localStorage.setItem(STORAGE_KEY, next); } catch (e) {}
+      });
+
+      window.addEventListener('storage', function(e) {
+        if (e.key === STORAGE_KEY && (e.newValue === 'light' || e.newValue === 'dark')) {
+          applyTheme(e.newValue);
+        }
+      });
+
+      init();
+    })();
+
+    // Mobil navigáció + Tantárgyak dropdown
+    (function() {
+      const toggle = document.getElementById('mobile-nav-toggle');
+      const nav = document.getElementById('main-nav');
+      const dropdownToggle = document.getElementById('subjects-toggle');
+      const dropdown = document.getElementById('subjects-dropdown');
+
+      toggle.addEventListener('click', function() {
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!expanded));
+        nav.classList.toggle('active');
+      });
+
+      dropdownToggle.addEventListener('click', function() {
+        const expanded = dropdownToggle.getAttribute('aria-expanded') === 'true';
+        dropdownToggle.setAttribute('aria-expanded', String(!expanded));
+        dropdown.classList.toggle('active');
+      });
+
+      // Asztali nézetben alaphelyzet
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 768) {
+          nav.classList.remove('active');
+          dropdown.classList.remove('active');
+          toggle.setAttribute('aria-expanded', 'false');
+          dropdownToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    })();
+
+    // MP3 konverter UI logika
+    (function () {
+      const convertBtn = document.getElementById('convertBtn');
+      const downloadAllBtn = document.getElementById('downloadAllBtn');
+      const videoUrlsInput = document.getElementById('videoUrls');
+      const bitrateSelect = document.getElementById('bitrate');
+      const loadingEl = document.getElementById('loading');
+      const downloadArea = document.getElementById('downloadArea');
+      const downloadList = document.getElementById('downloadList');
+      const errorArea = document.getElementById('errorArea');
+      const errorMessage = document.getElementById('errorMessage');
+
+      let downloadLinks = [];
+
+      function setBusyState(busy) {
+        convertBtn.disabled = busy;
+        bitrateSelect.disabled = busy;
+        videoUrlsInput.disabled = busy;
+        loadingEl.classList.toggle('hidden', !busy);
+      }
+
+      function showError(message) {
+        errorMessage.textContent = message;
+        errorArea.classList.remove('hidden');
+      }
+
+      function clearError() {
+        errorArea.classList.add('hidden');
+        errorMessage.textContent = '';
+      }
+
+      convertBtn.addEventListener('click', async () => {
+        const urls = videoUrlsInput.value
+          .trim()
+          .split('\n')
+          .map(u => u.trim())
+          .filter(Boolean);
+
+        clearError();
+        downloadArea.classList.add('hidden');
+        downloadList.innerHTML = '';
+        downloadLinks = [];
+
+        if (urls.length === 0) {
+          showError('Adj meg legalább egy YouTube URL-t.');
+          return;
+        }
+
+        setBusyState(true);
+
+        const bitrate = bitrateSelect.value;
+        const errors = [];
+
+        try {
+          const tasks = urls.map(async (url, index) => {
+            try {
+              const videoId = extractVideoId(url);
+              if (!videoId) throw new Error(`Érvénytelen URL (${index + 1}. sor): ${url}`);
+
+              const apiUrl = `https://youtube-mp3-2025.p.rapidapi.com/v1/social/youtube/audio?id=${videoId}&quality=${bitrate}kbps`;
+              const options = {
+                method: 'GET',
+                headers: {
+                  'x-rapidapi-key': '5882f3fef0msh57bdc68301c8109p1f8aa9jsn53db5c1ecc4c',
+                  'x-rapidapi-host': 'youtube-mp3-2025.p.rapidapi.com'
                 }
-            });
+              };
 
-            downloadAllBtn.addEventListener('click', () => {
-                downloadAll(downloadLinks);
-            });
+              const response = await fetch(apiUrl, options);
+              if (!response.ok) throw new Error(`HTTP hiba (${index + 1}. sor): ${response.status}`);
 
-            function downloadAll(links) {
-                let index = 0;
-                function downloadNext() {
-                    if (index >= links.length) return;
-                    const a = document.createElement('a');
-                    a.href = links[index];
-                    a.download = '';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    index++;
-                    setTimeout(downloadNext, 5000); // 5 másodperc késleltetés
-                }
-                downloadNext();
+              const data = await response.json();
+
+              if (data.linkDownload) {
+                downloadLinks.push(data.linkDownload);
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = data.linkDownload;
+                a.className = 'download-link';
+                a.textContent = `Letöltés #${index + 1}`;
+                a.target = '_blank';
+                li.appendChild(a);
+                downloadList.appendChild(li);
+              } else {
+                throw new Error(`Letöltési link nem található (${index + 1}. sor)`);
+              }
+            } catch (err) {
+              errors.push(err.message);
             }
+          });
 
-            function showError(message) {
-                errorMessage.textContent = message;
-                errorArea.classList.remove('hidden');
-            }
+          await Promise.all(tasks);
 
-            function extractVideoId(url) {
-                const regExp = /^.*(?:youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#&?]*).*/;
-                const match = url.match(regExp);
-                return match && match[1].length === 11 ? match[1] : null;
-            }
-        });
-    </script>
+          if (downloadLinks.length > 0) {
+            downloadAllBtn.classList.remove('hidden');
+            downloadArea.classList.remove('hidden');
+          } else {
+            downloadAllBtn.classList.add('hidden');
+          }
+
+          if (errors.length > 0) {
+            showError(errors.join('\n'));
+          }
+        } catch (e) {
+          showError(e.message || String(e));
+        } finally {
+          setBusyState(false);
+        }
+      });
+
+      downloadAllBtn.addEventListener('click', () => {
+        downloadAll(downloadLinks);
+      });
+
+      function downloadAll(links) {
+        let index = 0;
+        function next() {
+          if (index >= links.length) return;
+          const a = document.createElement('a');
+          a.href = links[index];
+          a.download = '';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          index++;
+          setTimeout(next, 5000);
+        }
+        next();
+      }
+
+      function extractVideoId(url) {
+        const regExp = /^.*(?:youtu\.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#&?]*).*/;
+        const match = url.match(regExp);
+        return match && match[1].length === 11 ? match[1] : null;
+      }
+    })();
+  </script>
 </body>
 </html>
-
-
-
