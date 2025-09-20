@@ -1,352 +1,551 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NorszStudy - Webprogramozás Quiz</title>
-    <style>
-        /* Kék alaptéma beállítások */
-        :root {
-            --primary-blue: #1a4b8c;
-            --secondary-blue: #2d6ebd;
-            --light-blue: #e0f2ff;
-            --accent-blue: #0056b3;
-            --text-light: #ffffff;
-            --text-dark: #333333;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>NorszStudy - Webprogramozás Kvíz</title>
+
+  <script>
+    // FOUC elleni gyors téma beállítás
+    (function () {
+      try {
+        var saved = localStorage.getItem('theme');
+        var root = document.documentElement;
+        if (saved === 'light' || saved === 'dark') {
+          root.setAttribute('data-theme', saved);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          root.setAttribute('data-theme', 'dark');
+        } else {
+          root.setAttribute('data-theme', 'light');
         }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--light-blue);
-            color: var(--text-dark);
-            line-height: 1.6;
-        }
-        
-        /* Fejléc stílus */
-        header {
-            background-color: var(--primary-blue);
-            color: var(--text-light);
-            padding: 20px 0;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        /* Logó stílus */
-        .logo {
-            font-size: 2.5rem;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-        
-        /* Navigációs sáv */
-        nav {
-            background-color: var(--secondary-blue);
-            padding: 10px 0;
-        }
-        
-        nav ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        nav ul li {
-            margin: 0 15px;
-            position: relative;
-        }
-        
-        nav ul li a {
-            color: var(--text-light);
-            text-decoration: none;
-            font-weight: bold;
-            padding: 8px 15px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            display: block;
-        }
-        
-        nav ul li a:hover {
-            background-color: var(--accent-blue);
-        }
-        
-        /* Legördülő menü stílus */
-        nav ul li ul.dropdown {
-            display: none;
-            position: absolute;
-            background-color: var(--secondary-blue);
-            min-width: 160px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            z-index: 1;
-            border-radius: 4px;
-            padding: 8px 0;
-            left: 0;
-        }
-        
-        nav ul li:hover ul.dropdown {
-            display: block;
-        }
-        
-        nav ul li ul.dropdown li {
-            margin: 0;
-            width: 100%;
-        }
-        
-        nav ul li ul.dropdown li a {
-            padding: 10px 15px;
-            border-radius: 0;
-            display: block;
-        }
-        
-        /* Caret jelző a legördülő menühöz */
-        .has-dropdown::after {
-            content: "▼";
-            font-size: 10px;
-            padding-left: 5px;
-        }
-        
-        /* Fő tartalom */
-        main {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-        
-        .page-title {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        
-        .page-title h1 {
-            color: var(--primary-blue);
-            margin-top: 0;
-        }
-        
-        /* Quiz választó szekció */
-        .quiz-selector {
-            background-color: white;
-            border-radius: 8px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .quiz-selector h2 {
-            color: var(--primary-blue);
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-        
-        .quiz-categories {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 25px;
-        }
-        
-        .quiz-category {
-            border: 2px solid var(--secondary-blue);
-            border-radius: 8px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-        }
-        
-        .quiz-category:hover {
-            background-color: var(--light-blue);
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .quiz-category h3 {
-            color: var(--primary-blue);
-            margin-top: 0;
-        }
-        
-        .quiz-category p {
-            font-size: 0.9rem;
-        }
-        
-        .quiz-level {
-            display: flex;
-            justify-content: center;
-            margin-top: 15px;
-        }
-        
-        .difficulty {
-            background-color: var(--secondary-blue);
-            color: white;
-            padding: 3px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            margin: 0 5px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .difficulty:hover {
-            background-color: var(--accent-blue);
-        }
-        
-        .difficulty.easy {
-            background-color: #28a745;
-        }
-        
-        .difficulty.medium {
-            background-color: #ffc107;
-            color: #333;
-        }
-        
-        .difficulty.hard {
-            background-color: #dc3545;
-        }
-        
-        .start-button {
-            background-color: var(--primary-blue);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: all 0.3s;
-        }
-        
-        .start-button:hover {
-            background-color: var(--accent-blue);
-            transform: scale(1.05);
-        }
-        
-        /* Népszerű kvízek szekció */
-        .popular-quizzes {
-            margin-top: 40px;
-        }
-        
-        .popular-quizzes h2 {
-            color: var(--primary-blue);
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .quiz-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-        
-        .quiz-card {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-        
-        .quiz-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .quiz-card h3 {
-            color: var(--primary-blue);
-            margin-top: 0;
-        }
-        
-        .quiz-stats {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: #777;
-        }
-        
-        /* Lábléc */
-        footer {
-            background-color: var(--primary-blue);
-            color: var(--text-light);
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 50px;
-        }
-    </style>
+      } catch (e) {}
+    })();
+  </script>
+
+  <style>
+    :root {
+      color-scheme: light dark;
+      /* Alapértelmezett (világos) színséma */
+      --bg: #f8fafc;
+      --bg-secondary: #f1f5f9;
+      --surface: #ffffff;
+      --surface-hover: #f8fafc;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --brand: #2563eb;
+      --brand-light: #3b82f6;
+      --brand-dark: #1d4ed8;
+      --border: #e2e8f0;
+      --border-hover: #cbd5e1;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --shadow-strong: rgba(0, 0, 0, 0.15);
+      --nav-bg: #1e293b;
+      --nav-text: #f8fafc;
+
+      /* Méretek és távolságok */
+      --radius-s: 8px;
+      --radius-m: 12px;
+      --radius-l: 16px;
+      --space-1: 0.5rem;
+      --space-2: 0.75rem;
+      --space-3: 1rem;
+      --space-4: 1.5rem;
+      --space-5: 2rem;
+      --space-6: 3rem;
+      --maxw: 1200px;
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Sötét téma színei */
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0f172a;
+      --bg-secondary: #1e293b;
+      --surface: #1e293b;
+      --surface-hover: #334155;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --brand: #60a5fa;
+      --brand-light: #93c5fd;
+      --brand-dark: #3b82f6;
+      --border: #334155;
+      --border-hover: #475569;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --shadow-strong: rgba(0, 0, 0, 0.4);
+      --nav-bg: #0f172a;
+      --nav-text: #f1f5f9;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: var(--font);
+      background: linear-gradient(135deg, var(--bg) 0%, var(--bg-secondary) 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: var(--brand);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    a:hover { color: var(--brand-light); text-decoration: underline; }
+    a:visited { color: var(--brand); }
+
+    /* Fejléc */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--nav-bg);
+      color: var(--nav-text);
+      border-bottom: 2px solid var(--brand);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .header-content {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: var(--space-3);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--space-3);
+      align-items: center;
+    }
+
+    .brand-area {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: clamp(1.25rem, 1rem + 1.5vw, 1.8rem);
+      letter-spacing: -0.025em;
+    }
+
+    .tagline {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      margin: 0;
+    }
+
+    .theme-toggle {
+      appearance: none;
+      background-color: var(--brand);
+      color: #fff;
+      border: 2px solid transparent;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-s);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      white-space: nowrap;
+    }
+    .theme-toggle:hover {
+      background-color: var(--brand-light);
+      transform: translateY(-1px);
+    }
+
+    /* Navigáció */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+
+    .nav-content {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 var(--space-3);
+    }
+
+    .mobile-toggle {
+      appearance: none;
+      background-color: var(--brand);
+      color: #fff;
+      border: none;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-s);
+      font-weight: 600;
+      cursor: pointer;
+      margin: var(--space-2) 0;
+      transition: background-color 0.2s ease;
+    }
+    .mobile-toggle:hover { background-color: var(--brand-light); }
+
+    .nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: none; /* mobil alap */
+      flex-direction: column;
+      gap: 0;
+    }
+    .nav-list.active {
+      display: flex;
+      padding-bottom: var(--space-3);
+    }
+
+    .nav-item { position: relative; }
+
+    .nav-link, .dropdown-toggle {
+      display: block;
+      padding: var(--space-2) var(--space-3);
+      color: var(--text);
+      font-weight: 500;
+      border-radius: var(--radius-s);
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+      background: none;
+      border: none;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-link:hover, .dropdown-toggle:hover {
+      background: var(--surface-hover);
+      text-decoration: none;
+    }
+
+    .dropdown {
+      display: none;
+      padding-left: var(--space-4);
+    }
+    .dropdown.active { display: block; }
+    .dropdown .nav-link {
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    @media (min-width: 768px) {
+      .mobile-toggle { display: none; }
+
+      .nav-list {
+        display: flex !important;
+        flex-direction: row;
+        align-items: center;
+        gap: var(--space-1);
+        padding: var(--space-2) 0;
+      }
+
+      .nav-link, .dropdown-toggle {
+        padding: var(--space-2);
+        white-space: nowrap;
+      }
+
+      .dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-s);
+        box-shadow: 0 8px 24px var(--shadow-strong);
+        min-width: 200px;
+        padding: var(--space-1);
+        display: none;
+        z-index: 200;
+      }
+
+      .nav-item:hover .dropdown { display: block; }
+
+      .dropdown .nav-link {
+        padding: var(--space-2);
+        margin: 0;
+        color: var(--text);
+      }
+    }
+
+    /* Fő tartalom */
+    main {
+      max-width: var(--maxw);
+      margin: var(--space-5) auto;
+      padding: 0 var(--space-3);
+    }
+
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-l);
+      padding: var(--space-5);
+      text-align: center;
+      box-shadow: 0 4px 16px var(--shadow);
+      margin-bottom: var(--space-5);
+    }
+
+    .hero h1 {
+      margin: 0 0 var(--space-2) 0;
+      font-size: clamp(1.5rem, 1.2rem + 2vw, 2.5rem);
+      font-weight: 800;
+      color: var(--brand-dark);
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    /* Quiz választó szekció (egységes stílus) */
+    .quiz-selector {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-l);
+      padding: var(--space-5);
+      box-shadow: 0 4px 16px var(--shadow);
+      margin-bottom: var(--space-5);
+    }
+
+    .quiz-selector h2 {
+      margin: 0;
+      text-align: center;
+      color: var(--brand-dark);
+    }
+
+    .quiz-categories {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+      margin-top: var(--space-4);
+    }
+    @media (min-width: 700px) { .quiz-categories { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1100px) { .quiz-categories { grid-template-columns: repeat(3, 1fr); } }
+
+    .quiz-category {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-m);
+      padding: var(--space-4);
+      box-shadow: 0 2px 8px var(--shadow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+      text-align: center; /* minden belső tartalom középre */
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .quiz-category:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px var(--shadow-strong);
+        border-color: var(--border-hover);
+      }
+    }
+    .quiz-category h3 { margin: 0 0 var(--space-1) 0; color: var(--brand-dark); }
+    .quiz-category p { margin: var(--space-1) 0; color: var(--text-muted); }
+
+    .quiz-level {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-1);
+      margin-top: var(--space-2);
+      justify-content: center; /* badge-ek középre */
+    }
+    .difficulty {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .difficulty.easy { background-color: #22c55e; }
+    .difficulty.medium { background-color: #facc15; color: #1f2937; }
+    .difficulty.hard { background-color: #ef4444; }
+
+    .actions {
+      margin-top: var(--space-3);
+      display: flex;
+      justify-content: center; /* gomb középre */
+    }
+    a.button {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      background: linear-gradient(135deg, var(--brand), var(--brand-light));
+      color: #fff;
+      padding: var(--space-1) var(--space-3);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+    a.button:hover { text-decoration: none; transform: translateY(-1px); }
+    a.button:visited { color: #fff; }
+    a.button:focus-visible { outline: 2px solid var(--brand-dark); outline-offset: 2px; }
+
+    /* Lábléc */
+    footer {
+      margin-top: var(--space-6);
+      background: var(--nav-bg);
+      color: var(--nav-text);
+      text-align: center;
+      padding: var(--space-4);
+      border-top: 2px solid var(--brand);
+    }
+
+    /* Fókusz stílusok */
+    :focus-visible {
+      outline: 2px solid var(--brand);
+      outline-offset: 2px;
+      border-radius: var(--radius-s);
+    }
+  </style>
 </head>
 <body>
-    <header>
+  <header>
+    <div class="header-content">
+      <div class="brand-area">
         <div class="logo">NorszStudy</div>
-        <p>A Ganz Ábrahám 12K-13K tananyagai alapján</p>
-    </header>
-    
-    <nav>
-        <ul>
-            <li><a href="index.html">Főoldal</a></li>
-            <li>
-                <a href="#" class="has-dropdown">Tantárgyak</a>
-                <ul class="dropdown">
-                    <li><a href="töri.html">Történelem</a></li>
-                    <li><a href="webprogi.html">Webprogramozás</a></li>
-                </ul>
-            </li>
-            <li><a href="orarend.html">Órarend</a></li>
-            <li><a href="yt-to-mp3.html">Youtube Konverter</a></li>
-            <li><a href="#">Kapcsolat</a></li>
-        </ul>
-    </nav>
-    
-    <main>
-        <section class="page-title">
-            <h1>Webprogramozás Kvíz</h1>
-            <p>Ismételd át a javascript "izgalmas" világát interaktív módon.</p>
-        </section>
-        
-        <section class="quiz-selector">
-            <h2>Válassz egy javascript témát</h2>
-            
-            <div class="quiz-categories">
-                <div class="quiz-category">
-                    <h3>JSON</h3>
-                    <p>JavaScript Object Notation, JSON.stringify, JSON.parse, JSON szintaxis</p>
-                    <div class="quiz-level">
-                        <span class="difficulty easy">Könnyű</span>
-                    </div>
-                    <a href="quziletjson.html"><button class="start-button">Kvíz indítása</button></a> 
-                </div>
-                
-                <div class="quiz-category">
-                    <h3>Promise</h3>
-                    <p>Promise-ok alapjai, then, catch, finally</p>
-                    <div class="quiz-level">
-                        <span class="difficulty easy">Könnyű</span>
-                    </div>
-                    <a href="quziletpromise.html"><button class="start-button">Kvíz indítása</button></a> 
-                </div>
+        <p class="tagline">A Ganz Ábrahám 12K-13K tananyagai alapján</p>
+      </div>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" title="Téma váltása">🌓 Téma</button>
+    </div>
+  </header>
 
-                <div class="quiz-category">
-                    <h3>Fetch API</h3>
-                    <p>fetch API működése, adatküldés és -lekérés folyamata</p>
-                    <div class="quiz-level">
-                        <span class="difficulty medium">Közepes</span>
-                    </div>
-                    <a href="quziletfetch.html"><button class="start-button">Kvíz indítása</button></a> 
-                </div>
-                
-            </div>
-        </section>
-    </main>
-    
-    <footer>
-        <p>&copy; 2025 NorszStudy. Minden jog fenntartva.</p>
-    </footer>
+  <nav role="navigation" aria-label="Fő navigáció">
+    <div class="nav-content">
+      <button id="mobile-nav-toggle" class="mobile-toggle" type="button" aria-expanded="false" aria-controls="main-nav">☰ Menü</button>
+
+      <ul id="main-nav" class="nav-list">
+        <li class="nav-item"><a href="index.html" class="nav-link">Főoldal</a></li>
+
+        <li class="nav-item">
+          <button id="subjects-toggle" class="dropdown-toggle" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="subjects-dropdown">
+            Tantárgyak ▾
+          </button>
+          <div id="subjects-dropdown" class="dropdown" role="menu" aria-label="Tantárgyak almenü">
+            <a href="töri.html" class="nav-link" role="menuitem">Történelem</a>
+            <a href="webprogi.html" class="nav-link" role="menuitem">Webprogramozás</a>
+          </div>
+        </li>
+
+        <li class="nav-item"><a href="orarend.html" class="nav-link">Órarend</a></li>
+        <li class="nav-item"><a href="yt-to-mp3.html" class="nav-link">Youtube Konverter</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">Kapcsolat</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <h1>Webprogramozás Kvíz</h1>
+      <p>Ismételd át a javascript "izgalmas" világát interaktív módon.</p>
+    </section>
+
+    <section class="quiz-selector">
+      <h2>Válassz egy javascript témát</h2>
+
+      <div class="quiz-categories">
+        <article class="quiz-category">
+          <h3>JSON</h3>
+          <p>JavaScript Object Notation, JSON.stringify, JSON.parse, JSON szintaxis</p>
+          <div class="quiz-level">
+            <span class="difficulty easy">Könnyű</span>
+          </div>
+          <div class="actions">
+            <a class="button" href="quziletjson.html" aria-label="JSON – kvíz indítása">Kvíz indítása</a>
+          </div>
+        </article>
+
+        <article class="quiz-category">
+          <h3>Promise</h3>
+          <p>Promise-ok alapjai, then, catch, finally</p>
+          <div class="quiz-level">
+            <span class="difficulty easy">Könnyű</span>
+          </div>
+          <br>
+          <div class="actions">
+            <a class="button" href="quziletpromise.html" aria-label="Promise – kvíz indítása">Kvíz indítása</a>
+          </div>
+        </article>
+
+        <article class="quiz-category">
+          <h3>Fetch API</h3>
+          <p>fetch API működése, adatküldés és -lekérés folyamata</p>
+          <div class="quiz-level">
+            <span class="difficulty medium">Közepes</span>
+          </div>
+          <div class="actions">
+            <a class="button" href="quziletfetch.html" aria-label="Fetch API – kvíz indítása">Kvíz indítása</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 NorszStudy. Minden jog fenntartva.</p>
+  </footer>
+
+  <script>
+    // Téma kezelés
+    (function() {
+      const btn = document.getElementById('theme-toggle');
+      const root = document.documentElement;
+      const STORAGE_KEY = 'theme';
+
+      function applyTheme(theme) {
+        root.setAttribute('data-theme', theme);
+        btn.setAttribute('aria-pressed', String(theme === 'dark'));
+      }
+
+      function init() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved === 'light' || saved === 'dark') {
+          applyTheme(saved);
+        } else {
+          applyTheme(root.getAttribute('data-theme') || 'light');
+        }
+      }
+
+      btn.addEventListener('click', function() {
+        const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        try { localStorage.setItem(STORAGE_KEY, next); } catch (e) {}
+      });
+
+      window.addEventListener('storage', function(e) {
+        if (e.key === STORAGE_KEY && (e.newValue === 'light' || e.newValue === 'dark')) {
+          applyTheme(e.newValue);
+        }
+      });
+
+      init();
+    })();
+
+    // Mobil navigáció + Tantárgyak dropdown
+    (function() {
+      const toggle = document.getElementById('mobile-nav-toggle');
+      const nav = document.getElementById('main-nav');
+      const dropdownToggle = document.getElementById('subjects-toggle');
+      const dropdown = document.getElementById('subjects-dropdown');
+
+      toggle.addEventListener('click', function() {
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!expanded));
+        nav.classList.toggle('active');
+      });
+
+      dropdownToggle.addEventListener('click', function() {
+        const expanded = dropdownToggle.getAttribute('aria-expanded') === 'true';
+        dropdownToggle.setAttribute('aria-expanded', String(!expanded));
+        dropdown.classList.toggle('active');
+      });
+
+      // Asztali nézetben alaphelyzet
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 768) {
+          nav.classList.remove('active');
+          dropdown.classList.remove('active');
+          toggle.setAttribute('aria-expanded', 'false');
+          dropdownToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
-
