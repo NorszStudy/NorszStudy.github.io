@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>C# OOP Kvíz - NorszStudy</title>
+
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('theme');
+        var root = document.documentElement;
+        if (saved === 'light' || saved === 'dark') {
+          root.setAttribute('data-theme', saved);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          root.setAttribute('data-theme', 'dark');
+        } else {
+          root.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f8fafc;
+      --bg-secondary: #f1f5f9;
+      --surface: #ffffff;
+      --surface-hover: #f8fafc;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --brand: #2563eb;
+      --brand-light: #3b82f6;
+      --brand-dark: #1d4ed8;
+      --border: #e2e8f0;
+      --border-hover: #cbd5e1;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --shadow-strong: rgba(0, 0, 0, 0.15);
+      --nav-bg: #1e293b;
+      --nav-text: #f8fafc;
+      --success: #22c55e;
+      --error: #ef4444;
+      --warning: #facc15;
+
+      --radius-s: 8px;
+      --radius-m: 12px;
+      --radius-l: 16px;
+      --space-1: 0.5rem;
+      --space-2: 0.75rem;
+      --space-3: 1rem;
+      --space-4: 1.5rem;
+      --space-5: 2rem;
+      --space-6: 3rem;
+      --maxw: 1200px;
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0f172a;
+      --bg-secondary: #1e293b;
+      --surface: #1e293b;
+      --surface-hover: #334155;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --brand: #60a5fa;
+      --brand-light: #93c5fd;
+      --brand-dark: #3b82f6;
+      --border: #334155;
+      --border-hover: #475569;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --shadow-strong: rgba(0, 0, 0, 0.4);
+      --nav-bg: #0f172a;
+      --nav-text: #f1f5f9;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: var(--font);
+      background: linear-gradient(135deg, var(--bg) 0%, var(--bg-secondary) 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .quiz-container {
+      max-width: 800px;
+      margin: var(--space-5) auto;
+      padding: 0 var(--space-3);
+    }
+
+    .quiz-header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-l);
+      padding: var(--space-5);
+      text-align: center;
+      box-shadow: 0 4px 16px var(--shadow);
+      margin-bottom: var(--space-5);
+    }
+
+    .quiz-header h1 {
+      margin: 0 0 var(--space-2) 0;
+      font-size: clamp(1.5rem, 1.2rem + 2vw, 2.5rem);
+      font-weight: 800;
+      color: var(--brand-dark);
+    }
+
+    .quiz-header p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .mode-selector {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-l);
+      padding: var(--space-5);
+      box-shadow: 0 4px 16px var(--shadow);
+      margin-bottom: var(--space-5);
+      text-align: center;
+    }
+
+    .mode-selector h2 {
+      margin: 0 0 var(--space-4) 0;
+      color: var(--brand-dark);
+    }
+
+    .mode-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+    }
+
+    .mode-btn {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-m);
+      padding: var(--space-4);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    .mode-btn:hover {
+      border-color: var(--brand);
+      background: var(--surface-hover);
+    }
+
+    .mode-btn h3 {
+      margin: 0 0 var(--space-1) 0;
+      color: var(--brand-dark);
+      font-size: 1.2rem;
+    }
+
+    .mode-btn p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .mode-icon {
+      font-size: 2rem;
+      margin-bottom: var(--space-2);
+      display: block;
+    }
+
+    .quiz-progress {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-m);
+      padding: var(--space-3);
+      box-shadow: 0 2px 8px var(--shadow);
+      margin-bottom: var(--space-4);
+      display: none;
+    }
+
+    .progress-bar {
+      background: var(--border);
+      height: 8px;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: var(--space-2);
+    }
+
+    .progress-fill {
+      background: linear-gradient(135deg, var(--brand), var(--brand-light));
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .question-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-l);
+      padding: var(--space-5);
+      box-shadow: 0 4px 16px var(--shadow);
+      margin-bottom: var(--space-4);
+      display: none;
+    }
+
+    .question-number {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+
+    .question-text {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: var(--space-4);
+      line-height: 1.5;
+    }
+
+    .question-code {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-s);
+      padding: var(--space-3);
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+      margin: var(--space-3) 0;
+      overflow-x: auto;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .option {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-m);
+      padding: var(--space-3);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .option:hover:not(.disabled) {
+      border-color: var(--border-hover);
+      background: var(--surface-hover);
+    }
+
+    .option.selected {
+      border-color: var(--brand);
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .option.correct {
+      border-color: var(--success);
+      background: var(--success);
+      color: #fff;
+    }
+
+    .option.incorrect {
+      border-color: var(--error);
+      background: var(--error);
+      color: #fff;
+    }
+
+    .option.disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .option-letter {
+      font-weight: 700;
+      min-width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+
+    .option.selected .option-letter,
+    .option.correct .option-letter,
+    .option.incorrect .option-letter {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .true-false-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+    }
+
+    .feedback {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-m);
+      padding: var(--space-3);
+      margin-top: var(--space-3);
+      display: none;
+    }
+
+    .feedback.correct {
+      border-left: 4px solid var(--success);
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .feedback.incorrect {
+      border-left: 4px solid var(--error);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .feedback-icon {
+      font-size: 1.2rem;
+      margin-right: var(--space-1);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: var(--space-4);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      background: linear-gradient(135deg, var(--brand), var(--brand-light));
+      color: #fff;
+      padding: var(--space-2) var(--space-4);
+      border: none;
+      border-radius: var(--radius-s);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px var(--shadow-strong);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 2px solid var(--border);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      border-color: var(--border-hover);
+      background: var(--surface-hover);
+    }
+
+    .results-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-l);
+      padding: var(--space-5);
+      box-shadow: 0 4px 16px var(--shadow);
+      text-align: center;
+      display: none;
+    }
+
+    .results-score {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--brand-dark);
+      margin-bottom: var(--space-2);
+    }
+
+    .results-message {
+      font-size: 1.2rem;
+      margin-bottom: var(--space-4);
+    }
+
+    .results-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: var(--space-3);
+      margin: var(--space-4) 0;
+    }
+
+    .result-stat {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-m);
+      padding: var(--space-3);
+    }
+
+    .result-stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--brand-dark);
+    }
+
+    .result-stat-label {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .review-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-l);
+      padding: var(--space-5);
+      box-shadow: 0 4px 16px var(--shadow);
+      margin-bottom: var(--space-4);
+      display: none;
+    }
+
+    .review-section h2 {
+      margin: 0 0 var(--space-4) 0;
+      color: var(--brand-dark);
+      text-align: center;
+    }
+
+    .review-item {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-m);
+      padding: var(--space-3);
+      margin-bottom: var(--space-3);
+      border-left: 4px solid var(--error);
+    }
+
+    .review-question {
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+
+    .review-answer {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .round-info {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: var(--space-3);
+    }
+
+    @media (max-width: 768px) {
+      .quiz-container {
+        margin: var(--space-3) auto;
+        padding: 0 var(--space-2);
+      }
+      
+      .mode-buttons {
+        grid-template-columns: 1fr;
+      }
+      
+      .true-false-options {
+        grid-template-columns: 1fr;
+      }
+      
+      .controls {
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--brand);
+      outline-offset: 2px;
+      border-radius: var(--radius-s);
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <div class="quiz-header">
+      <h1>C# OOP Kvíz</h1>
+      <p>Teljes objektumorientált programozás kvíz - 50 kérdés</p>
+    </div>
+
+    <div class="mode-selector" id="mode-selector">
+      <h2>Válassz módot</h2>
+      <div class="mode-buttons">
+        <div class="mode-btn" onclick="startMode('test')">
+          <span class="mode-icon">📋</span>
+          <h3>Teszt mód</h3>
+          <p>Klasszikus kvíz - mind az 50 kérdésen végigmész, végén látod az eredményt</p>
+        </div>
+        <div class="mode-btn" onclick="startMode('practice')">
+          <span class="mode-icon">🎯</span>
+          <h3>Gyakorló mód</h3>
+          <p>Mind az 50 kérdésen végigmész, azonnal visszajelzést kapsz, 10 kérdésenként áttekintés</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-progress" id="quiz-progress">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-text">
+        <span id="question-counter">1 / 50</span>
+        <span id="score-display">Pontszám: 0</span>
+      </div>
+    </div>
+
+    <div class="question-card" id="question-card">
+      <div class="round-info" id="round-info"></div>
+      <div class="question-number" id="question-number">1. kérdés</div>
+      <div class="question-text" id="question-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback">
+        <span class="feedback-icon" id="feedback-icon"></span>
+        <span id="feedback-text"></span>
+      </div>
+      <div class="controls">
+        <button class="btn btn-secondary" id="prev-btn" onclick="previousQuestion()" disabled>
+          ← Előző
+        </button>
+        <button class="btn" id="next-btn" onclick="nextQuestion()" disabled>
+          Következő →
+        </button>
+      </div>
+    </div>
+
+    <div class="review-section" id="review-section">
+      <h2 id="review-title">🔍 Mit tudj még gyakorolni?</h2>
+      <div class="round-info" id="review-round-info"></div>
+      <div id="review-content"></div>
+      <div class="controls">
+        <button class="btn" id="continue-btn" onclick="continuePractice()">Folytatás</button>
+        <button class="btn btn-secondary" onclick="backToMenu()">Vissza a menühöz</button>
+      </div>
+    </div>
+
+    <div class="results-card" id="results-card">
+      <div class="results-score" id="final-score">0%</div>
+      <div class="results-message" id="results-message"></div>
+      <div class="results-details">
+        <div class="result-stat">
+          <div class="result-stat-value" id="correct-count">0</div>
+          <div class="result-stat-label">Helyes válasz</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-value" id="incorrect-count">0</div>
+          <div class="result-stat-label">Helytelen válasz</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-value" id="total-questions">50</div>
+          <div class="result-stat-label">Összes kérdés</div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn" onclick="restartQuiz()">Újraindítás</button>
+        <button class="btn btn-secondary" onclick="backToMenu()">Vissza a menühöz</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const quizData = {
+      "title": "C# OOP Kvíz - 50 kérdés",
+      "description": "Teljes C# objektumorientált programozás kvíz",
+      "questions": [
+        {
+          "id": 1,
+          "question": "Melyik szimbólumot használják az öröklődés jelölésére C#-ban?",
+          "type": "multiple_choice",
+          "options": [":", "->", ".", "::"],
+          "correct": 0
+        },
+        {
+          "id": 2,
+          "question": "Melyik OOP fogalom segít elrejteni az objektum belső működését?",
+          "type": "multiple_choice",
+          "options": ["Kapszulázás", "Absztrakció", "Öröklődés", "Polimorfizmus"],
+          "correct": 0
+        },
+        {
+          "id": 3,
+          "question": "Mi a 'private protected' láthatóság jelentése C# nyelvben?",
+          "type": "multiple_choice",
+          "options": [
+            "Bárhonnan elérhető",
+            "Csak a leszármazottakban érhető el, ha ugyanabban az assembly-ben vannak",
+            "Csak az osztályon belül érhető el",
+            "Csak az adott assembly-ben érhető el"
+          ],
+          "correct": 1
+        },
+        {
+          "id": 4,
+          "question": "Miért van szükség a public kulcsszóra a Car osztályban?",
+          "type": "multiple_choice",
+          "options": [
+            "Hogy a kurzus különböző programozási nyelveken is elérhető legyen",
+            "Az osztálymezőkhöz való hozzáférés korlátozása miatt",
+            "Hogy az osztály statikus legyen",
+            "Hogy a változó más osztályokból is elérhető legyen"
+          ],
+          "correct": 3
+        },
+        {
+          "id": 5,
+          "question": "Mit jelent az OOP?",
+          "type": "multiple_choice",
+          "options": [
+            "Műveleti objektumprogramozás",
+            "Objektumorientált programozás",
+            "Műveletorientált programozás",
+            "Objektumszervezett programozás"
+          ],
+          "correct": 1
+        },
+        {
+          "id": 6,
+          "question": "A metódusokat a objektum.metódus() szintaxissal érheted el.",
+          "type": "true_false",
+          "correct": true
+        },
+        {
+          "id": 7,
+          "question": "Melyik kulcsszó szükséges a származtatott osztálymetódusban egy alap osztálymetódus felülírásakor?",
+          "type": "multiple_choice",
+          "options": ["sealed", "virtual", "override", "private"],
+          "correct": 2
+        },
+        {
+          "id": 8,
+          "question": "Mi történik példányosításkor az OOP-ban?",
+          "type": "multiple_choice",
+          "options": [
+            "Az osztály öröklődik",
+            "Egy új osztály jön létre",
+            "Egy új objektum jön létre az osztály alapján",
+            "A metódusok felülíródnak"
+          ],
+          "correct": 2
+        },
+        {
+          "id": 9,
+          "question": "Az alábbiak közül melyik igaz a C# konstruktoraira?",
+          "type": "multiple_choice",
+          "options": [
+            "Ha nincs definiálva konstruktor, a C# egy alapértelmezett konstruktort biztosít",
+            "A konstruktorokat nem lehet túlterhelni",
+            "A konstruktoroknak értéket kell visszaadniuk",
+            "Egy konstruktornak mindig kell lennie legalább egy paraméterrel"
+          ],
+          "correct": 0
+        },
+        {
+          "id": 10,
+          "question": "Mi az absztrakció célja az OOP-ban?",
+          "type": "multiple_choice",
+          "options": [
+            "Az adatok nyilvánossá tétele",
+            "A lényegtelen részletek elrejtése és a fontos tulajdonságok kiemelése",
+            "Az összes részlet megjelenítése a felhasználónak",
+            "Az osztályok közötti kapcsolat megszüntetése"
+          ],
+          "correct": 1
+        },
+        {
+          "id": 11,
+          "question": "Mit fog kiadni a következő kód?",
+          "type": "multiple_choice",
+          "code": `using System;
+namespace MyApplication
+{
+  class Car
+  {
+    string color = "red";
+    static void Main(string[] args)
+    {
+      Car myObj = new Car();
+      Console.WriteLine(myObj.color);
+    }
+  }
+}`,
+          "options": ["red", "Hiba", "Car", "null"],
+          "correct": 0
+        },
+        {
+          "id": 12,
+          "question": "Mi az objektumorientált programozás egyik fő célja?",
+          "type": "multiple_choice",
+          "options": [
+            "minél több globális változó használata",
+            "csak függvények használata osztályok nélkül",
+            "program futási sebességének maximalizálása",
+            "adatok és viselkedés egy egységbe szervezése"
+          ],
+          "correct": 3
+        },
+        {
+          "id": 13,
+          "question": "Mi a különbség a 'protected' és a 'protected internal' láthatóság között C# nyelvben?",
+          "type": "multiple_choice",
+          "options": [
+            "'protected' bárhonnan elérhető",
+            "Nincs különbség",
+            "'protected internal' csak az osztályon belül érhető el",
+            "'protected internal' az assembly-n belül és leszármazottakban is elérhető"
+          ],
+          "correct": 3
+        },
+        {
+          "id": 14,
+          "question": "Mi a polimorfizmus jelentése az OOP-ban?",
+          "type": "multiple_choice",
+          "options": [
+            "Az osztályok közötti kapcsolat megszüntetése",
+            "Az adatok elrejtése az osztályon belül",
+            "Egy osztály több példányának a létrehozása",
+            "Ugyanaz a metódus különböző objektumokon eltérően viselkedik"
+          ],
+          "correct": 3
+        },
+        {
+          "id": 15,
+          "question": "Mi a beágyazás (encapsulation) fő célja C#-ban?",
+          "type": "multiple_choice",
+          "options": [
+            "Hogy minden adat nyilvánosan hozzáférhető legyen",
+            "A kód végrehajtásának felgyorsítása érdekében",
+            "Annak érdekében, hogy az érzékeny adatok rejtve maradjanak a jogosulatlan hozzáférés elől"
+          ],
+          "correct": 2
+        },
+        {
+          "id": 16,
+          "question": "Melyik szintaxis a helyes?",
+          "type": "multiple_choice",
+          "options": [
+            "Console.WriteLine(myObj::color);",
+            "Console.WriteLine(myObj->color);",
+            "Console.WriteLine(color.myObj);",
+            "Console.WriteLine(myObj.color);"
+          ],
+          "correct": 3
+        },
+        {
+          "id": 17,
+          "question": "Melyik válasz írja le legjobban a több osztály használatának előnyét?",
+          "type": "multiple_choice",
+          "options": [
+            "Jobb szervezést és modularitást tesz lehetővé egy programban",
+            "Ez kiküszöböli a konstruktorok szükségességét",
+            "Gyorsabbá teszi a program végrehajtását",
+            "Automatikusan generál objektumokat egy osztályhoz"
+          ],
+          "correct": 0
+        },
+        {
+          "id": 18,
+          "question": "Mi az osztály szerepe az OOP-ban?",
+          "type": "multiple_choice",
+          "options": [
+            "A program futtatása",
+            "Az adatok tárolása adatbázisban",
+            "A fájlok kezelése",
+            "Az objektumok sablonja, amely meghatározza azok tulajdonságait és viselkedését"
+          ],
+          "correct": 3
+        },
+        {
+          "id": 19,
+          "question": "Mit fog kiadni a következő kód?",
+          "type": "multiple_choice",
+          "code": `class Person
+{
+  private string name;
+  public string Name
+  {
+    get { return name; }
+    set { name = value; }
+  }
+}
+
+class Program
+{
+  static void Main(string[] args)
+  {
+    Person myObj = new Person();
+    myObj.Name = "Liam";
+    Console.WriteLine(myObj.Name);
+  }
+}`,
+          "options": ["null", "Hiba", "Liam", "Meghatározatlan"],
+          "correct": 2
+        },
+        {
+          "id": 20,
+          "question": "Mi a konstruktorokkal kapcsolatos kulcsfontosságú szabály a C#-ban?",
+          "type": "multiple_choice",
+          "options": [
+            "Egy konstruktort statikusként kell deklarálni",
+            "Egy konstruktornak eltérő nevével kell rendelkeznie, mint az osztálynak",
+            "Egy konstruktornak meg kell egyeznie az osztály nevével",
+            "Egy konstruktornak rendelkeznie kell visszatérési típussal"
+          ],
+          "correct": 2
+        },
+        {
+          "id": 21,
+          "question": "Hogyan lehet egy tulajdonságot csak olvashatóvá tenni?",
+          "type": "multiple_choice",
+          "options": [
+            "Azzal, hogy a láthatóság public",
+            "Csak egy getter definiálásával és a setter elhagyásával",
+            "Csak egy setter definiálásával és a getter elhagyásával"
+          ],
+          "correct": 1
+        },
+        {
+          "id": 22,
+          "question": "Mi szükséges egy alap osztály metódushoz ahhoz, hogy a származtatott osztályok felülírhassák azt?",
+          "type": "multiple_choice",
+          "options": [
+            "sealed-nek kell jelölni",
+            "Meg kell egyeznie az osztály nevével",
+            "static-nak kell jelölni",
+            "virtual-nak kell jelölni"
+          ],
+          "correct": 3
+        },
+        {
+          "id": 23,
+          "question": "Mi az öröklődés C#-ban?",
+          "type": "multiple_choice",
+          "options": [
+            "Egy olyan mechanizmus, amelyben az egyik osztály tulajdonságokat és metódusokat örököl egy másik osztálytól",
+            "Egy módszer a kód osztályok közötti másolására",
+            "Több, azonos nevű osztály definiálásának folyamata",
+            "Egy módszer privát változók létrehozására"
+          ],
+          "correct": 0
+        },
+        {
+          "id": 24,
+          "question": "Mi az osztály a C#-ban?",
+          "type": "multiple_choice",
+          "options": [
+            "Tervrajz tárgyak létrehozásához",
+            "Egy metódus egy objektumon belül",
+            "Beépített adattípus",
+            "Egy objektum egy példánya"
+          ],
+          "correct": 0
+        },
+        {
+          "id": 25,
+          "question": "Mi az öröklés fő előnye?",
+          "type": "multiple_choice",
+          "options": [
+            "Lehetővé teszi az egyik osztály számára, hogy egy másik osztály mezőit és metódusait újra felhasználja",
+            "Ez arra kényszeríti az összes osztályt, hogy ugyanazokkal a metódusokkal rendelkezzenek"
+          ],
+          "correct": 0
+        },
+        {
+          "id": 26,
+          "question": "Mit fog kiadni a következő kód?",
+          "type": "multiple_choice",
+          "code": `class Vehicle
+{
+  public string brand = "Ford";
+}
+
+class Car : Vehicle
+{
+  public string modelName = "Mustang";
+}
+
+class Program
+{
+  static void Main(string[] args)
+  {
+    Car myCar = new Car();
+    Console.WriteLine(myCar.brand + " " + myCar.modelName);
+  }
+}`,
+          "options": [
+            "Hiba: A 'márka' nem érhető el",
+            "Mustang Ford",
+            "null null",
+            "Ford Mustang"
+          ],
+          "correct": 3
+        },
+        {
+          "id": 27,
+          "question": "Az alábbiak közül melyik példa egy osztályra?",
+          "type": "multiple_choice",
+          "options": ["Autó", "Volvo"],
+          "correct": 0
+        },
+        {
+          "id": 28,
+          "question": "Mit fog kiadni a következő kód?",
+          "type": "multiple_choice",
+          "code": `class Car
+{
+  public string model;
+  public Car()
+  {
+    model = "Mustang";
+  }
+}
+
+class Program
+{
+  static void Main(string[] args)
+  {
+    Car Ford = new Car();
+    Console.WriteLine(Ford.model);
+  }
+}`,
+          "options": ["Ford", "Hiba", "NULL", "Mustang"],
+          "correct": 3
+        },
+        {
+          "id": 29,
+          "question": "Mit fog kiírni a következő kód?",
+          "type": "multiple_choice",
+          "code": `class Car
+{
+  public string model;
+  public Car(string modelName)
+  {
+    model = modelName;
+  }
+}
+
+class Program
+{
+  static void Main(string[] args)
+  {
+    Car myCar = new Car("Toyota");
+    Console.WriteLine(myCar.model);
+  }
+}`,
+          "options": ["Car", "modell", "modelName", "Mustang", "Toyota"],
+          "correct": 4
+        },
+        {
+          "id": 30,
+          "question": "Az alábbiak közül melyik az objektumorientált programozás (OOP) előnye?",
+          "type": "multiple_choice",
+          "options": [
+            "Az OOP megnehezíti a kód hibakeresését és karbantartását",
+            "Az OOP kiküszöböli az osztályok és objektumok szükségességét",
+            "Az OOP egyértelmű struktúrát biztosít a programok számára"
+          ],
+          "correct": 2
+        },
+        {
+          "id": 31,
+          "question": "Mi jellemző az 'internal' láthatóságra C# nyelvben?",
+          "type": "multiple_choice",
+          "options": [
+            "csak az adott assembly-n belül érhető el",
+            "bárhonnan elérhető",
+            "csak a leszármazott osztályban érhető el",
+            "csak az adott osztályban érhető el"
+          ],
+          "correct": 0
+        },
+        {
+          "id": 32,
+          "question": "Mit fog kiadni a következő kód?",
+          "type": "multiple_choice",
+          "code": `class Animal
+{
+  public virtual void animalSound()
+  {
+    Console.WriteLine("The animal makes a sound");
+  }
+}
+
+class Pig : Animal
+{
+  public override void animalSound()
+  {
+    Console.WriteLine("The pig says: wee wee");
+  }
+}
+
+class Program
+{
+  static void Main(string[] args)
+  {
+    Animal myPig = new Pig();
+    myPig.animalSound();
+  }
+}`,
+          "options": [
+            "Null",
+            "Hiba: A metódus nem felülírható",
+            "The pig says: wee wee",
+            "The animal makes a sound"
+          ],
+          "correct": 2
+        },
+        {
+          "id": 33,
+          "question": "Melyik kulcsszóval érhető el egy mező az osztályon belül és annak leszármazottjaiban C# nyelvben?",
+          "type": "multiple_choice",
+          "options": ["public", "protected", "internal", "private"],
+          "correct": 1
+        },
+        {
+          "id": 34,
+          "question": "Mi a konstruktor C#-ban?",
+          "type": "multiple_choice",
+          "options": [
+            "Egy metódus, amely objektumok inicializálására szolgál azok létrehozásakor",
+            "Tárgyak megsemmisítésére használt módszer",
+            "Egy metódus, amelyet csak manuálisan lehet meghívni",
+            "Egy metódus, amelynek értéket kell visszaadnia"
+          ],
+          "correct": 0
+        },
+        {
+          "id": 35,
+          "question": "Miért fontos a kapszulázás?",
+          "type": "multiple_choice",
+          "options": [
+            "Alapértelmezés szerint minden osztálytagot nyilvánossá tesz",
+            "Lehetővé teszi a mezők közvetlen módosítását az osztályon kívülről",
+            "Korlátozza a mezőkhöz való hozzáférést, növelve az adatbiztonságot",
+            "Megakadályozza a módszerek alkalmazását"
+          ],
+          "correct": 2
+        },
+        {
+          "id": 36,
+          "question": "Az alábbiak közül melyik példa egy objektumra?",
+          "type": "multiple_choice",
+          "options": ["Gyümölcs", "Alma"],
+          "correct": 1
+        },
+        {
+          "id": 37,
+          "question": "Mit csinál a sealed kulcsszó, ha egy osztállyal együtt használjuk?",
+          "type": "multiple_choice",
+          "options": [
+            "Megakadályozza az osztály öröklődését",
+            "Lehetővé teszi az osztály számára a metódusok felülbírálását",
+            "Létrehoz egy konstruktort",
+            "Megakadályozza a metódusok felülbírálását"
+          ],
+          "correct": 0
+        },
+        {
+          "id": 38,
+          "question": "Mit fog kiadni a következő kód?",
+          "type": "multiple_choice",
+          "code": `class Car
+{
+  string color = "red";
+}
+class Program
+{
+  static void Main(string[] args)
+  {
+    Car myObj1 = new Car();
+    Car myObj2 = new Car();
+    Console.WriteLine(myObj1.color);
+    Console.WriteLine(myObj2.color);
+  }
+}`,
+          "options": ["error", "red blue", "red red", "null null"],
+          "correct": 2
+        },
+        {
+          "id": 39,
+          "question": "Mi a kapcsolat egy osztály és egy objektum között?",
+          "type": "multiple_choice",
+          "options": [
+            "Egy osztály és egy objektum ugyanaz",
+            "Egy objektum egy osztály egy példánya",
+            "Egy osztály egy objektum egy példánya",
+            "Egy objektum egy sablon egy osztályhoz"
+          ],
+          "correct": 1
+        },
+        {
+          "id": 40,
+          "question": "Melyik kulcsszóval érhető el egy mező csak az adott osztályon belül C# nyelvben?",
+          "type": "multiple_choice",
+          "options": ["internal", "private", "protected", "public"],
+          "correct": 1
+        },
+        {
+          "id": 41,
+          "question": "Mik az osztály tagjai C#-ban?",
+          "type": "multiple_choice",
+          "options": [
+            "Csak egy osztály konstruktorai",
+            "Csak az osztályon belüli metódusok",
+            "Csak az osztályon belüli mezők (változók)",
+            "Mind a mezők (változók), mind a metódusok egy osztályon belül"
+          ],
+          "correct": 3
+        },
+        {
+          "id": 42,
+          "question": "Melyik OOP fogalom írja le azt, amikor egy osztály átveszi egy másik osztály tulajdonságait és metódusait?",
+          "type": "multiple_choice",
+          "options": ["Kapszulázás", "Poliformizmus", "Absztrakció", "Öröklődés"],
+          "correct": 3
+        },
+        {
+          "id": 43,
+          "question": "Melyik kulcsszóval érhető el egy mező bárhonnan, akár más projektből is?",
+          "type": "multiple_choice",
+          "options": ["protected", "public", "internal", "private"],
+          "correct": 1
+        },
+        {
+          "id": 44,
+          "question": "A static kulcsszó mit jelent C#-ban?",
+          "type": "multiple_choice",
+          "options": [
+            "A tagok az osztályhoz tartoznak, nem az példányokhoz",
+            "A tagok csak privát módon érhetők el",
+            "A tagok automatikusan örökölődnek",
+            "A tagok nem módosíthatók"
+          ],
+          "correct": 0
+        },
+        {
+          "id": 45,
+          "question": "Mi a különbség a public és a private között?",
+          "type": "multiple_choice",
+          "options": [
+            "public - bárhonnan elérhető, private - csak az osztályon belül",
+            "public - csak öröklésnél, private - minden esetben",
+            "public - statikus, private - dinamikus",
+            "Nincs különbség"
+          ],
+          "correct": 0
+        },
+        {
+          "id": 46,
+          "question": "Melyik állítás igaz a virtual metódusokra?",
+          "type": "multiple_choice",
+          "options": [
+            "Nem lehet őket felülírni",
+            "Automatikusan abstract-ok",
+            "Felülírhatók a származtatott osztályokban",
+            "Csak static osztályokban használhatók"
+          ],
+          "correct": 2
+        },
+        {
+          "id": 47,
+          "question": "Mi történik ha egy osztálynak nincs konstruktora?",
+          "type": "multiple_choice",
+          "options": [
+            "Hibát dob a compiler",
+            "Az osztály nem példányosítható",
+            "A C# automatikusan létrehoz egy alapértelmezett konstruktort",
+            "Az osztály statikus lesz"
+          ],
+          "correct": 2
+        },
+        {
+          "id": 48,
+          "question": "A property-k (tulajdonságok) mire szolgálnak C#-ban?",
+          "type": "multiple_choice",
+          "options": [
+            "Csak adatok tárolására",
+            "Kontrollált hozzáférés biztosítására a mezőkhöz",
+            "Metódusok helyettesítésére",
+            "Konstruktorok létrehozására"
+          ],
+          "correct": 1
+        },
+        {
+          "id": 49,
+          "question": "Mit jelent a method overloading (metódus túlterhelés)?",
+          "type": "multiple_choice",
+          "options": [
+            "Ugyanaz a metódusnév, különböző paraméterek",
+            "Különböző metódusnevek, ugyanazok a paraméterek",
+            "Metódusok felülírása öröklésnél",
+            "Statikus metódusok létrehozása"
+          ],
+          "correct": 0
+        },
+        {
+          "id": 50,
+          "question": "Melyik kulcsszó használható az alap osztály konstruktorának meghívására?",
+          "type": "multiple_choice",
+          "options": ["parent", "super", "base", "this"],
+          "correct": 2
+        }
+      ]
+    };
+
+    let currentMode = null;
+    let currentQuestion = 0;
+    let score = 0;
+    let userAnswers = [];
+    let quizCompleted = false;
+    let incorrectQuestionsInRound = [];
+    let allIncorrectQuestions = [];
+    let currentRound = 1;
+    let totalRounds = 5;
+    let questionsPerRound = 10;
+
+    function startMode(mode) {
+      currentMode = mode;
+      document.getElementById('mode-selector').style.display = 'none';
+      document.getElementById('quiz-progress').style.display = 'block';
+      document.getElementById('question-card').style.display = 'block';
+      
+      initQuiz();
+    }
+
+    function backToMenu() {
+      // Reset minden változó
+      currentMode = null;
+      currentQuestion = 0;
+      score = 0;
+      userAnswers = [];
+      quizCompleted = false;
+      incorrectQuestionsInRound = [];
+      allIncorrectQuestions = [];
+      currentRound = 1;
+
+      // UI reset
+      document.getElementById('mode-selector').style.display = 'block';
+      document.getElementById('quiz-progress').style.display = 'none';
+      document.getElementById('question-card').style.display = 'none';
+      document.getElementById('results-card').style.display = 'none';
+      document.getElementById('review-section').style.display = 'none';
+    }
+
+    function initQuiz() {
+      if (currentMode === 'practice') {
+        currentRound = 1;
+        totalRounds = Math.ceil(quizData.questions.length / questionsPerRound);
+      }
+      
+      renderQuestion();
+      updateProgress();
+      updateRoundInfo();
+    }
+
+    function updateRoundInfo() {
+      const roundInfo = document.getElementById('round-info');
+      if (currentMode === 'practice') {
+        const roundStart = (currentRound - 1) * questionsPerRound + 1;
+        const roundEnd = Math.min(currentRound * questionsPerRound, quizData.questions.length);
+        roundInfo.textContent = `${currentRound}. kör (${roundStart}-${roundEnd}. kérdések)`;
+        roundInfo.style.display = 'block';
+      } else {
+        roundInfo.style.display = 'none';
+      }
+    }
+
+    function renderQuestion() {
+      const question = quizData.questions[currentQuestion];
+      const questionCard = document.getElementById('question-card');
+      const resultsCard = document.getElementById('results-card');
+      const reviewSection = document.getElementById('review-section');
+      
+      questionCard.style.display = 'block';
+      resultsCard.style.display = 'none';
+      reviewSection.style.display = 'none';
+
+      document.getElementById('question-number').textContent = `${currentQuestion + 1}. kérdés`;
+      
+      // Kód megjelenítése, ha van
+      let questionHTML = question.question;
+      if (question.code) {
+        questionHTML += `<div class="question-code">${question.code}</div>`;
+      }
+      document.getElementById('question-text').innerHTML = questionHTML;
+
+      // Visszajelzés elrejtése
+      document.getElementById('feedback').style.display = 'none';
+
+      const optionsContainer = document.getElementById('options');
+      optionsContainer.innerHTML = '';
+
+      if (question.type === 'multiple_choice') {
+        optionsContainer.className = 'options';
+        question.options.forEach((option, index) => {
+          const optionElement = document.createElement('div');
+          optionElement.className = 'option';
+          optionElement.onclick = () => selectOption(index);
+          
+          const letter = String.fromCharCode(65 + index); // A, B, C, D
+          optionElement.innerHTML = `
+            <div class="option-letter">${letter}</div>
+            <span>${option}</span>
+          `;
+          
+          optionsContainer.appendChild(optionElement);
+        });
+      } else if (question.type === 'true_false') {
+        optionsContainer.className = 'options true-false-options';
+        
+        const trueOption = document.createElement('div');
+        trueOption.className = 'option';
+        trueOption.onclick = () => selectOption(true);
+        trueOption.innerHTML = `
+          <div class="option-letter">I</div>
+          <span>Igaz</span>
+        `;
+        
+        const falseOption = document.createElement('div');
+        falseOption.className = 'option';
+        falseOption.onclick = () => selectOption(false);
+        falseOption.innerHTML = `
+          <div class="option-letter">H</div>
+          <span>Hamis</span>
+        `;
+        
+        optionsContainer.appendChild(trueOption);
+        optionsContainer.appendChild(falseOption);
+      }
+
+      // Navigációs gombok
+      document.getElementById('prev-btn').disabled = currentQuestion === 0;
+      document.getElementById('next-btn').disabled = true;
+      document.getElementById('next-btn').textContent = 
+        currentQuestion === quizData.questions.length - 1 ? 'Befejezés' : 'Következő →';
+        
+      updateRoundInfo();
+    }
+
+    function selectOption(selectedValue) {
+      const question = quizData.questions[currentQuestion];
+      const options = document.querySelectorAll('.option');
+      
+      options.forEach(option => {
+        option.classList.remove('selected');
+        if (currentMode === 'practice') {
+          option.classList.add('disabled');
+          option.onclick = null;
+        }
+      });
+
+      let selectedOptionIndex;
+      if (question.type === 'multiple_choice') {
+        selectedOptionIndex = selectedValue;
+        options[selectedValue].classList.add('selected');
+      } else {
+        selectedOptionIndex = selectedValue === true ? 0 : 1;
+        options[selectedOptionIndex].classList.add('selected');
+      }
+
+      userAnswers[currentQuestion] = selectedValue;
+
+      // Gyakorló módban azonnal visszajelzés
+      if (currentMode === 'practice') {
+        const isCorrect = selectedValue === question.correct;
+        showFeedback(isCorrect, question, selectedValue);
+        
+        if (isCorrect) {
+          score++;
+        } else {
+          const incorrectQuestion = {
+            questionIndex: currentQuestion,
+            question: question,
+            userAnswer: selectedValue,
+            correctAnswer: question.correct
+          };
+          incorrectQuestionsInRound.push(incorrectQuestion);
+          allIncorrectQuestions.push(incorrectQuestion);
+        }
+        
+        // Opciók színezése
+        if (question.type === 'multiple_choice') {
+          options[question.correct].classList.add('correct');
+          if (selectedValue !== question.correct) {
+            options[selectedValue].classList.add('incorrect');
+          }
+        } else {
+          const correctIndex = question.correct === true ? 0 : 1;
+          options[correctIndex].classList.add('correct');
+          if (selectedValue !== question.correct) {
+            options[selectedOptionIndex].classList.add('incorrect');
+          }
+        }
+      }
+
+      document.getElementById('next-btn').disabled = false;
+    }
+
+    function showFeedback(isCorrect, question, userAnswer) {
+      const feedback = document.getElementById('feedback');
+      const feedbackIcon = document.getElementById('feedback-icon');
+      const feedbackText = document.getElementById('feedback-text');
+      
+      feedback.style.display = 'block';
+      feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+      
+      if (isCorrect) {
+        feedbackIcon.textContent = '✅';
+        feedbackText.textContent = 'Helyes válasz! Szuper!';
+      } else {
+        feedbackIcon.textContent = '❌';
+        let correctAnswerText;
+        if (question.type === 'multiple_choice') {
+          correctAnswerText = question.options[question.correct];
+        } else {
+          correctAnswerText = question.correct ? 'Igaz' : 'Hamis';
+        }
+        feedbackText.textContent = `Helytelen. A helyes válasz: ${correctAnswerText}`;
+      }
+    }
+
+    function nextQuestion() {      
+      if (currentQuestion < quizData.questions.length - 1) {
+        currentQuestion++;
+        
+        // Gyakorló módban ellenőrizzük, hogy 10 kérdésenként kell-e áttekintést mutatni
+        if (currentMode === 'practice' && (currentQuestion % questionsPerRound === 0)) {
+          showPracticeReview();
+          return;
+        }
+        
+        renderQuestion();
+        updateProgress();
+      } else {
+        if (currentMode === 'practice') {
+          showPracticeReview();
+        } else {
+          completeQuiz();
+        }
+      }
+    }
+
+    function previousQuestion() {
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        renderQuestion();
+        updateProgress();
+        
+        // Előző válasz visszaállítása teszt módban
+        if (currentMode === 'test') {
+          if (userAnswers[currentQuestion] !== undefined) {
+            selectOption(userAnswers[currentQuestion]);
+          }
+        }
+      }
+    }
+
+    function updateProgress() {
+      const progressFill = document.getElementById('progress-fill');
+      const questionCounter = document.getElementById('question-counter');
+      const scoreDisplay = document.getElementById('score-display');
+      
+      const progress = ((currentQuestion + 1) / quizData.questions.length) * 100;
+      progressFill.style.width = `${progress}%`;
+      
+      questionCounter.textContent = `${currentQuestion + 1} / ${quizData.questions.length}`;
+      scoreDisplay.textContent = `Pontszám: ${score}`;
+    }
+
+    function showPracticeReview() {
+      document.getElementById('question-card').style.display = 'none';
+      const reviewSection = document.getElementById('review-section');
+      reviewSection.style.display = 'block';
+      
+      const reviewTitle = document.getElementById('review-title');
+      const reviewRoundInfo = document.getElementById('review-round-info');
+      const reviewContent = document.getElementById('review-content');
+      const continueBtn = document.getElementById('continue-btn');
+      
+      // Ellenőrizzük, hogy ez az utolsó kör-e
+      const isLastRound = currentQuestion >= quizData.questions.length - 1;
+      
+      if (isLastRound) {
+        reviewTitle.textContent = '🎯 Kvíz Befejezve!';
+        reviewRoundInfo.textContent = `Végeredmény: ${score}/${quizData.questions.length}`;
+        continueBtn.textContent = 'Eredmények megtekintése';
+        continueBtn.onclick = () => completeQuiz();
+      } else {
+        reviewTitle.textContent = `🔍 ${currentRound}. kör áttekintése`;
+        const roundStart = (currentRound - 1) * questionsPerRound + 1;
+        const roundEnd = Math.min(currentQuestion + 1, quizData.questions.length);
+        reviewRoundInfo.textContent = `${roundStart}-${roundEnd}. kérdések (${incorrectQuestionsInRound.length} hiba)`;
+        continueBtn.textContent = 'Folytatás következő körrel';
+        continueBtn.onclick = () => continuePractice();
+      }
+      
+      if (incorrectQuestionsInRound.length === 0) {
+        reviewContent.innerHTML = `
+          <div style="text-align: center; padding: var(--space-4);">
+            <span style="font-size: 3rem;">🎉</span>
+            <h3>Fantasztikus!</h3>
+            <p>Ebben a körben minden kérdést helyesen válaszoltál meg!</p>
+          </div>
+        `;
+      } else {
+        let reviewHTML = `<p>Ebben a körben ${incorrectQuestionsInRound.length} kérdést érdemes még gyakorolni:</p>`;
+        
+        incorrectQuestionsInRound.forEach(item => {
+          const question = item.question;
+          let userAnswerText, correctAnswerText;
+          
+          if (question.type === 'multiple_choice') {
+            userAnswerText = question.options[item.userAnswer];
+            correctAnswerText = question.options[item.correctAnswer];
+          } else {
+            userAnswerText = item.userAnswer ? 'Igaz' : 'Hamis';
+            correctAnswerText = item.correctAnswer ? 'Igaz' : 'Hamis';
+          }
+          
+          reviewHTML += `
+            <div class="review-item">
+              <div class="review-question">${item.questionIndex + 1}. ${question.question}</div>
+              <div class="review-answer">
+                <strong>A te válaszod:</strong> ${userAnswerText}<br>
+                <strong>Helyes válasz:</strong> ${correctAnswerText}
+              </div>
+            </div>
+          `;
+        });
+        
+        reviewContent.innerHTML = reviewHTML;
+      }
+      
+      // Kör befejezése - reset a következő körre
+      incorrectQuestionsInRound = [];
+      currentRound++;
+    }
+
+    function continuePractice() {
+      document.getElementById('review-section').style.display = 'none';
+      renderQuestion();
+      updateProgress();
+    }
+
+    function completeQuiz() {
+      // Pontszám kiszámítása teszt módhoz
+      if (currentMode === 'test') {
+        score = 0;
+        userAnswers.forEach((answer, index) => {
+          const question = quizData.questions[index];
+          if (answer === question.correct) {
+            score++;
+          }
+        });
+      }
+
+      // Eredmények megjelenítése
+      const questionCard = document.getElementById('question-card');
+      const reviewSection = document.getElementById('review-section');
+      const resultsCard = document.getElementById('results-card');
+      
+      questionCard.style.display = 'none';
+      reviewSection.style.display = 'none';
+      resultsCard.style.display = 'block';
+
+      const percentage = Math.round((score / quizData.questions.length) * 100);
+      
+      document.getElementById('final-score').textContent = `${percentage}%`;
+      document.getElementById('correct-count').textContent = score;
+      document.getElementById('incorrect-count').textContent = quizData.questions.length - score;
+      document.getElementById('total-questions').textContent = quizData.questions.length;
+      
+      let message = '';
+      if (percentage >= 90) {
+        message = '🎉 Kiváló! Tökéletesen ismered a C# OOP alapjait!';
+      } else if (percentage >= 75) {
+        message = '👍 Nagyon jó! Jól megy az objektumorientált programozás!';
+      } else if (percentage >= 60) {
+        message = '👌 Jó munka! Még egy kis gyakorlással tökéletes leszel!';
+      } else {
+        message = '📚 Érdemes még gyakorolni az OOP fogalmakat.';
+      }
+      
+      document.getElementById('results-message').textContent = message;
+      quizCompleted = true;
+    }
+
+    function restartQuiz() {
+      score = 0;
+      userAnswers = [];
+      quizCompleted = false;
+      incorrectQuestionsInRound = [];
+      allIncorrectQuestions = [];
+      currentQuestion = 0;
+      currentRound = 1;
+      
+      initQuiz();
+    }
+  </script>
+</body>
+</html>
