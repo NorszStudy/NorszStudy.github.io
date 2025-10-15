@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>HTTP & API Kvíz - NorszStudy</title>
+
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('theme');
+        var root = document.documentElement;
+        if (saved === 'light' || saved === 'dark') {
+          root.setAttribute('data-theme', saved);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          root.setAttribute('data-theme', 'dark');
+        } else {
+          root.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f8fafc;
+      --bg-secondary: #f1f5f9;
+      --surface: #ffffff;
+      --surface-hover: #f8fafc;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --correct: #10b981;
+      --correct-bg: #d1fae5;
+      --incorrect: #ef4444;
+      --incorrect-bg: #fee2e2;
+      --shadow: rgba(15, 23, 42, 0.08);
+    }
+
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --bg-secondary: #1e293b;
+      --surface: #1e293b;
+      --surface-hover: #334155;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --primary: #60a5fa;
+      --primary-hover: #3b82f6;
+      --correct: #34d399;
+      --correct-bg: #065f46;
+      --incorrect: #f87171;
+      --incorrect-bg: #7f1d1d;
+      --shadow: rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: var(--surface);
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px var(--shadow);
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .header h2 {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .progress-container {
+      background: var(--surface);
+      padding: 16px 24px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .progress-text {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-secondary);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--correct));
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .card {
+      background: var(--surface);
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .review-banner {
+      background: linear-gradient(135deg, #f59e0b, #ea580c);
+      color: white;
+      padding: 16px 24px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    #definitionText {
+      font-size: 20px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 32px;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    #optionsContainer {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .optionBtn {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      background: var(--bg-secondary);
+      color: var(--text);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 16px;
+      text-align: left;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .optionBtn::before {
+      content: attr(data-letter);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      margin-right: 16px;
+      font-weight: 700;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+
+    .optionBtn:hover:not(:disabled) {
+      background: var(--surface-hover);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .optionBtn:hover:not(:disabled)::before {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .optionBtn.correct {
+      background: var(--correct-bg);
+      border-color: var(--correct);
+      color: var(--text);
+    }
+
+    .optionBtn.correct::before {
+      background: var(--correct);
+      border-color: var(--correct);
+      color: white;
+      content: "✓";
+    }
+
+    .optionBtn.incorrect {
+      background: var(--incorrect-bg);
+      border-color: var(--incorrect);
+      color: var(--text);
+    }
+
+    .optionBtn.incorrect::before {
+      background: var(--incorrect);
+      border-color: var(--incorrect);
+      color: white;
+      content: "✗";
+    }
+
+    .optionBtn:disabled {
+      cursor: not-allowed;
+    }
+
+    #feedbackArea {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    #feedbackMessage {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    #progressMessage {
+      font-size: 16px;
+      color: var(--text-muted);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-muted);
+      margin-top: 12px;
+    }
+
+    .btn-secondary:hover {
+      color: var(--text);
+      background: var(--bg-secondary);
+    }
+
+    .mode-controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 24px;
+    }
+
+    .mode-controls button {
+      padding: 12px 32px;
+      background: var(--bg-secondary);
+      color: var(--text);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .mode-controls button.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .mode-controls button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .completion-message {
+      text-align: center;
+      padding: 48px 24px;
+    }
+
+    .completion-message h2 {
+      font-size: 32px;
+      margin-bottom: 16px;
+      color: var(--correct);
+    }
+
+    .completion-message p {
+      font-size: 18px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    #restartBtn {
+      margin-top: 24px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 640px) {
+      .header h1 {
+        font-size: 24px;
+      }
+      
+      .header h2 {
+        font-size: 16px;
+      }
+
+      #definitionText {
+        font-size: 18px;
+      }
+
+      .card {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>HTTP & API Alapok</h1>
+      <h2>Szerver-kliens kommunikáció és API tesztelés</h2>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-text">
+        <span id="learnedCount">0</span> / <span id="totalCount">0</span> fogalom
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div id="studyContainer">
+      <div class="card">
+        <div id="reviewBanner"></div>
+        <p id="definitionText">Definíció betöltése...</p>
+        <div id="optionsContainer">
+          <button class="optionBtn" data-index="0" data-letter="A"></button>
+          <button class="optionBtn" data-index="1" data-letter="B"></button>
+          <button class="optionBtn" data-index="2" data-letter="C"></button>
+          <button class="optionBtn" data-index="3" data-letter="D"></button>
+        </div>
+        <div id="feedbackArea"></div>
+        <button id="nextQuestionBtn" class="btn btn-primary hidden">Következő kérdés</button>
+        <button id="dontKnowBtn" class="btn btn-secondary">Nem tudom</button>
+      </div>
+    </div>
+
+    <div class="mode-controls">
+      <button id="studyModeBtn" class="active">Tanulás</button>
+      <button id="testModeBtn">Teszt</button>
+    </div>
+  </div>
+
+  <script>
+    // HTTP & API kommunikáció flashcard adatok
+    const flashcards = [
+      { term: "Fogadja a kéréseket, feldolgozza őket, majd választ küld a kliensnek.", definition: "Mi a szerver szerepe a weben, és mit csinál, amikor egy kérés érkezik hozzá?" },
+      { term: "A kliens küldi a kéréseket és megjeleníti a válaszokat, a szerver pedig feldolgozza a kéréseket.", definition: "Mi a kliens szerepe, és miben különbözik a szervertől?" },
+      { term: "Egy szabványos protokoll a kliens és a szerver közötti kommunikációra, azért használjuk, mert mindenki által ismert és kompatibilis.", definition: "Mi az az HTTP, és miért erre a szabályrendszerre támaszkodik a böngésző és a szerver?" },
+      { term: "Meghatározza a kérdés típusát és célját, külön célra külön metódus illik.", definition: "Mire való egy HTTP metódus, és miért nem mindegy, melyiket használjuk?" },
+      { term: "Adatok lekérése a szerverről módosítás nélkül.", definition: "Mi a GET kérés célja a gyakorlatban?" },
+      { term: "Adatok küldése a szervernek valami létrehozásához vagy feldolgozásához.", definition: "Mi a POST kérés célja a gyakorlatban?" },
+      { term: "Egy konkrét elérési pont a szerveren, amelyhez kérvényeket küldhetünk.", definition: "Mit jelent, hogy egy útvonal endpoint vagy erőforrás?" },
+      { term: "Meghatározza, hova küldjük a kérvényeket, általában protokoll, domain és útvonal részekből áll.", definition: "Mi a URL szerepe, és milyen fő részekből áll magas szinten?" },
+      { term: "Számos eredménykód, ami jelzi a kérés kimenetelről az állapotot a kliens felé.", definition: "Mit jelent az, hogy státuszkód, és miért fontos visszajelzés a kliensnek?" },
+      { term: "A kérés sikeresen lefutott, a válasz rendben érkezett.", definition: "Mit üzen számodra a 200 OK státuszkód?" },
+      { term: "A kliens oldalán van probléma, például hibás kérés vagy jogosultság hiánya.", definition: "Mit jelez általában a 4xx tartományú státuszkód?" },
+      { term: "Szerveroldali hibát, amikor a szerver nem tudja helyesen feldolgozni a kérvényeket.", definition: "Mit jelez általában az 5xx tartományú státuszkód?" },
+      { term: "Metaadatok a kérdésről és válaszról, amelyek segítik a helyes feldolgozást.", definition: "Mi az a header (fejléc), és miért küld a kliens és a szerver is headeröket?" },
+      { term: "A küldött vagy kapott adatok tartalma, ha a kérés vagy válasz adatot hordoz.", definition: "Mi az a törzs (body) egy kérésben vagy válaszban, és mikor használjuk?" },
+      { term: "Könnyen olvasható szöveges adatcsere formátum kulcs-érték párokkal.", definition: "Mi a JSON formátum lényege, és miért kedvelt adatcsere a weben?" },
+      { term: "Amikor fejlettebb beállításokra van szükség és nem csak GET kérést akarunk küldeni.", definition: "Miért lehet kevés egy böngésző, és mikor érdemes API tesztelő eszközt használni?" },
+      { term: "API kérdések küldése, válaszok elemzése és automatizált tesztelés segítése.", definition: "Mi a Postman elsődleges szerepe a fejlesztésben és tanulásban?" },
+      { term: "Rendszerezhetjük a kérvényeket és könnyen újrafelhasználhatjuk őket.", definition: "Miben segít, hogy a Postmanben külön menthető kérések és gyűjtemények vannak?" },
+      { term: "Külön beállításokat tarthatunk fejlesztéshez, teszthez és éleshez, és könnyen váltogathatunk köztük.", definition: "Mi a haszna a Postman környezeteinek, és hogyan könnyítik meg a váltáskor a munkát?" },
+      { term: "Változókba tehetjük az ismert részeket, például a bázis URL-t, így kevésbé kell átírni mindent.", definition: "Mire jók a Postman környezeti változói, és hogyan növelik az újrahasználhatóságot?" },
+      { term: "Más nézetek segítenek az áttekintésben és a hibák megtalálásában.", definition: "Miért hasznos a Postmanben a válasz megjelenítése különböző nézetekben?" },
+      { term: "Teljesítmény és adatforgalom szempontból fontos visszajelzés a rendszerről.", definition: "Miért érdemes a Postmanben figyelni a kérés idejét és a válasz méretét?" },
+      { term: "Automatikusan ellenőrizhetjük, hogy a válasz megfelel-e az elvárásoknak.", definition: "Mi a célja a Postmanben a tesztek írásának, és miben segít tanuláskor?" },
+      { term: "A böngésző alapvetően csak lekér, a Postman pedig finomhangolható paraméterekkel és headerekkel küld.", definition: "Mi a különbség aközött, hogy egy GET kérést böngészőből nyitsz meg, vagy Postmanból küldesz el?" },
+      { term: "A szerver nem őrzi meg a korábbi kérdések állapotát, ezért minden kérés önállóan értelmezhető.", definition: "Mit jelent, hogy egy API állapot nélküli (stateless), és ez miért egyszerűsíti a tesztelést?" },
+      { term: "Átláthatóbb, egységesebb és előrejelezhető használatot ad.", definition: "Miért fontos a konzisztens név és útvonalhasználat az API-kban?" },
+      { term: "Egyszerű szűréshez és lapozáshoz, amikor nem módosításról van szó.", definition: "Mire jók a lekérdezés paraméterek (query params), és mikor választanád ezeket a body helyett?" },
+      { term: "Mert pontosan beállíthatók a kérés részletei és következetesen ismételhetőek a lépések.", definition: "Mitől hatékony eszköz a Postman?" },
+      { term: "Mert nyomon követhető, mi történt egy kérés feldolgozásakor.", definition: "Miért hasznos a szerver oldalon a naplózás és a konzol üzenetek a hibák megtalálásához?" },
+      { term: "A fejlesztői környezet kísérletezésre való, az éles stabil szolgáltatásra, ezért külön kezeljük őket.", definition: "Mi a különbség a fejlesztői környezet és az éles környezet között, és miért nem ugyanott tesztelünk mindent?" }
+    ];
+
+    // Alkalmazás változók
+    let currentIndex = 0;
+    let questionCounter = 0;
+    let isReviewMode = false;
+    let reviewCounter = 0;
+    let incorrectAnswers = [];
+    let learnedTerms = new Set();
+    let availableTerms = [];
+
+    // DOM elemek
+    const definitionText = document.getElementById('definitionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const dontKnowBtn = document.getElementById('dontKnowBtn');
+    const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const reviewBanner = document.getElementById('reviewBanner');
+    const progressFill = document.getElementById('progressFill');
+    const learnedCount = document.getElementById('learnedCount');
+    const totalCount = document.getElementById('totalCount');
+
+    // Inicializálás
+    function initApp() {
+      initLearningProgress();
+      updateProgress();
+      generateStudyQuestion();
+
+      nextQuestionBtn.addEventListener('click', handleNextQuestion);
+      dontKnowBtn.addEventListener('click', handleDontKnow);
+    }
+
+    function initLearningProgress() {
+      learnedTerms = new Set();
+      availableTerms = [];
+      
+      for (let i = 0; i < flashcards.length; i++) {
+        availableTerms.push(i);
+      }
+      
+      shuffleArray(availableTerms);
+      totalCount.textContent = flashcards.length;
+    }
+
+    function updateProgress() {
+      const learned = learnedTerms.size;
+      const total = flashcards.length;
+      const percentage = (learned / total) * 100;
+      
+      learnedCount.textContent = learned;
+      progressFill.style.width = percentage + '%';
+    }
+
+    function generateStudyQuestion() {
+      feedbackArea.innerHTML = '';
+      nextQuestionBtn.classList.add('hidden');
+      reviewBanner.innerHTML = '';
+      
+      if (availableTerms.length === 0) {
+        if (learnedTerms.size === flashcards.length) {
+          showCompletionMessage();
+          return;
+        }
+        resetAvailableTerms();
+      }
+      
+      const randomIndex = Math.floor(Math.random() * availableTerms.length);
+      currentIndex = availableTerms[randomIndex];
+      const correctAnswer = flashcards[currentIndex].term;
+
+      const options = [correctAnswer];
+      while (options.length < 4) {
+        const randomTerm = flashcards[Math.floor(Math.random() * flashcards.length)].term;
+        if (!options.includes(randomTerm)) {
+          options.push(randomTerm);
+        }
+      }
+
+      shuffleArray(options);
+
+      definitionText.textContent = flashcards[currentIndex].definition;
+
+      const optionButtons = document.querySelectorAll('.optionBtn');
+      optionButtons.forEach((btn, index) => {
+        btn.textContent = options[index];
+        btn.dataset.correct = options[index] === correctAnswer ? 'true' : 'false';
+        btn.className = 'optionBtn';
+        btn.disabled = false;
+        
+        btn.removeEventListener('click', handleOptionClick);
+        btn.removeEventListener('click', handleReviewOptionClick);
+        btn.addEventListener('click', isReviewMode ? handleReviewOptionClick : handleOptionClick);
+      });
+      
+      dontKnowBtn.disabled = false;
+    }
+
+    function handleOptionClick(event) {
+      const isCorrect = event.target.dataset.correct === 'true';
+      const optionButtons = document.querySelectorAll('.optionBtn');
+
+      optionButtons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.correct === 'true') {
+          btn.classList.add('correct');
+        } else if (btn === event.target && !isCorrect) {
+          btn.classList.add('incorrect');
+          
+          const wrongAnswer = {
+            index: currentIndex,
+            term: flashcards[currentIndex].term,
+            definition: flashcards[currentIndex].definition
+          };
+          incorrectAnswers.push(wrongAnswer);
+        }
+      });
+      
+      if (isCorrect) {
+        learnedTerms.add(currentIndex);
+        availableTerms = availableTerms.filter(index => index !== currentIndex);
+        updateProgress();
+      }
+      
+      dontKnowBtn.disabled = true;
+
+      const feedbackMessage = document.createElement('p');
+      feedbackMessage.id = 'feedbackMessage';
+      feedbackMessage.textContent = isCorrect 
+        ? "Szééép! Csak így tovább! :D" 
+        : "No para, ez még nem dolgozat!";
+      feedbackMessage.style.color = isCorrect ? 'var(--correct)' : 'var(--incorrect)';
+      feedbackArea.appendChild(feedbackMessage);
+
+      nextQuestionBtn.classList.remove('hidden');
+    }
+
+    function handleDontKnow() {
+      const optionButtons = document.querySelectorAll('.optionBtn');
+      
+      optionButtons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.correct === 'true') {
+          btn.classList.add('correct');
+        }
+      });
+      
+      dontKnowBtn.disabled = true;
+      
+      if (!isReviewMode) {
+        const wrongAnswer = {
+          index: currentIndex,
+          term: flashcards[currentIndex].term,
+          definition: flashcards[currentIndex].definition
+        };
+        incorrectAnswers.push(wrongAnswer);
+      }
+      
+      const feedbackMessage = document.createElement('p');
+      feedbackMessage.id = 'feedbackMessage';
+      feedbackMessage.textContent = 'A helyes válasz: ' + flashcards[currentIndex].term;
+      feedbackMessage.style.color = 'var(--primary)';
+      feedbackArea.appendChild(feedbackMessage);
+      
+      nextQuestionBtn.classList.remove('hidden');
+    }
+
+    function handleNextQuestion() {
+      if (isReviewMode) {
+        showNextReviewQuestion();
+      } else {
+        questionCounter++;
+        
+        if (questionCounter % 10 === 0 && incorrectAnswers.length > 0) {
+          startReviewSession();
+        } else {
+          if (availableTerms.length === 0 && learnedTerms.size === flashcards.length) {
+            showCompletionMessage();
+          } else if (availableTerms.length === 0) {
+            resetAvailableTerms();
+            generateStudyQuestion();
+          } else {
+            generateStudyQuestion();
+          }
+        }
+      }
+    }
+
+    function startReviewSession() {
+      isReviewMode = true;
+      reviewCounter = 0;
+      shuffleArray(incorrectAnswers);
+      showNextReviewQuestion();
+    }
+
+    function showNextReviewQuestion() {
+      if (reviewCounter >= incorrectAnswers.length) {
+        isReviewMode = false;
+        incorrectAnswers = [];
+        generateStudyQuestion();
+        return;
+      }
+      
+      feedbackArea.innerHTML = '';
+      nextQuestionBtn.classList.add('hidden');
+      
+      reviewBanner.innerHTML = '<div class="review-banner">🔄 Nézzük meg újra</div>';
+      
+      currentIndex = incorrectAnswers[reviewCounter].index;
+      const correctAnswer = flashcards[currentIndex].term;
+
+      const options = [correctAnswer];
+      while (options.length < 4) {
+        const randomTerm = flashcards[Math.floor(Math.random() * flashcards.length)].term;
+        if (!options.includes(randomTerm)) {
+          options.push(randomTerm);
+        }
+      }
+
+      shuffleArray(options);
+
+      definitionText.textContent = flashcards[currentIndex].definition;
+
+      const optionButtons = document.querySelectorAll('.optionBtn');
+      optionButtons.forEach((btn, index) => {
+        btn.textContent = options[index];
+        btn.dataset.correct = options[index] === correctAnswer ? 'true' : 'false';
+        btn.className = 'optionBtn';
+        btn.disabled = false;
+        
+        btn.removeEventListener('click', handleOptionClick);
+        btn.removeEventListener('click', handleReviewOptionClick);
+        btn.addEventListener('click', handleReviewOptionClick);
+      });
+      
+      dontKnowBtn.disabled = false;
+      reviewCounter++;
+    }
+
+    function handleReviewOptionClick(event) {
+      const isCorrect = event.target.dataset.correct === 'true';
+      const optionButtons = document.querySelectorAll('.optionBtn');
+
+      optionButtons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.correct === 'true') {
+          btn.classList.add('correct');
+        } else if (btn === event.target && !isCorrect) {
+          btn.classList.add('incorrect');
+        }
+      });
+      
+      dontKnowBtn.disabled = true;
+
+      const feedbackMessage = document.createElement('p');
+      feedbackMessage.id = 'feedbackMessage';
+      
+      if (isCorrect) {
+        feedbackMessage.textContent = "Ügyes vagy, ezúttal eltaláltad!";
+        feedbackMessage.style.color = 'var(--correct)';
+        
+        learnedTerms.add(currentIndex);
+        updateProgress();
+      } else {
+        feedbackMessage.textContent = "Nyugi, gyakorolj tovább, meg lesz az!";
+        feedbackMessage.style.color = 'var(--incorrect)';
+        
+        const wrongAnswer = {
+          index: currentIndex,
+          term: flashcards[currentIndex].term,
+          definition: flashcards[currentIndex].definition
+        };
+        incorrectAnswers.push(wrongAnswer);
+      }
+      
+      feedbackArea.appendChild(feedbackMessage);
+
+      nextQuestionBtn.classList.remove('hidden');
+    }
+
+    function resetAvailableTerms() {
+      availableTerms = [];
+      for (let i = 0; i < flashcards.length; i++) {
+        if (!learnedTerms.has(i)) {
+          availableTerms.push(i);
+        }
+      }
+      shuffleArray(availableTerms);
+    }
+
+    function showCompletionMessage() {
+      feedbackArea.innerHTML = '';
+      nextQuestionBtn.classList.add('hidden');
+      
+      const optionButtons = document.querySelectorAll('.optionBtn');
+      optionButtons.forEach(btn => btn.style.display = 'none');
+      
+      dontKnowBtn.style.display = 'none';
+      
+      const completionMessage = document.createElement('div');
+      completionMessage.className = 'completion-message';
+      completionMessage.innerHTML = `
+        <h2>🎉 Gratulálunk!</h2>
+        <p>Sikeresen megtanultad az összes HTTP & API fogalmat!</p>
+        <p>Fogalmak száma: ${flashcards.length}</p>
+        <button id="restartBtn" class="btn btn-primary">Újrakezdés</button>
+      `;
+      document.querySelector('.card').appendChild(completionMessage);
+      
+      document.getElementById('restartBtn').addEventListener('click', () => {
+        completionMessage.remove();
+        optionButtons.forEach(btn => btn.style.display = 'flex');
+        dontKnowBtn.style.display = 'block';
+        initLearningProgress();
+        updateProgress();
+        generateStudyQuestion();
+      });
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    window.onload = initApp;
+  </script>
+</body>
+</html>
