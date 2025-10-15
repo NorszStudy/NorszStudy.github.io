@@ -398,39 +398,36 @@
   </div>
 
   <script>
-    // Next.js flashcard adatok - a képernyőképek alapján
+    // Next.js flashcard adatok - javított karakterekkel
     const flashcards = [
-      { term: "dev = fejlesztés, build = produkciós csomag, start = produkció futtatása, sorrenд: build → start", definition: "Mi a különbség a npm run dev, a npm run build és a npm run start parancsok között, és milyen sorrendben használod őket éles futtatáshoz?" },
-      { term: "Nextjs projekt létrehozásához, és milyen fő részeiből áll a parancs (futható csomagnév, célmappa, flagek)", definition: "Melyik parancsnot használod a Nextjs projekt létrehozásához, és mire figyelj a mappanév kiválasztásánál?" },
+      { term: "dev = fejlesztés, build = produkciós csomag, start = produkció futtatása, sorrend: build → start", definition: "Mi a különbség a npm run dev, a npm run build és a npm run start parancsok között, és milyen sorrendben használod őket éles futtatáshoz?" },
+      { term: "npx create-next-app@latest projektnév (latest projektnév flagek)", definition: "Melyik parancsot használod a Nextjs projekt létrehozásához, és mire figyelj a mappanév kiválasztásánál?" },
       { term: "A parancs végén adod meg a mappanevet: kerüld a szóközt és ékezetet", definition: "Hogyan adsz meg címlapot a projekt létrehozásakor, és mire figyelj a mappanév kiválasztásánál?" },
       { term: "Node 18.18+ vagy 20.9+, npm 9+ ajánlott", definition: "Milyen Node.js és npm verzió szükségesek egy Nextjs projekt futtatásához?" },
-      { term: "cd projektnév", definition: "Hogyan lépez be terminálból az imént létrehozott projekt mappájába?" },
+      { term: "cd projektnév", definition: "Hogyan lépsz be terminálból az imént létrehozott projekt mappájába?" },
       { term: "npm run dev ; 3000", definition: "Melyik parancs indítja a Nextjs fejlesztőszervert, és mely portján látható meg az alkalmazás?" },
       { term: "npm run dev --p 4000", definition: "Hogyan állítod át a fejlesztőszerver portját?" },
       { term: "npm run build majd npm run start", definition: "Melyik parancsokkal készítesz production buildet, és hogyan indítod el a production szervert?" },
       { term: "A projekt gyökerében: npm install", definition: "Hogyan telepíted a függőségeket egy már meglévő (pl. GitHubról klónozott) Nextjs projektben?" },
-      { term: "Ctrl+C a letállításhoz, majd npm run dev, a HMR többnyire automatikus", definition: "Hogyan indítod újra a fejlesztőszervert, ha tellállítottad és hogyan frísíted el a böngészőt a változások megtekintéséhez?" },
-      { term: "git clone <url> → cd projekt → npm install → npm run dev (vagy build + start)", definition: "Hogyan 'oltod vissza' a projektet egy másik gépön: milyen lépések kellenek a klónozástól a futtatásig (parancsok sorrendje)?" },
-      { term: "A package.json szerepe egy Nextjs projektben, és melyik script indítja a fejlesztést?", definition: "Mi a package.json szerepe egy Nextjs projektben, és melyik script indítja a fejlesztést?" },
-      { term: "Mi a next.config.js feladata, és milyen típusú beállításokat szoktak benne megadni?", definition: "Mi a next.config.js feladata, és milyen típusú beállításokat szoktak benne megadni?" },
-      { term: "Az útválnak gyökere (App Router): alapból szerverkomponensek és layout/page.jsx fájlok", definition: "Mire szolgál az app/ mappa, és hogyan befolássolja az egész alkalmazás keretét?" },
+      { term: "Ctrl+C a leállításhoz, majd npm run dev, a HMR többnyire automatikus", definition: "Hogyan indítod újra a fejlesztőszervert, ha leállítottad és hogyan frísíted el a böngészőt a változások megtekintéséhez?" },
+      { term: "git clone <url> → cd projekt → npm install → npm run dev (vagy build + start)", definition: "Hogyan klónozod le a projektet egy másik gépre: milyen lépések kellenek a klónozástól a futtatásig (parancsok sorrendje)?" },
+      { term: "A függőségek és scriptek leírása, dev script indítja a fejlesztést", definition: "Mi a package.json szerepe egy Nextjs projektben, és melyik script indítja a fejlesztést?" },
+      { term: "Projektkonfiguráció (pl. images, basePath), experimental beállítások", definition: "Mi a next.config.js feladata, és milyen típusú beállításokat szoktak benne megadni?" },
+      { term: "Az útvonalak gyökere (App Router): alapból szerverkomponensek és layout/page.jsx fájlok", definition: "Mire szolgál az app/ mappa, és hogyan befolyásolja az egész alkalmazás keretét?" },
       { term: "Globális keret az egész appra (HTML/Body, közös UI, meta)", definition: "Mire szolgál az app/layout.jsx, és mely elemeket tartalmazza kötelezően a keret szerint?" },
-      { term: "A mappa kezdődoldlája: bármely mappa page.jsx fájla egy útvnalat hoz létre", definition: "Mire szolgál az app/page.jsx, és mikor hoz létre új útvonalat egy page.jsx fáj?" },
-      { term: "Státkus fájok helye: public/logo.png elérhető: http://localhost:3000/logo.png", definition: "Mire szolgál a public/ mappa, és hogyan éred el böngészőből a benne lévő fájlt?" },
-      { term: "Hozd létre: app/rolunk/page.jsx mappa kezdődoldája: bármely mappa page.jsx fájla egy útvonalat hoz létre", definition: "Hogyan hozol létre új oldalt az App Routerrel (példa: /rolunk útvonal mappa és fájlnév)?" },
-      { term: "app/ = új App Router (szerverkomponensek, layout/page fájok), pages/ = régi Pages Router (layoutkezelés, oldal-alapú routing)", definition: "Mi a különbség az app/ és a régi pages/ megközelítés között, és mikor melyiket érdemes használni?" },
-      { term: "tsconfig.json → baseUrl: * *, és paths: {"@/*": ["./*"]} ; előny: rövid, gyökér-alapú importok", definition: "Hogyan állítod be és használod az @/* import aliast a tsconfig.json-ban (melyik két kulcsod kell megadni)?" },
-      { term: "A .env.local fájba írод, szerveren process.env.X, klilensen NEXT_PUBLIC_* érhetó el", definition: "Hogyan állítasz be környezeti változókat (.env.local fájba), és hogyan éred el ezeket a kódból?" },
-      { term: "isconfig.json → baseUrl: * *, paths: {"@/*": ["./*"]} ; előny: rövid, gyökér-alapú importok", definition: "Mire való a tsconfig.json, és hogyan hat a TypeScript beállításokra a projektben?" },
-      { term: "Új mappa az app/ alatt (pl. app/kapcsolat) és benne page.jsx", definition: "Hogyan adsz hozza új oldalt az alkalmazáshoz az App Routerrel (mappstruktúra és fájlnév)?" },
-      { term: "app/ = új App Router (layout/page.jsx) pages/ = régi Pages Router", definition: "Mi a különbség az app/ és a régi pages/ megközelítés között, és miként érdemes használni?" },
-      { term: "TypeScript: Yes, Linter: None, Tailwind: Yes, src/: No, App Router: Yes, Turbopack: No, Alias: Yes @/*", definition: "Milyen választ adez a create-next-app kérdéseire (TypeScript, linter, Tailwind, src/: App Router, Turbopack, alias)?" },
-      { term: "cd bevezető majd npm run dev", definition: "Hogyan navigálsz be terminálban a létrehozott projekt mappájába, és melyik parancs indítja a fejlesztői szervert?" },
-      { term: "http://localhost:3000 ; másik port: npm run dev --p 3001", definition: "Mely URL-en éred el alapértelmezés szerint a dev szerver, és hogyan indítod másik portján ha a 3000-es foglalt?" },
-      { term: "npm run build majd npm run start", definition: "Melyik parancsokkal ellenőrződ a telepített Node és npm verziót a terminálban, és mit teszel, ha nincs fent?" },
-      { term: "node -v és npm -v, ha nincs telepítőve a nodes.org-ról", definition: "Melyik parancsokkal ellenőrződ a telepített Node és npm verziót a terminálban, és mit teszel, ha nincs fent?" },
-      { term: "npx create-next-app@latest bevezeto - a projekt nevét a parancs végére ícod", definition: "Mi a pontos parancs új Nextjs projekt létrehozására a lérás szerint, és hová írod be a projekt nevét?" },
-      { term: "TypeScript: Yes, Linter: None, Tailwind: Yes, src/: No, App Router: Yes, Turbopack: No, Alias: Yes @/*", definition: "Milyen választ adez a create-next-app kérdéseire (TypeScript, linter, Tailwind, src/: App Router, Turbopack, alias)?" }
+      { term: "A mappa kezdődoldala: bármely mappa page.jsx fájla egy útvonalat hoz létre", definition: "Mire szolgál az app/page.jsx, és mikor hoz létre új útvonalat egy page.jsx fájl?" },
+      { term: "Statikus fájok helye: public/logo.png elérhető: http://localhost:3000/logo.png", definition: "Mire szolgál a public/ mappa, és hogyan éred el böngészőből a benne lévő fájlt?" },
+      { term: "Hozd létre: app/rolunk/page.jsx", definition: "Hogyan hozol létre új oldalt az App Routerrel (példa: /rolunk útvonal mappa és fájlnév)?" },
+      { term: "app/ = új App Router (szerverkomponensek, layout/page fájlok), pages/ = régi Pages Router (kliens oldali, fájl alapú routing)", definition: "Mi a különbség az app/ és a régi pages/ megközelítés között, és mikor melyiket érdemes használni?" },
+      { term: "tsconfig.json → baseUrl: ., és paths: {\"@/*\": [\"./*\"]} ; előny: rövid, gyökér-alapú importok", definition: "Hogyan állítod be és használod az @/* import aliast a tsconfig.json-ban (melyik két kulcsot kell megadni)?" },
+      { term: "A .env.local fájlba írod, szerveren process.env.X, kliensen NEXT_PUBLIC_* érhető el", definition: "Hogyan állítasz be környezeti változókat (.env.local fájlba), és hogyan éred el ezeket a kódból?" },
+      { term: "TypeScript konfiguráció: baseUrl, paths, strict stb.", definition: "Mire való a tsconfig.json, és hogyan hat a TypeScript beállításokra a projektben?" },
+      { term: "Új mappa az app/ alatt (pl. app/kapcsolat) és benne page.jsx", definition: "Hogyan adsz hozzá új oldalt az alkalmazáshoz az App Routerrel (mappastruktúra és fájlnév)?" },
+      { term: "TypeScript: Yes, Linter: None, Tailwind: Yes, src/: No, App Router: Yes, Turbopack: No, Alias: Yes @/*", definition: "Milyen választ adsz a create-next-app kérdéseire (TypeScript, linter, Tailwind, src/, App Router, Turbopack, alias)?" },
+      { term: "cd bevezeto majd npm run dev", definition: "Hogyan navigálsz be terminálban a létrehozott projekt mappájába, és melyik parancs indítja a fejlesztői szervert?" },
+      { term: "http://localhost:3000 ; másik port: npm run dev --p 3001", definition: "Mely URL-en éred el alapértelmezés szerint a dev szervert, és hogyan indítod másik porton ha a 3000-es foglalt?" },
+      { term: "node -v és npm -v, ha nincs telepítve a nodejs.org-ról", definition: "Melyik parancsokkal ellenőrzöd a telepített Node és npm verziót a terminálban, és mit teszel, ha nincs fent?" },
+      { term: "npx create-next-app@latest bevezeto - a projekt nevét a parancs végére írod", definition: "Mi a pontos parancs új Nextjs projekt létrehozására a leírás szerint, és hová írod be a projekt nevét?" }
     ];
 
     // Alkalmazás változók
@@ -590,7 +587,7 @@
       
       const feedbackMessage = document.createElement('p');
       feedbackMessage.id = 'feedbackMessage';
-      feedbackMessage.textContent = `A helyes válasz: ${flashcards[currentIndex].term}`;
+      feedbackMessage.textContent = 'A helyes válasz: ' + flashcards[currentIndex].term;
       feedbackMessage.style.color = 'var(--primary)';
       feedbackArea.appendChild(feedbackMessage);
       
@@ -760,3 +757,4 @@
   </script>
 </body>
 </html>
+
