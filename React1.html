@@ -363,7 +363,7 @@
   <div class="container">
     <div class="header">
       <h1>React Komponensek</h1>
-      <h2>Alapfogalmak és működés</h2>
+      <h2>Komponensek alapjai, props, state és interaktivitás</h2>
     </div>
 
     <div class="progress-container">
@@ -382,6 +382,8 @@
         <div id="optionsContainer">
           <button class="optionBtn" data-index="0" data-letter="A"></button>
           <button class="optionBtn" data-index="1" data-letter="B"></button>
+          <button class="optionBtn" data-index="2" data-letter="C"></button>
+          <button class="optionBtn" data-index="3" data-letter="D"></button>
         </div>
         <div id="feedbackArea"></div>
         <button id="nextQuestionBtn" class="btn btn-primary hidden">Következő kérdés</button>
@@ -498,7 +500,7 @@
       const correctAnswer = flashcards[currentIndex].term;
 
       const options = [correctAnswer];
-      while (options.length < 2) {
+      while (options.length < 4) {
         const randomTerm = flashcards[Math.floor(Math.random() * flashcards.length)].term;
         if (!options.includes(randomTerm)) {
           options.push(randomTerm);
@@ -638,7 +640,7 @@
       const correctAnswer = flashcards[currentIndex].term;
 
       const options = [correctAnswer];
-      while (options.length < 2) {
+      while (options.length < 4) {
         const randomTerm = flashcards[Math.floor(Math.random() * flashcards.length)].term;
         if (!options.includes(randomTerm)) {
           options.push(randomTerm);
