@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>Next.js Kvíz - NorszStudy</title>
+
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('theme');
+        var root = document.documentElement;
+        if (saved === 'light' || saved === 'dark') {
+          root.setAttribute('data-theme', saved);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          root.setAttribute('data-theme', 'dark');
+        } else {
+          root.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f8fafc;
+      --bg-secondary: #f1f5f9;
+      --surface: #ffffff;
+      --surface-hover: #f8fafc;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --correct: #10b981;
+      --correct-bg: #d1fae5;
+      --incorrect: #ef4444;
+      --incorrect-bg: #fee2e2;
+      --shadow: rgba(15, 23, 42, 0.08);
+    }
+
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --bg-secondary: #1e293b;
+      --surface: #1e293b;
+      --surface-hover: #334155;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --primary: #60a5fa;
+      --primary-hover: #3b82f6;
+      --correct: #34d399;
+      --correct-bg: #065f46;
+      --incorrect: #f87171;
+      --incorrect-bg: #7f1d1d;
+      --shadow: rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: var(--surface);
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px var(--shadow);
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .header h2 {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .progress-container {
+      background: var(--surface);
+      padding: 16px 24px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .progress-text {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-secondary);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--correct));
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .card {
+      background: var(--surface);
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .review-banner {
+      background: linear-gradient(135deg, #f59e0b, #ea580c);
+      color: white;
+      padding: 16px 24px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    #definitionText {
+      font-size: 20px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 32px;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    #optionsContainer {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .optionBtn {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      background: var(--bg-secondary);
+      color: var(--text);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 16px;
+      text-align: left;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .optionBtn::before {
+      content: attr(data-letter);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      margin-right: 16px;
+      font-weight: 700;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+
+    .optionBtn:hover:not(:disabled) {
+      background: var(--surface-hover);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .optionBtn:hover:not(:disabled)::before {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .optionBtn.correct {
+      background: var(--correct-bg);
+      border-color: var(--correct);
+      color: var(--text);
+    }
+
+    .optionBtn.correct::before {
+      background: var(--correct);
+      border-color: var(--correct);
+      color: white;
+      content: "✓";
+    }
+
+    .optionBtn.incorrect {
+      background: var(--incorrect-bg);
+      border-color: var(--incorrect);
+      color: var(--text);
+    }
+
+    .optionBtn.incorrect::before {
+      background: var(--incorrect);
+      border-color: var(--incorrect);
+      color: white;
+      content: "✗";
+    }
+
+    .optionBtn:disabled {
+      cursor: not-allowed;
+    }
+
+    #feedbackArea {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    #feedbackMessage {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    #progressMessage {
+      font-size: 16px;
+      color: var(--text-muted);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-muted);
+      margin-top: 12px;
+    }
+
+    .btn-secondary:hover {
+      color: var(--text);
+      background: var(--bg-secondary);
+    }
+
+    .mode-controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 24px;
+    }
+
+    .mode-controls button {
+      padding: 12px 32px;
+      background: var(--bg-secondary);
+      color: var(--text);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .mode-controls button.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .mode-controls button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .completion-message {
+      text-align: center;
+      padding: 48px 24px;
+    }
+
+    .completion-message h2 {
+      font-size: 32px;
+      margin-bottom: 16px;
+      color: var(--correct);
+    }
+
+    .completion-message p {
+      font-size: 18px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    #restartBtn {
+      margin-top: 24px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 640px) {
+      .header h1 {
+        font-size: 24px;
+      }
+      
+      .header h2 {
+        font-size: 16px;
+      }
+
+      #definitionText {
+        font-size: 18px;
+      }
+
+      .card {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>JavaScript Fogalmak</h1>
+      <h2>Next.js</h2>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-text">
+        <span id="learnedCount">0</span> / <span id="totalCount">0</span> fogalom
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div id="studyContainer">
+      <div class="card">
+        <div id="reviewBanner"></div>
+        <p id="definitionText">Definíció betöltése...</p>
+        <div id="optionsContainer">
+          <button class="optionBtn" data-index="0" data-letter="A"></button>
+          <button class="optionBtn" data-index="1" data-letter="B"></button>
+          <button class="optionBtn" data-index="2" data-letter="C"></button>
+          <button class="optionBtn" data-index="3" data-letter="D"></button>
+        </div>
+        <div id="feedbackArea"></div>
+        <button id="nextQuestionBtn" class="btn btn-primary hidden">Következő kérdés</button>
+        <button id="dontKnowBtn" class="btn btn-secondary">Nem tudom</button>
+      </div>
+    </div>
+
+    <div class="mode-controls">
+      <button id="studyModeBtn" class="active">Tanulás</button>
+      <button id="testModeBtn">Teszt</button>
+    </div>
+  </div>
+
+  <script>
+    // Next.js flashcard adatok - a képernyőképek alapján
+    const flashcards = [
+      { term: "dev = fejlesztés, build = produkciós csomag, start = produkció futtatása, sorrenд: build → start", definition: "Mi a különbség a npm run dev, a npm run build és a npm run start parancsok között, és milyen sorrendben használod őket éles futtatáshoz?" },
+      { term: "Nextjs projekt létrehozásához, és milyen fő részeiből áll a parancs (futható csomagnév, célmappa, flagek)", definition: "Melyik parancsnot használod a Nextjs projekt létrehozásához, és mire figyelj a mappanév kiválasztásánál?" },
+      { term: "A parancs végén adod meg a mappanevet: kerüld a szóközt és ékezetet", definition: "Hogyan adsz meg címlapot a projekt létrehozásakor, és mire figyelj a mappanév kiválasztásánál?" },
+      { term: "Node 18.18+ vagy 20.9+, npm 9+ ajánlott", definition: "Milyen Node.js és npm verzió szükségesek egy Nextjs projekt futtatásához?" },
+      { term: "cd projektnév", definition: "Hogyan lépez be terminálból az imént létrehozott projekt mappájába?" },
+      { term: "npm run dev ; 3000", definition: "Melyik parancs indítja a Nextjs fejlesztőszervert, és mely portján látható meg az alkalmazás?" },
+      { term: "npm run dev --p 4000", definition: "Hogyan állítod át a fejlesztőszerver portját?" },
+      { term: "npm run build majd npm run start", definition: "Melyik parancsokkal készítesz production buildet, és hogyan indítod el a production szervert?" },
+      { term: "A projekt gyökerében: npm install", definition: "Hogyan telepíted a függőségeket egy már meglévő (pl. GitHubról klónozott) Nextjs projektben?" },
+      { term: "Ctrl+C a letállításhoz, majd npm run dev, a HMR többnyire automatikus", definition: "Hogyan indítod újra a fejlesztőszervert, ha tellállítottad és hogyan frísíted el a böngészőt a változások megtekintéséhez?" },
+      { term: "git clone <url> → cd projekt → npm install → npm run dev (vagy build + start)", definition: "Hogyan 'oltod vissza' a projektet egy másik gépön: milyen lépések kellenek a klónozástól a futtatásig (parancsok sorrendje)?" },
+      { term: "A package.json szerepe egy Nextjs projektben, és melyik script indítja a fejlesztést?", definition: "Mi a package.json szerepe egy Nextjs projektben, és melyik script indítja a fejlesztést?" },
+      { term: "Mi a next.config.js feladata, és milyen típusú beállításokat szoktak benne megadni?", definition: "Mi a next.config.js feladata, és milyen típusú beállításokat szoktak benne megadni?" },
+      { term: "Az útválnak gyökere (App Router): alapból szerverkomponensek és layout/page.jsx fájlok", definition: "Mire szolgál az app/ mappa, és hogyan befolássolja az egész alkalmazás keretét?" },
+      { term: "Globális keret az egész appra (HTML/Body, közös UI, meta)", definition: "Mire szolgál az app/layout.jsx, és mely elemeket tartalmazza kötelezően a keret szerint?" },
+      { term: "A mappa kezdődoldlája: bármely mappa page.jsx fájla egy útvnalat hoz létre", definition: "Mire szolgál az app/page.jsx, és mikor hoz létre új útvonalat egy page.jsx fáj?" },
+      { term: "Státkus fájok helye: public/logo.png elérhető: http://localhost:3000/logo.png", definition: "Mire szolgál a public/ mappa, és hogyan éred el böngészőből a benne lévő fájlt?" },
+      { term: "Hozd létre: app/rolunk/page.jsx mappa kezdődoldája: bármely mappa page.jsx fájla egy útvonalat hoz létre", definition: "Hogyan hozol létre új oldalt az App Routerrel (példa: /rolunk útvonal mappa és fájlnév)?" },
+      { term: "app/ = új App Router (szerverkomponensek, layout/page fájok), pages/ = régi Pages Router (layoutkezelés, oldal-alapú routing)", definition: "Mi a különbség az app/ és a régi pages/ megközelítés között, és mikor melyiket érdemes használni?" },
+      { term: "tsconfig.json → baseUrl: * *, és paths: {"@/*": ["./*"]} ; előny: rövid, gyökér-alapú importok", definition: "Hogyan állítod be és használod az @/* import aliast a tsconfig.json-ban (melyik két kulcsod kell megadni)?" },
+      { term: "A .env.local fájba írод, szerveren process.env.X, klilensen NEXT_PUBLIC_* érhetó el", definition: "Hogyan állítasz be környezeti változókat (.env.local fájba), és hogyan éred el ezeket a kódból?" },
+      { term: "isconfig.json → baseUrl: * *, paths: {"@/*": ["./*"]} ; előny: rövid, gyökér-alapú importok", definition: "Mire való a tsconfig.json, és hogyan hat a TypeScript beállításokra a projektben?" },
+      { term: "Új mappa az app/ alatt (pl. app/kapcsolat) és benne page.jsx", definition: "Hogyan adsz hozza új oldalt az alkalmazáshoz az App Routerrel (mappstruktúra és fájlnév)?" },
+      { term: "app/ = új App Router (layout/page.jsx) pages/ = régi Pages Router", definition: "Mi a különbség az app/ és a régi pages/ megközelítés között, és miként érdemes használni?" },
+      { term: "TypeScript: Yes, Linter: None, Tailwind: Yes, src/: No, App Router: Yes, Turbopack: No, Alias: Yes @/*", definition: "Milyen választ adez a create-next-app kérdéseire (TypeScript, linter, Tailwind, src/: App Router, Turbopack, alias)?" },
+      { term: "cd bevezető majd npm run dev", definition: "Hogyan navigálsz be terminálban a létrehozott projekt mappájába, és melyik parancs indítja a fejlesztői szervert?" },
+      { term: "http://localhost:3000 ; másik port: npm run dev --p 3001", definition: "Mely URL-en éred el alapértelmezés szerint a dev szerver, és hogyan indítod másik portján ha a 3000-es foglalt?" },
+      { term: "npm run build majd npm run start", definition: "Melyik parancsokkal ellenőrződ a telepített Node és npm verziót a terminálban, és mit teszel, ha nincs fent?" },
+      { term: "node -v és npm -v, ha nincs telepítőve a nodes.org-ról", definition: "Melyik parancsokkal ellenőrződ a telepített Node és npm verziót a terminálban, és mit teszel, ha nincs fent?" },
+      { term: "npx create-next-app@latest bevezeto - a projekt nevét a parancs végére ícod", definition: "Mi a pontos parancs új Nextjs projekt létrehozására a lérás szerint, és hová írod be a projekt nevét?" },
+      { term: "TypeScript: Yes, Linter: None, Tailwind: Yes, src/: No, App Router: Yes, Turbopack: No, Alias: Yes @/*", definition: "Milyen választ adez a create-next-app kérdéseire (TypeScript, linter, Tailwind, src/: App Router, Turbopack, alias)?" }
+    ];
+
+    // Alkalmazás változók
+    let currentIndex = 0;
+    let questionCounter = 0;
+    let isReviewMode = false;
+    let reviewCounter = 0;
+    let incorrectAnswers = [];
+    let learnedTerms = new Set();
+    let availableTerms = [];
+
+    // DOM elemek
+    const definitionText = document.getElementById('definitionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const dontKnowBtn = document.getElementById('dontKnowBtn');
+    const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const reviewBanner = document.getElementById('reviewBanner');
+    const progressFill = document.getElementById('progressFill');
+    const learnedCount = document.getElementById('learnedCount');
+    const totalCount = document.getElementById('totalCount');
+
+    // Inicializálás
+    function initApp() {
+      initLearningProgress();
+      updateProgress();
+      generateStudyQuestion();
+
+      nextQuestionBtn.addEventListener('click', handleNextQuestion);
+      dontKnowBtn.addEventListener('click', handleDontKnow);
+    }
+
+    function initLearningProgress() {
+      learnedTerms = new Set();
+      availableTerms = [];
+      
+      for (let i = 0; i < flashcards.length; i++) {
+        availableTerms.push(i);
+      }
+      
+      shuffleArray(availableTerms);
+      totalCount.textContent = flashcards.length;
+    }
+
+    function updateProgress() {
+      const learned = learnedTerms.size;
+      const total = flashcards.length;
+      const percentage = (learned / total) * 100;
+      
+      learnedCount.textContent = learned;
+      progressFill.style.width = percentage + '%';
+    }
+
+    function generateStudyQuestion() {
+      feedbackArea.innerHTML = '';
+      nextQuestionBtn.classList.add('hidden');
+      reviewBanner.innerHTML = '';
+      
+      if (availableTerms.length === 0) {
+        if (learnedTerms.size === flashcards.length) {
+          showCompletionMessage();
+          return;
+        }
+        resetAvailableTerms();
+      }
+      
+      const randomIndex = Math.floor(Math.random() * availableTerms.length);
+      currentIndex = availableTerms[randomIndex];
+      const correctAnswer = flashcards[currentIndex].term;
+
+      const options = [correctAnswer];
+      while (options.length < 4) {
+        const randomTerm = flashcards[Math.floor(Math.random() * flashcards.length)].term;
+        if (!options.includes(randomTerm)) {
+          options.push(randomTerm);
+        }
+      }
+
+      shuffleArray(options);
+
+      definitionText.textContent = flashcards[currentIndex].definition;
+
+      const optionButtons = document.querySelectorAll('.optionBtn');
+      optionButtons.forEach((btn, index) => {
+        btn.textContent = options[index];
+        btn.dataset.correct = options[index] === correctAnswer ? 'true' : 'false';
+        btn.className = 'optionBtn';
+        btn.disabled = false;
+        
+        btn.removeEventListener('click', handleOptionClick);
+        btn.removeEventListener('click', handleReviewOptionClick);
+        btn.addEventListener('click', isReviewMode ? handleReviewOptionClick : handleOptionClick);
+      });
+      
+      dontKnowBtn.disabled = false;
+    }
+
+    function handleOptionClick(event) {
+      const isCorrect = event.target.dataset.correct === 'true';
+      const optionButtons = document.querySelectorAll('.optionBtn');
+
+      optionButtons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.correct === 'true') {
+          btn.classList.add('correct');
+        } else if (btn === event.target && !isCorrect) {
+          btn.classList.add('incorrect');
+          
+          const wrongAnswer = {
+            index: currentIndex,
+            term: flashcards[currentIndex].term,
+            definition: flashcards[currentIndex].definition
+          };
+          incorrectAnswers.push(wrongAnswer);
+        }
+      });
+      
+      if (isCorrect) {
+        learnedTerms.add(currentIndex);
+        availableTerms = availableTerms.filter(index => index !== currentIndex);
+        updateProgress();
+      }
+      
+      dontKnowBtn.disabled = true;
+
+      const feedbackMessage = document.createElement('p');
+      feedbackMessage.id = 'feedbackMessage';
+      feedbackMessage.textContent = isCorrect 
+        ? "Szééép! Csak így tovább! :D" 
+        : "No para, ez még nem dolgozat!";
+      feedbackMessage.style.color = isCorrect ? 'var(--correct)' : 'var(--incorrect)';
+      feedbackArea.appendChild(feedbackMessage);
+
+      nextQuestionBtn.classList.remove('hidden');
+    }
+
+    function handleDontKnow() {
+      const optionButtons = document.querySelectorAll('.optionBtn');
+      
+      optionButtons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.correct === 'true') {
+          btn.classList.add('correct');
+        }
+      });
+      
+      dontKnowBtn.disabled = true;
+      
+      if (!isReviewMode) {
+        const wrongAnswer = {
+          index: currentIndex,
+          term: flashcards[currentIndex].term,
+          definition: flashcards[currentIndex].definition
+        };
+        incorrectAnswers.push(wrongAnswer);
+      }
+      
+      const feedbackMessage = document.createElement('p');
+      feedbackMessage.id = 'feedbackMessage';
+      feedbackMessage.textContent = `A helyes válasz: ${flashcards[currentIndex].term}`;
+      feedbackMessage.style.color = 'var(--primary)';
+      feedbackArea.appendChild(feedbackMessage);
+      
+      nextQuestionBtn.classList.remove('hidden');
+    }
+
+    function handleNextQuestion() {
+      if (isReviewMode) {
+        showNextReviewQuestion();
+      } else {
+        questionCounter++;
+        
+        if (questionCounter % 10 === 0 && incorrectAnswers.length > 0) {
+          startReviewSession();
+        } else {
+          if (availableTerms.length === 0 && learnedTerms.size === flashcards.length) {
+            showCompletionMessage();
+          } else if (availableTerms.length === 0) {
+            resetAvailableTerms();
+            generateStudyQuestion();
+          } else {
+            generateStudyQuestion();
+          }
+        }
+      }
+    }
+
+    function startReviewSession() {
+      isReviewMode = true;
+      reviewCounter = 0;
+      shuffleArray(incorrectAnswers);
+      showNextReviewQuestion();
+    }
+
+    function showNextReviewQuestion() {
+      if (reviewCounter >= incorrectAnswers.length) {
+        isReviewMode = false;
+        incorrectAnswers = [];
+        generateStudyQuestion();
+        return;
+      }
+      
+      feedbackArea.innerHTML = '';
+      nextQuestionBtn.classList.add('hidden');
+      
+      reviewBanner.innerHTML = '<div class="review-banner">🔄 Nézzük meg újra</div>';
+      
+      currentIndex = incorrectAnswers[reviewCounter].index;
+      const correctAnswer = flashcards[currentIndex].term;
+
+      const options = [correctAnswer];
+      while (options.length < 4) {
+        const randomTerm = flashcards[Math.floor(Math.random() * flashcards.length)].term;
+        if (!options.includes(randomTerm)) {
+          options.push(randomTerm);
+        }
+      }
+
+      shuffleArray(options);
+
+      definitionText.textContent = flashcards[currentIndex].definition;
+
+      const optionButtons = document.querySelectorAll('.optionBtn');
+      optionButtons.forEach((btn, index) => {
+        btn.textContent = options[index];
+        btn.dataset.correct = options[index] === correctAnswer ? 'true' : 'false';
+        btn.className = 'optionBtn';
+        btn.disabled = false;
+        
+        btn.removeEventListener('click', handleOptionClick);
+        btn.removeEventListener('click', handleReviewOptionClick);
+        btn.addEventListener('click', handleReviewOptionClick);
+      });
+      
+      dontKnowBtn.disabled = false;
+      reviewCounter++;
+    }
+
+    function handleReviewOptionClick(event) {
+      const isCorrect = event.target.dataset.correct === 'true';
+      const optionButtons = document.querySelectorAll('.optionBtn');
+
+      optionButtons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.correct === 'true') {
+          btn.classList.add('correct');
+        } else if (btn === event.target && !isCorrect) {
+          btn.classList.add('incorrect');
+        }
+      });
+      
+      dontKnowBtn.disabled = true;
+
+      const feedbackMessage = document.createElement('p');
+      feedbackMessage.id = 'feedbackMessage';
+      
+      if (isCorrect) {
+        feedbackMessage.textContent = "Ügyes vagy, ezúttal eltaláltad!";
+        feedbackMessage.style.color = 'var(--correct)';
+        
+        learnedTerms.add(currentIndex);
+        updateProgress();
+      } else {
+        feedbackMessage.textContent = "Nyugi, gyakorolj tovább, meg lesz az!";
+        feedbackMessage.style.color = 'var(--incorrect)';
+        
+        const wrongAnswer = {
+          index: currentIndex,
+          term: flashcards[currentIndex].term,
+          definition: flashcards[currentIndex].definition
+        };
+        incorrectAnswers.push(wrongAnswer);
+      }
+      
+      feedbackArea.appendChild(feedbackMessage);
+
+      nextQuestionBtn.classList.remove('hidden');
+    }
+
+    function resetAvailableTerms() {
+      availableTerms = [];
+      for (let i = 0; i < flashcards.length; i++) {
+        if (!learnedTerms.has(i)) {
+          availableTerms.push(i);
+        }
+      }
+      shuffleArray(availableTerms);
+    }
+
+    function showCompletionMessage() {
+      feedbackArea.innerHTML = '';
+      nextQuestionBtn.classList.add('hidden');
+      
+      const optionButtons = document.querySelectorAll('.optionBtn');
+      optionButtons.forEach(btn => btn.style.display = 'none');
+      
+      dontKnowBtn.style.display = 'none';
+      
+      const completionMessage = document.createElement('div');
+      completionMessage.className = 'completion-message';
+      completionMessage.innerHTML = `
+        <h2>🎉 Gratulálunk!</h2>
+        <p>Sikeresen megtanultad az összes Next.js fogalmat!</p>
+        <p>Fogalmak száma: ${flashcards.length}</p>
+        <button id="restartBtn" class="btn btn-primary">Újrakezdés</button>
+      `;
+      document.querySelector('.card').appendChild(completionMessage);
+      
+      document.getElementById('restartBtn').addEventListener('click', () => {
+        completionMessage.remove();
+        optionButtons.forEach(btn => btn.style.display = 'flex');
+        dontKnowBtn.style.display = 'block';
+        initLearningProgress();
+        updateProgress();
+        generateStudyQuestion();
+      });
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    window.onload = initApp;
+  </script>
+</body>
+</html>
