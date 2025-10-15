@@ -400,6 +400,12 @@
   <script>
     // Next.js flashcard adatok - javított karakterekkel
     const flashcards = [
+      { term: "Hogyan indítod újra a fejlesztőszervert, ha leállítottad azt és hogyan frissíled a böngészőt a változások megtekintéséhez?", definition: "Ctrl+C a leállításhoz, majd npm run dev, a HMR többnyire automatikus" },
+      { term: "Ctrl+C a leállításhoz, majd npm run dev, a HMR többnyire automatikus", definition: "Hogyan indítod újra a fejlesztőszervert, ha leállítottad azt és hogyan frissíled a böngészőt a változások megtekintéséhez?" },
+      { term: "git clone <url> → cd projekt → npm install → npm run dev (vagy build + start)", definition: "Hogyan klónozod le a projektet egy másik gépre: milyen lépések kellenek a klónozástól a futtatásig (parancsok sorrendje)?" },
+      { term: "Melyik parancsot használod a Nextjs projekt létrehozásához, és mire figyelj a mappanév kiválasztásánál?", definition: "npx create-next-app@latest projektnév (latest projektnév flagek)" },
+      { term: "Mely parancsokkal ellenőrzöd a telepített Node és npm verziót a terminálban, és mit teszel, ha nincs fent?", definition: "node -v és npm -v, ha nincs telepítve a nodejs.org-ról" },
+      { term: "Mi a különbség a npm run dev, a npm run build és a npm run start parancsok között, és milyen sorrendben használod őket éles futtatáshoz?", definition: "dev = fejlesztés, build = produkciós csomag, start = produkció futtatása, sorrend: build → start" },
       { term: "dev = fejlesztés, build = produkciós csomag, start = produkció futtatása, sorrend: build → start", definition: "Mi a különbség a npm run dev, a npm run build és a npm run start parancsok között, és milyen sorrendben használod őket éles futtatáshoz?" },
       { term: "npx create-next-app@latest projektnév (latest projektnév flagek)", definition: "Melyik parancsot használod a Nextjs projekt létrehozásához, és mire figyelj a mappanév kiválasztásánál?" },
       { term: "A parancs végén adod meg a mappanevet: kerüld a szóközt és ékezetet", definition: "Hogyan adsz meg címlapot a projekt létrehozásakor, és mire figyelj a mappanév kiválasztásánál?" },
@@ -409,8 +415,7 @@
       { term: "npm run dev --p 4000", definition: "Hogyan állítod át a fejlesztőszerver portját?" },
       { term: "npm run build majd npm run start", definition: "Melyik parancsokkal készítesz production buildet, és hogyan indítod el a production szervert?" },
       { term: "A projekt gyökerében: npm install", definition: "Hogyan telepíted a függőségeket egy már meglévő (pl. GitHubról klónozott) Nextjs projektben?" },
-      { term: "Ctrl+C a leállításhoz, majd npm run dev, a HMR többnyire automatikus", definition: "Hogyan indítod újra a fejlesztőszervert, ha leállítottad és hogyan frísíted el a böngészőt a változások megtekintéséhez?" },
-      { term: "git clone <url> → cd projekt → npm install → npm run dev (vagy build + start)", definition: "Hogyan klónozod le a projektet egy másik gépre: milyen lépések kellenek a klónozástól a futtatásig (parancsok sorrendje)?" },
+      { term: "Hogyan telepíted a függőségeket egy már meglévő (pl. GitHubról klónozott) Nextjs projektben?", definition: "A projekt gyökerében: npm install" },
       { term: "A függőségek és scriptek leírása, dev script indítja a fejlesztést", definition: "Mi a package.json szerepe egy Nextjs projektben, és melyik script indítja a fejlesztést?" },
       { term: "Projektkonfiguráció (pl. images, basePath), experimental beállítások", definition: "Mi a next.config.js feladata, és milyen típusú beállításokat szoktak benne megadni?" },
       { term: "Az útvonalak gyökere (App Router): alapból szerverkomponensek és layout/page.jsx fájlok", definition: "Mire szolgál az app/ mappa, és hogyan befolyásolja az egész alkalmazás keretét?" },
@@ -426,7 +431,7 @@
       { term: "TypeScript: Yes, Linter: None, Tailwind: Yes, src/: No, App Router: Yes, Turbopack: No, Alias: Yes @/*", definition: "Milyen választ adsz a create-next-app kérdéseire (TypeScript, linter, Tailwind, src/, App Router, Turbopack, alias)?" },
       { term: "cd bevezeto majd npm run dev", definition: "Hogyan navigálsz be terminálban a létrehozott projekt mappájába, és melyik parancs indítja a fejlesztői szervert?" },
       { term: "http://localhost:3000 ; másik port: npm run dev --p 3001", definition: "Mely URL-en éred el alapértelmezés szerint a dev szervert, és hogyan indítod másik porton ha a 3000-es foglalt?" },
-      { term: "node -v és npm -v, ha nincs telepítve a nodejs.org-ról", definition: "Melyik parancsokkal ellenőrzöd a telepített Node és npm verziót a terminálban, és mit teszel, ha nincs fent?" },
+      { term: "node -v és npm -v, ha nincs telepítve a nodejs.org-ról", definition: "Mely parancsokkal ellenőrzöd a telepített Node és npm verziót a terminálban, és mit teszel, ha nincs fent?" },
       { term: "npx create-next-app@latest bevezeto - a projekt nevét a parancs végére írod", definition: "Mi a pontos parancs új Nextjs projekt létrehozására a leírás szerint, és hová írod be a projekt nevét?" }
     ];
 
@@ -757,4 +762,3 @@
   </script>
 </body>
 </html>
-
