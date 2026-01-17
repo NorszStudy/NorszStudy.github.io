@@ -97,6 +97,7 @@
       transition: color 0.2s ease;
     }
     a:hover { color: var(--brand-light); text-decoration: underline; }
+    a:visited { color: var(--brand); }
 
     /* Fejléc */
     header {
@@ -270,16 +271,24 @@
       color: #fff;
     }
 
+    @media (max-width: 640px) {
+      .hero {
+        padding: var(--space-4) var(--space-3);
+        border-radius: var(--radius-m);
+        margin-bottom: var(--space-4);
+      }
+    }
+
     .hero h1 {
       margin: 0 0 var(--space-2) 0;
-      font-size: clamp(1.5rem, 1.2rem + 2vw, 2.5rem);
+      font-size: clamp(1.3rem, 1rem + 2vw, 2.5rem);
       font-weight: 800;
     }
 
     .hero p {
       margin: 0;
       opacity: 0.9;
-      font-size: 1.1rem;
+      font-size: clamp(0.9rem, 0.85rem + 0.5vw, 1.1rem);
     }
 
     /* Vizsga info box */
@@ -292,17 +301,31 @@
       box-shadow: 0 4px 16px var(--shadow);
     }
 
+    @media (max-width: 640px) {
+      .exam-info {
+        padding: var(--space-3);
+        border-radius: var(--radius-m);
+      }
+    }
+
     .exam-info h2 {
       margin: 0 0 var(--space-3) 0;
       color: var(--brand);
-      font-size: 1.3rem;
+      font-size: clamp(1.1rem, 1rem + 0.5vw, 1.3rem);
     }
 
     .exam-stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
       gap: var(--space-3);
       margin-bottom: var(--space-3);
+    }
+
+    @media (max-width: 480px) {
+      .exam-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-2);
+      }
     }
 
     .stat-card {
@@ -313,22 +336,34 @@
       border: 1px solid var(--border);
     }
 
+    @media (max-width: 640px) {
+      .stat-card {
+        padding: var(--space-2);
+      }
+    }
+
     .stat-card .value {
-      font-size: 1.8rem;
+      font-size: clamp(1.4rem, 1.2rem + 1vw, 1.8rem);
       font-weight: bold;
       color: var(--brand);
     }
 
     .stat-card .label {
       color: var(--text-muted);
-      font-size: 0.9rem;
+      font-size: clamp(0.75rem, 0.7rem + 0.3vw, 0.9rem);
     }
 
     /* Témakör táblázat */
+    .topics-table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-top: var(--space-3);
+    }
+
     .topics-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: var(--space-3);
+      min-width: 300px;
     }
 
     .topics-table th,
@@ -338,10 +373,19 @@
       border-bottom: 1px solid var(--border);
     }
 
+    @media (max-width: 640px) {
+      .topics-table th,
+      .topics-table td {
+        padding: var(--space-1) var(--space-2);
+        font-size: 0.85rem;
+      }
+    }
+
     .topics-table th {
       background: var(--bg-secondary);
       font-weight: 600;
       color: var(--brand);
+      white-space: nowrap;
     }
 
     .topics-table tr:hover {
@@ -358,6 +402,13 @@
       box-shadow: 0 2px 8px var(--shadow);
     }
 
+    @media (max-width: 640px) {
+      .topic-section {
+        border-radius: var(--radius-m);
+        margin-bottom: var(--space-3);
+      }
+    }
+
     .topic-header {
       background: linear-gradient(135deg, var(--brand), var(--brand-light));
       color: #fff;
@@ -367,24 +418,50 @@
       justify-content: space-between;
       align-items: center;
       user-select: none;
+      gap: var(--space-2);
+    }
+
+    @media (max-width: 640px) {
+      .topic-header {
+        padding: var(--space-2) var(--space-3);
+        flex-wrap: wrap;
+      }
     }
 
     .topic-header h2 {
       margin: 0;
-      font-size: 1.2rem;
+      font-size: clamp(0.95rem, 0.8rem + 1vw, 1.2rem);
       font-weight: 700;
+      flex: 1;
+      min-width: 0;
     }
 
     .topic-header .questions {
       background: rgba(255,255,255,0.2);
       padding: var(--space-1) var(--space-2);
       border-radius: 999px;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 480px) {
+      .topic-header .questions {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+      }
     }
 
     .topic-content {
       padding: var(--space-4);
       display: none;
+      overflow-x: hidden;
+    }
+
+    @media (max-width: 640px) {
+      .topic-content {
+        padding: var(--space-3);
+      }
     }
 
     .topic-content.active {
@@ -396,7 +473,7 @@
       margin: var(--space-4) 0 var(--space-2) 0;
       padding-bottom: var(--space-1);
       border-bottom: 2px solid var(--border);
-      font-size: 1.1rem;
+      font-size: clamp(1rem, 0.9rem + 0.5vw, 1.1rem);
     }
 
     .topic-content h3:first-child {
@@ -406,11 +483,20 @@
     .topic-content h4 {
       color: var(--text);
       margin: var(--space-3) 0 var(--space-2) 0;
-      font-size: 1rem;
+      font-size: clamp(0.9rem, 0.85rem + 0.3vw, 1rem);
     }
 
     .topic-content p {
       margin-bottom: var(--space-2);
+      font-size: 0.95rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    @media (max-width: 640px) {
+      .topic-content p {
+        font-size: 0.9rem;
+      }
     }
 
     .topic-content ul,
@@ -419,8 +505,23 @@
       margin-bottom: var(--space-3);
     }
 
+    @media (max-width: 640px) {
+      .topic-content ul,
+      .topic-content ol {
+        margin-left: var(--space-3);
+        padding-left: var(--space-2);
+      }
+    }
+
     .topic-content li {
       margin-bottom: var(--space-1);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 640px) {
+      .topic-content li {
+        font-size: 0.9rem;
+      }
     }
 
     /* Kód blokk */
@@ -430,10 +531,26 @@
       padding: var(--space-3);
       border-radius: var(--radius-m);
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
       font-size: 0.85rem;
       margin: var(--space-3) 0;
       border: 1px solid var(--border);
+      max-width: 100%;
+    }
+
+    .code-block code {
+      display: block;
+      white-space: pre;
+      word-wrap: normal;
+    }
+
+    @media (max-width: 640px) {
+      .code-block {
+        padding: var(--space-2);
+        font-size: 0.75rem;
+        border-radius: var(--radius-s);
+      }
     }
 
     .inline-code {
@@ -450,10 +567,16 @@
     }
 
     /* Info táblázat */
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: var(--space-3) 0;
+    }
+
     .info-table {
       width: 100%;
       border-collapse: collapse;
-      margin: var(--space-3) 0;
+      min-width: 400px;
     }
 
     .info-table th,
@@ -461,44 +584,67 @@
       padding: var(--space-2);
       text-align: left;
       border: 1px solid var(--border);
+      font-size: 0.9rem;
     }
 
     .info-table th {
       background: var(--bg-secondary);
       font-weight: 600;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 640px) {
+      .info-table th,
+      .info-table td {
+        padding: var(--space-1) var(--space-2);
+        font-size: 0.8rem;
+      }
+      
+      .info-table {
+        min-width: 300px;
+      }
     }
 
     /* Figyelmeztető dobozok */
-    .highlight-box {
-      background: rgba(245, 158, 11, 0.1);
-      border-left: 4px solid var(--warning);
+    .highlight-box,
+    .success-box,
+    .tip-box,
+    .danger-box {
       padding: var(--space-3);
       margin: var(--space-3) 0;
       border-radius: 0 var(--radius-s) var(--radius-s) 0;
+      font-size: 0.95rem;
+    }
+
+    .highlight-box {
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid var(--warning);
     }
 
     .success-box {
       background: rgba(34, 197, 94, 0.1);
       border-left: 4px solid var(--success);
-      padding: var(--space-3);
-      margin: var(--space-3) 0;
-      border-radius: 0 var(--radius-s) var(--radius-s) 0;
     }
 
     .tip-box {
       background: rgba(37, 99, 235, 0.1);
       border-left: 4px solid var(--brand);
-      padding: var(--space-3);
-      margin: var(--space-3) 0;
-      border-radius: 0 var(--radius-s) var(--radius-s) 0;
     }
 
     .danger-box {
       background: rgba(239, 68, 68, 0.1);
       border-left: 4px solid var(--danger);
-      padding: var(--space-3);
-      margin: var(--space-3) 0;
-      border-radius: 0 var(--radius-s) var(--radius-s) 0;
+    }
+
+    @media (max-width: 640px) {
+      .highlight-box,
+      .success-box,
+      .tip-box,
+      .danger-box {
+        padding: var(--space-2);
+        font-size: 0.85rem;
+        margin: var(--space-2) 0;
+      }
     }
 
     /* Box model diagram */
@@ -513,6 +659,15 @@
       border: 1px solid var(--border);
       white-space: pre;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 640px) {
+      .box-model {
+        padding: var(--space-2);
+        font-size: 0.7rem;
+      }
     }
 
     /* Tartalomjegyzék */
@@ -528,12 +683,24 @@
     .toc h2 {
       margin: 0 0 var(--space-3) 0;
       color: var(--brand);
+      font-size: clamp(1.1rem, 1rem + 1vw, 1.3rem);
     }
 
     .toc-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: var(--space-2);
+    }
+
+    @media (max-width: 480px) {
+      .toc {
+        padding: var(--space-3);
+      }
+      
+      .toc-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-1);
+      }
     }
 
     .toc-item {
@@ -548,6 +715,7 @@
       transition: all 0.2s ease;
       border: 1px solid var(--border);
       cursor: pointer;
+      font-size: 0.9rem;
     }
 
     .toc-item:hover {
@@ -555,6 +723,17 @@
       transform: translateX(4px);
       border-color: var(--brand);
       text-decoration: none;
+    }
+
+    @media (max-width: 640px) {
+      .toc-item {
+        padding: var(--space-2);
+        font-size: 0.85rem;
+      }
+      
+      .toc-item:hover {
+        transform: none;
+      }
     }
 
     .toc-num {
@@ -569,6 +748,14 @@
       font-weight: bold;
       font-size: 0.85rem;
       flex-shrink: 0;
+    }
+
+    @media (max-width: 640px) {
+      .toc-num {
+        width: 24px;
+        height: 24px;
+        font-size: 0.75rem;
+      }
     }
 
     /* Lábléc */
@@ -2463,4 +2650,5 @@ app.use(cors({
     }
   </script>
 </body>
+</html>
 </html>
