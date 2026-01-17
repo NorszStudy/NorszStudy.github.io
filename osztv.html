@@ -1,0 +1,2466 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>OSZTV Szoftverfejlesztő Tananyag - NorszStudy</title>
+
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('theme');
+        var root = document.documentElement;
+        if (saved === 'light' || saved === 'dark') {
+          root.setAttribute('data-theme', saved);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          root.setAttribute('data-theme', 'dark');
+        } else {
+          root.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f8fafc;
+      --bg-secondary: #f1f5f9;
+      --surface: #ffffff;
+      --surface-hover: #f8fafc;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --brand: #2563eb;
+      --brand-light: #3b82f6;
+      --brand-dark: #1d4ed8;
+      --border: #e2e8f0;
+      --border-hover: #cbd5e1;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --shadow-strong: rgba(0, 0, 0, 0.15);
+      --nav-bg: #1e293b;
+      --nav-text: #f8fafc;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --code-bg: #1e293b;
+      --code-text: #e2e8f0;
+
+      --radius-s: 8px;
+      --radius-m: 12px;
+      --radius-l: 16px;
+      --space-1: 0.5rem;
+      --space-2: 0.75rem;
+      --space-3: 1rem;
+      --space-4: 1.5rem;
+      --space-5: 2rem;
+      --space-6: 3rem;
+      --maxw: 1000px;
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0f172a;
+      --bg-secondary: #1e293b;
+      --surface: #1e293b;
+      --surface-hover: #334155;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --brand: #60a5fa;
+      --brand-light: #93c5fd;
+      --brand-dark: #3b82f6;
+      --border: #334155;
+      --border-hover: #475569;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --shadow-strong: rgba(0, 0, 0, 0.4);
+      --nav-bg: #0f172a;
+      --nav-text: #f1f5f9;
+      --code-bg: #0d1117;
+      --code-text: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: var(--font);
+      background: linear-gradient(135deg, var(--bg) 0%, var(--bg-secondary) 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: var(--brand);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    a:hover { color: var(--brand-light); text-decoration: underline; }
+
+    /* Fejléc */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--nav-bg);
+      color: var(--nav-text);
+      border-bottom: 2px solid var(--brand);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .header-content {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: var(--space-3);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--space-3);
+      align-items: center;
+    }
+
+    .brand-area {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: clamp(1.25rem, 1rem + 1.5vw, 1.8rem);
+      letter-spacing: -0.025em;
+    }
+
+    .tagline {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      margin: 0;
+    }
+
+    .theme-toggle {
+      appearance: none;
+      background-color: var(--brand);
+      color: #fff;
+      border: 2px solid transparent;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-s);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      white-space: nowrap;
+    }
+    .theme-toggle:hover {
+      background-color: var(--brand-light);
+      transform: translateY(-1px);
+    }
+
+    /* Navigáció */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+
+    .nav-content {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 var(--space-3);
+    }
+
+    .mobile-toggle {
+      appearance: none;
+      background-color: var(--brand);
+      color: #fff;
+      border: none;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-s);
+      font-weight: 600;
+      cursor: pointer;
+      margin: var(--space-2) 0;
+      transition: background-color 0.2s ease;
+    }
+    .mobile-toggle:hover { background-color: var(--brand-light); }
+
+    .nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: none;
+      flex-direction: column;
+      gap: 0;
+    }
+    .nav-list.active {
+      display: flex;
+      padding-bottom: var(--space-3);
+    }
+
+    .nav-item { position: relative; }
+
+    .nav-link, .dropdown-toggle {
+      display: block;
+      padding: var(--space-2) var(--space-3);
+      color: var(--text);
+      font-weight: 500;
+      border-radius: var(--radius-s);
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+      background: none;
+      border: none;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-link:hover, .dropdown-toggle:hover {
+      background: var(--surface-hover);
+      text-decoration: none;
+    }
+
+    .dropdown {
+      display: none;
+      padding-left: var(--space-4);
+    }
+    .dropdown.active { display: block; }
+
+    @media (min-width: 768px) {
+      .mobile-toggle { display: none; }
+
+      .nav-list {
+        display: flex !important;
+        flex-direction: row;
+        align-items: center;
+        gap: var(--space-1);
+        padding: var(--space-2) 0;
+      }
+
+      .nav-link, .dropdown-toggle {
+        padding: var(--space-2);
+        white-space: nowrap;
+      }
+
+      .dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-s);
+        box-shadow: 0 8px 24px var(--shadow-strong);
+        min-width: 200px;
+        padding: var(--space-1);
+        display: none;
+        z-index: 200;
+      }
+
+      .nav-item:hover .dropdown { display: block; }
+    }
+
+    /* Fő tartalom */
+    main {
+      max-width: var(--maxw);
+      margin: var(--space-5) auto;
+      padding: 0 var(--space-3);
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+      border-radius: var(--radius-l);
+      padding: var(--space-5);
+      text-align: center;
+      box-shadow: 0 4px 16px var(--shadow);
+      margin-bottom: var(--space-5);
+      color: #fff;
+    }
+
+    .hero h1 {
+      margin: 0 0 var(--space-2) 0;
+      font-size: clamp(1.5rem, 1.2rem + 2vw, 2.5rem);
+      font-weight: 800;
+    }
+
+    .hero p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 1.1rem;
+    }
+
+    /* Vizsga info box */
+    .exam-info {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-l);
+      padding: var(--space-4);
+      margin-bottom: var(--space-4);
+      box-shadow: 0 4px 16px var(--shadow);
+    }
+
+    .exam-info h2 {
+      margin: 0 0 var(--space-3) 0;
+      color: var(--brand);
+      font-size: 1.3rem;
+    }
+
+    .exam-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: var(--space-3);
+      margin-bottom: var(--space-3);
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      padding: var(--space-3);
+      border-radius: var(--radius-m);
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .stat-card .value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--brand);
+    }
+
+    .stat-card .label {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Témakör táblázat */
+    .topics-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: var(--space-3);
+    }
+
+    .topics-table th,
+    .topics-table td {
+      padding: var(--space-2) var(--space-3);
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topics-table th {
+      background: var(--bg-secondary);
+      font-weight: 600;
+      color: var(--brand);
+    }
+
+    .topics-table tr:hover {
+      background: var(--surface-hover);
+    }
+
+    /* Témakör szekciók */
+    .topic-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-l);
+      margin-bottom: var(--space-4);
+      overflow: hidden;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+
+    .topic-header {
+      background: linear-gradient(135deg, var(--brand), var(--brand-light));
+      color: #fff;
+      padding: var(--space-3) var(--space-4);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .topic-header h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .topic-header .questions {
+      background: rgba(255,255,255,0.2);
+      padding: var(--space-1) var(--space-2);
+      border-radius: 999px;
+      font-size: 0.85rem;
+    }
+
+    .topic-content {
+      padding: var(--space-4);
+      display: none;
+    }
+
+    .topic-content.active {
+      display: block;
+    }
+
+    .topic-content h3 {
+      color: var(--brand);
+      margin: var(--space-4) 0 var(--space-2) 0;
+      padding-bottom: var(--space-1);
+      border-bottom: 2px solid var(--border);
+      font-size: 1.1rem;
+    }
+
+    .topic-content h3:first-child {
+      margin-top: 0;
+    }
+
+    .topic-content h4 {
+      color: var(--text);
+      margin: var(--space-3) 0 var(--space-2) 0;
+      font-size: 1rem;
+    }
+
+    .topic-content p {
+      margin-bottom: var(--space-2);
+    }
+
+    .topic-content ul,
+    .topic-content ol {
+      margin-left: var(--space-4);
+      margin-bottom: var(--space-3);
+    }
+
+    .topic-content li {
+      margin-bottom: var(--space-1);
+    }
+
+    /* Kód blokk */
+    .code-block {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: var(--space-3);
+      border-radius: var(--radius-m);
+      overflow-x: auto;
+      font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+      font-size: 0.85rem;
+      margin: var(--space-3) 0;
+      border: 1px solid var(--border);
+    }
+
+    .inline-code {
+      background: var(--bg-secondary);
+      color: var(--warning);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.85em;
+    }
+
+    :root[data-theme="dark"] .inline-code {
+      background: #334155;
+    }
+
+    /* Info táblázat */
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: var(--space-3) 0;
+    }
+
+    .info-table th,
+    .info-table td {
+      padding: var(--space-2);
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+
+    .info-table th {
+      background: var(--bg-secondary);
+      font-weight: 600;
+    }
+
+    /* Figyelmeztető dobozok */
+    .highlight-box {
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid var(--warning);
+      padding: var(--space-3);
+      margin: var(--space-3) 0;
+      border-radius: 0 var(--radius-s) var(--radius-s) 0;
+    }
+
+    .success-box {
+      background: rgba(34, 197, 94, 0.1);
+      border-left: 4px solid var(--success);
+      padding: var(--space-3);
+      margin: var(--space-3) 0;
+      border-radius: 0 var(--radius-s) var(--radius-s) 0;
+    }
+
+    .tip-box {
+      background: rgba(37, 99, 235, 0.1);
+      border-left: 4px solid var(--brand);
+      padding: var(--space-3);
+      margin: var(--space-3) 0;
+      border-radius: 0 var(--radius-s) var(--radius-s) 0;
+    }
+
+    .danger-box {
+      background: rgba(239, 68, 68, 0.1);
+      border-left: 4px solid var(--danger);
+      padding: var(--space-3);
+      margin: var(--space-3) 0;
+      border-radius: 0 var(--radius-s) var(--radius-s) 0;
+    }
+
+    /* Box model diagram */
+    .box-model {
+      text-align: center;
+      font-family: monospace;
+      background: var(--code-bg);
+      color: var(--success);
+      padding: var(--space-4);
+      border-radius: var(--radius-m);
+      margin: var(--space-3) 0;
+      border: 1px solid var(--border);
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    /* Tartalomjegyzék */
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-l);
+      padding: var(--space-4);
+      margin-bottom: var(--space-4);
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+
+    .toc h2 {
+      margin: 0 0 var(--space-3) 0;
+      color: var(--brand);
+    }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--space-2);
+    }
+
+    .toc-item {
+      padding: var(--space-2) var(--space-3);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-s);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.2s ease;
+      border: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    .toc-item:hover {
+      background: var(--surface-hover);
+      transform: translateX(4px);
+      border-color: var(--brand);
+      text-decoration: none;
+    }
+
+    .toc-num {
+      background: var(--brand);
+      color: #fff;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    /* Lábléc */
+    footer {
+      margin-top: var(--space-6);
+      background: var(--nav-bg);
+      color: var(--nav-text);
+      text-align: center;
+      padding: var(--space-4);
+      border-top: 2px solid var(--brand);
+    }
+
+    /* Fókusz */
+    :focus-visible {
+      outline: 2px solid var(--brand);
+      outline-offset: 2px;
+      border-radius: var(--radius-s);
+    }
+
+    /* Vissza gomb */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      background: var(--brand);
+      color: #fff;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-s);
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      margin-bottom: var(--space-4);
+    }
+    .back-btn:hover {
+      background: var(--brand-light);
+      text-decoration: none;
+      transform: translateY(-1px);
+      color: #fff;
+    }
+
+    /* Nyomtatás */
+    @media print {
+      header, nav, footer, .back-btn, .theme-toggle { display: none; }
+      .topic-content { display: block !important; }
+      .topic-section { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="brand-area">
+        <div class="logo">NorszStudy</div>
+        <p class="tagline">A Ganz Ábrahám 12K-13K tananyagai alapján</p>
+      </div>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" title="Téma váltása">🌓 Téma</button>
+    </div>
+  </header>
+
+  <nav role="navigation" aria-label="Fő navigáció">
+    <div class="nav-content">
+      <button id="mobile-nav-toggle" class="mobile-toggle" type="button" aria-expanded="false" aria-controls="main-nav">☰ Menü</button>
+
+      <ul id="main-nav" class="nav-list">
+        <li class="nav-item"><a href="index.html" class="nav-link">Főoldal</a></li>
+
+        <li class="nav-item">
+          <button id="subjects-toggle" class="dropdown-toggle" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="subjects-dropdown">
+            Tantárgyak ▾
+          </button>
+          <div id="subjects-dropdown" class="dropdown" role="menu" aria-label="Tantárgyak almenü">
+            <a href="töri.html" class="nav-link" role="menuitem">Történelem</a>
+            <a href="webprogi.html" class="nav-link" role="menuitem">Webprogramozás</a>
+          </div>
+        </li>
+
+        <li class="nav-item"><a href="orarend.html" class="nav-link">Órarend</a></li>
+        <li class="nav-item"><a href="yt-to-mp3.html" class="nav-link">Youtube Konverter</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">Kapcsolat</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <h1>🎯 OSZTV Szoftverfejlesztő és -tesztelő</h1>
+      <p>Teljes Elméleti Felkészítő Tananyag • 2026</p>
+    </section>
+
+    <!-- Vizsga információk -->
+    <div class="exam-info">
+      <h2>📋 A vizsga szerkezete</h2>
+      <div class="exam-stats">
+        <div class="stat-card">
+          <div class="value">20</div>
+          <div class="label">Kérdés</div>
+        </div>
+        <div class="stat-card">
+          <div class="value">45</div>
+          <div class="label">Perc</div>
+        </div>
+        <div class="stat-card">
+          <div class="value">60%</div>
+          <div class="label">Után mentesség</div>
+        </div>
+        <div class="stat-card">
+          <div class="value">2</div>
+          <div class="label">Pont/kérdés</div>
+        </div>
+      </div>
+      
+      <table class="topics-table">
+        <thead>
+          <tr><th>#</th><th>Témakör</th><th>Kérdések</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Csoportmunkaeszközök, Git</td><td>2</td></tr>
+          <tr><td>2</td><td>HTML5, CSS3</td><td>2</td></tr>
+          <tr><td>3</td><td>JavaScript, ECMAScript</td><td>2</td></tr>
+          <tr><td>4</td><td>Tiszta kód alapelvek</td><td>2</td></tr>
+          <tr><td>5</td><td>Adatbázis-tervezés, SQL</td><td>2</td></tr>
+          <tr><td>6</td><td>Mobil alkalmazásfejlesztés</td><td>1</td></tr>
+          <tr><td>7</td><td>Frontend JavaScript keretrendszerek</td><td>2</td></tr>
+          <tr><td>8</td><td>Backend nyelvek és keretrendszerek, ORM</td><td>2</td></tr>
+          <tr><td>9</td><td>Objektum Orientált Programozás (OOP)</td><td>2</td></tr>
+          <tr><td>10</td><td>Tartalomkezelő rendszerek (CMS)</td><td>1</td></tr>
+          <tr><td>11</td><td>Tesztelés</td><td>2</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- OSZTV figyelmeztetés -->
+    <div class="exam-info danger-box" style="border: 2px solid var(--warning); border-left-width: 4px;">
+      <h2 style="color: var(--warning);">⚠️ FONTOS OSZTV INFORMÁCIÓ</h2>
+      <p style="font-size: 1.05rem;">
+        A versenyszabályzat szerint: <strong style="color: var(--warning);">"A feladatokban a követelmények előírásainál magasabb követelményszint is előfordulhat"</strong>
+      </p>
+      <ul>
+        <li>A <strong>11 témakör változatlan</strong>, de a kérdések <strong>nehezebbek</strong> lehetnek</li>
+        <li>A verseny a <strong>teljes tananyagot</strong> lefedi</li>
+        <li>Mélyebb, gyakorlatiasabb tudást várnak el</li>
+        <li>Előfordulhatnak <strong>ágazati alapvizsga témák</strong> is magasabb szinten</li>
+      </ul>
+      <div class="tip-box">
+        <strong>💡 Javaslat:</strong> Gyakorolj az <a href="https://infojegyzet.hu/vizsgafeladatok/szoftverfejleszto-interaktiv/teszt/" target="_blank">infojegyzet.hu próbateszten</a> és nézd át a korábbi OSZTV feladatsorokat is!
+      </div>
+    </div>
+
+    <!-- Tartalomjegyzék -->
+    <div class="toc">
+      <h2>📚 Tartalomjegyzék <small style="font-weight: normal; color: var(--text-muted);">(kattints a megnyitáshoz)</small></h2>
+      <div class="toc-grid">
+        <div class="toc-item" onclick="openTopic(1)"><span class="toc-num">1</span>Csoportmunkaeszközök, Git</div>
+        <div class="toc-item" onclick="openTopic(2)"><span class="toc-num">2</span>HTML5, CSS3</div>
+        <div class="toc-item" onclick="openTopic(3)"><span class="toc-num">3</span>JavaScript, ECMAScript</div>
+        <div class="toc-item" onclick="openTopic(4)"><span class="toc-num">4</span>Tiszta kód alapelvek</div>
+        <div class="toc-item" onclick="openTopic(5)"><span class="toc-num">5</span>Adatbázis-tervezés, SQL</div>
+        <div class="toc-item" onclick="openTopic(6)"><span class="toc-num">6</span>Mobil alkalmazásfejlesztés</div>
+        <div class="toc-item" onclick="openTopic(7)"><span class="toc-num">7</span>Frontend keretrendszerek</div>
+        <div class="toc-item" onclick="openTopic(8)"><span class="toc-num">8</span>Backend és ORM</div>
+        <div class="toc-item" onclick="openTopic(9)"><span class="toc-num">9</span>OOP alapelvek</div>
+        <div class="toc-item" onclick="openTopic(10)"><span class="toc-num">10</span>CMS rendszerek</div>
+        <div class="toc-item" onclick="openTopic(11)"><span class="toc-num">11</span>Tesztelés</div>
+        <div class="toc-item" onclick="openTopic('extra')" style="background: rgba(239, 68, 68, 0.1); border-color: var(--danger);"><span class="toc-num" style="background: var(--danger);">🔥</span>Bónusz témák</div>
+      </div>
+    </div>
+
+    <!-- TÉMAKÖR 1: Git -->
+    <div class="topic-section" id="topic1">
+      <div class="topic-header" onclick="toggleTopic(1)">
+        <h2>1. Csoportmunkaeszközök, Git</h2>
+        <span class="questions">2 kérdés</span>
+      </div>
+      <div class="topic-content" id="content1">
+        <h3>Git alapfogalmak</h3>
+        <p><strong>Git:</strong> Elosztott verziókezelő rendszer (DVCS), Linus Torvalds készítette 2005-ben.</p>
+        
+        <table class="info-table">
+          <tr><th>Fogalom</th><th>Jelentés</th></tr>
+          <tr><td><span class="inline-code">Repository</span></td><td>Projekt tárolója, verzióelőzményekkel</td></tr>
+          <tr><td><span class="inline-code">Working Directory</span></td><td>Aktuális munkakönyvtár</td></tr>
+          <tr><td><span class="inline-code">Staging Area</span></td><td>Előkészítési terület commit előtt</td></tr>
+          <tr><td><span class="inline-code">Commit</span></td><td>Változtatások véglegesítése</td></tr>
+          <tr><td><span class="inline-code">Branch</span></td><td>Független fejlesztési ág</td></tr>
+          <tr><td><span class="inline-code">HEAD</span></td><td>Mutató az aktuális branch utolsó commitjára</td></tr>
+          <tr><td><span class="inline-code">Remote</span></td><td>Távoli repository</td></tr>
+          <tr><td><span class="inline-code">Clone</span></td><td>Repository teljes másolása</td></tr>
+          <tr><td><span class="inline-code">Fork</span></td><td>Repository másolata saját fiókba</td></tr>
+        </table>
+        
+        <h3>Alapvető Git parancsok</h3>
+        <div class="code-block"><code># Inicializálás
+git init                    # Új repo létrehozása
+git clone &lt;url&gt;             # Repo klónozása
+
+# Változtatások
+git status                  # Állapot
+git add .                   # Minden hozzáadása staging-hez
+git commit -m "üzenet"      # Commit
+
+# Branch műveletek
+git branch                  # Branch-ek listázása
+git checkout -b &lt;név&gt;       # Új branch és váltás
+git merge &lt;branch&gt;          # Branch beolvasztása
+
+# Távoli repo
+git push origin &lt;branch&gt;    # Feltöltés
+git pull                    # Letöltés és merge
+git fetch                   # Csak letöltés</code></div>
+        
+        <h3>GitFlow ágak</h3>
+        <ul>
+          <li><strong>main/master:</strong> Stabil, production-ready kód</li>
+          <li><strong>develop:</strong> Fejlesztési ág</li>
+          <li><strong>feature/xxx:</strong> Új funkciók</li>
+          <li><strong>release/xxx:</strong> Kiadás előkészítése</li>
+          <li><strong>hotfix/xxx:</strong> Sürgős javítások</li>
+        </ul>
+        
+        <h3>Platformok</h3>
+        <p><strong>GitHub</strong> (legnagyobb), <strong>GitLab</strong> (CI/CD integrált), <strong>Bitbucket</strong> (Atlassian)</p>
+        
+        <div class="tip-box">
+          <strong>💡 Fontos:</strong> Pull Request (PR) / Merge Request (MR) = változtatások beolvasztási kérelme
+        </div>
+      </div>
+    </div>
+
+    <!-- TÉMAKÖR 2: HTML5, CSS3 -->
+    <div class="topic-section" id="topic2">
+      <div class="topic-header" onclick="toggleTopic(2)">
+        <h2>2. HTML5, CSS3</h2>
+        <span class="questions">2 kérdés</span>
+      </div>
+      <div class="topic-content" id="content2">
+        <h3>HTML5 dokumentum struktúra</h3>
+        <div class="code-block"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="hu"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Cím&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!-- Tartalom --&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></div>
+        
+        <h3>Szemantikus HTML5 elemek</h3>
+        <table class="info-table">
+          <tr><th>Elem</th><th>Funkció</th></tr>
+          <tr><td><span class="inline-code">&lt;header&gt;</span></td><td>Fejléc</td></tr>
+          <tr><td><span class="inline-code">&lt;nav&gt;</span></td><td>Navigáció</td></tr>
+          <tr><td><span class="inline-code">&lt;main&gt;</span></td><td>Fő tartalom (egyszer!)</td></tr>
+          <tr><td><span class="inline-code">&lt;article&gt;</span></td><td>Önálló tartalom</td></tr>
+          <tr><td><span class="inline-code">&lt;section&gt;</span></td><td>Tartalmi szakasz</td></tr>
+          <tr><td><span class="inline-code">&lt;aside&gt;</span></td><td>Oldalsáv</td></tr>
+          <tr><td><span class="inline-code">&lt;footer&gt;</span></td><td>Lábléc</td></tr>
+        </table>
+        
+        <h3>CSS Szelektorok</h3>
+        <table class="info-table">
+          <tr><th>Típus</th><th>Példa</th><th>Leírás</th></tr>
+          <tr><td>Elem</td><td><span class="inline-code">p</span></td><td>Minden &lt;p&gt;</td></tr>
+          <tr><td>Osztály</td><td><span class="inline-code">.class</span></td><td>class attribútum</td></tr>
+          <tr><td>ID</td><td><span class="inline-code">#id</span></td><td>id attribútum</td></tr>
+          <tr><td>Leszármazott</td><td><span class="inline-code">div p</span></td><td>div-ben lévő p</td></tr>
+          <tr><td>Gyermek</td><td><span class="inline-code">div > p</span></td><td>Közvetlen gyermek</td></tr>
+        </table>
+        
+        <h3>Box Model (VIZSGÁN GYAKORI!)</h3>
+        <div class="box-model">+---------------------------+
+|         margin            |
+|  +---------------------+  |
+|  |      border         |  |
+|  |  +---------------+  |  |
+|  |  |   padding     |  |  |
+|  |  | +---------+   |  |  |
+|  |  | | content |   |  |  |
+|  |  | +---------+   |  |  |
+|  |  +---------------+  |  |
+|  +---------------------+  |
++---------------------------+</div>
+        
+        <div class="highlight-box">
+          <strong>⚠️ FONTOS:</strong> A <strong>margin NEM számít bele</strong> az elem szélességébe!<br><br>
+          <span class="inline-code">box-sizing: content-box</span> (alap): width = content<br>
+          <span class="inline-code">box-sizing: border-box</span>: width = content + padding + border
+        </div>
+        
+        <h3>Flexbox (FONTOS!)</h3>
+        <div class="code-block"><code>.container {
+    display: flex;
+    flex-direction: row | column;
+    justify-content: flex-start | center | space-between | space-around;
+    align-items: stretch | center | flex-start | flex-end;
+    flex-wrap: wrap | nowrap;
+    gap: 10px;
+}</code></div>
+        
+        <h3>Media Query (Reszponzív)</h3>
+        <div class="code-block"><code>@media (min-width: 768px) {
+    /* Tablet és nagyobb */
+}
+
+@media (max-width: 768px) {
+    /* Tablet és kisebb */
+}</code></div>
+        
+        <h3>CSS Specificitás</h3>
+        <ol>
+          <li><span class="inline-code">!important</span> (kerülendő!)</li>
+          <li>Inline style</li>
+          <li>ID (#id) - 100 pont</li>
+          <li>Osztály (.class) - 10 pont</li>
+          <li>Elem (p) - 1 pont</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- TÉMAKÖR 3: JavaScript -->
+    <div class="topic-section" id="topic3">
+      <div class="topic-header" onclick="toggleTopic(3)">
+        <h2>3. JavaScript, ECMAScript</h2>
+        <span class="questions">2 kérdés</span>
+      </div>
+      <div class="topic-content" id="content3">
+        <h3>Változó deklarálás</h3>
+        <div class="code-block"><code>var x = 1;    // Régi, function scope, hoisting
+let y = 2;    // Blokk scope, újradeklarálás nem lehet
+const z = 3;  // Konstans, blokk scope</code></div>
+        
+        <h3>Adattípusok</h3>
+        <p><strong>Primitív:</strong> number, string, boolean, undefined, null, symbol, bigint</p>
+        <p><strong>Összetett:</strong> object, array, function</p>
+        
+        <div class="highlight-box">
+          <strong>⚠️ FONTOS typeof:</strong><br>
+          <span class="inline-code">typeof null</span> = "object" (JavaScript bug!)<br>
+          <span class="inline-code">typeof []</span> = "object" (használj Array.isArray())
+        </div>
+        
+        <h3>Összehasonlítás</h3>
+        <div class="code-block"><code>==   // Egyenlő (típuskonverzióval!)
+===  // Szigorúan egyenlő (típus is!) ← MINDIG EZT HASZNÁLD!
+
+5 == "5"    // true (típuskonverzió!)
+5 === "5"   // false</code></div>
+        
+        <h3>Arrow Function (ES6)</h3>
+        <div class="code-block"><code>const add = (a, b) => a + b;
+const greet = name => `Hello, ${name}!`;</code></div>
+        
+        <h3>Tömb metódusok (FONTOS!)</h3>
+        <div class="code-block"><code>arr.map(x => x * 2);           // Transzformál
+arr.filter(x => x > 2);        // Szűr
+arr.find(x => x > 2);          // Első találat
+arr.some(x => x > 2);          // Van-e ilyen
+arr.every(x => x > 0);         // Mind ilyen-e
+arr.reduce((acc, x) => acc + x, 0);  // Összegez</code></div>
+        
+        <h3>DOM események</h3>
+        <div class="tip-box">
+          <strong>💡 VIZSGA:</strong> <span class="inline-code">onload</span> = eseménykezelő attribútum, <span class="inline-code">load</span> = az esemény neve
+        </div>
+        
+        <h3>Promise és Async/Await</h3>
+        <div class="code-block"><code>// Async/Await
+async function getData() {
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+    }
+}</code></div>
+      </div>
+    </div>
+
+    <!-- TÉMAKÖR 4: Clean Code -->
+    <div class="topic-section" id="topic4">
+      <div class="topic-header" onclick="toggleTopic(4)">
+        <h2>4. Tiszta kód alapelvek</h2>
+        <span class="questions">2 kérdés</span>
+      </div>
+      <div class="topic-content" id="content4">
+        <h3>SOLID elvek</h3>
+        <table class="info-table">
+          <tr><th>Betű</th><th>Elv</th><th>Jelentés</th></tr>
+          <tr><td><strong>S</strong></td><td>Single Responsibility</td><td>Egy osztály egy felelősség</td></tr>
+          <tr><td><strong>O</strong></td><td>Open/Closed</td><td>Nyitott bővítésre, zárt módosításra</td></tr>
+          <tr><td><strong>L</strong></td><td>Liskov Substitution</td><td>Leszármazott behelyettesíthető</td></tr>
+          <tr><td><strong>I</strong></td><td>Interface Segregation</td><td>Kis, specifikus interfészek</td></tr>
+          <tr><td><strong>D</strong></td><td>Dependency Inversion</td><td>Absztrakciótól függjön</td></tr>
+        </table>
+        
+        <h3>További elvek</h3>
+        <ul>
+          <li><strong>DRY</strong> - Don't Repeat Yourself (Ne ismételd magad)</li>
+          <li><strong>KISS</strong> - Keep It Simple, Stupid (Egyszerűség)</li>
+          <li><strong>YAGNI</strong> - You Aren't Gonna Need It (Ne fejlessz feleslegeset)</li>
+        </ul>
+        
+        <h3>Elnevezési konvenciók</h3>
+        <ul>
+          <li><strong>camelCase</strong> - JavaScript változók, függvények</li>
+          <li><strong>PascalCase</strong> - Osztályok, komponensek</li>
+          <li><strong>SCREAMING_SNAKE_CASE</strong> - Konstansok</li>
+          <li><strong>snake_case</strong> - Python, adatbázis</li>
+        </ul>
+        
+        <h3>Code Smell-ek</h3>
+        <p>Long Method, Large Class, Duplicate Code, Dead Code, Magic Numbers, Deeply Nested Code, God Object</p>
+        
+        <h3>Refactoring</h3>
+        <p>A kód szerkezetének javítása a működés megváltoztatása nélkül.</p>
+      </div>
+    </div>
+
+    <!-- TÉMAKÖR 5: Adatbázis, SQL -->
+    <div class="topic-section" id="topic5">
+      <div class="topic-header" onclick="toggleTopic(5)">
+        <h2>5. Adatbázis-tervezés, SQL</h2>
+        <span class="questions">2 kérdés</span>
+      </div>
+      <div class="topic-content" id="content5">
+        <h3>Alapfogalmak</h3>
+        <table class="info-table">
+          <tr><th>Fogalom</th><th>Jelentés</th></tr>
+          <tr><td>Primary Key</td><td>Elsődleges kulcs, egyedi azonosító</td></tr>
+          <tr><td>Foreign Key</td><td>Idegen kulcs, kapcsolat másik táblához</td></tr>
+          <tr><td>1:N kapcsolat</td><td>Egy-sok (pl. osztály - tanulók)</td></tr>
+          <tr><td>N:M kapcsolat</td><td>Sok-sok (kapcsolótábla kell!)</td></tr>
+        </table>
+        
+        <h3>SQL parancsok</h3>
+        <div class="code-block"><code>-- SELECT
+SELECT * FROM users WHERE age > 18;
+SELECT * FROM users ORDER BY name ASC;
+SELECT DISTINCT city FROM users;
+
+-- INSERT
+INSERT INTO users (name, email) VALUES ('János', '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2943694c44484045074a4644">[email&#160;protected]</a>');
+
+-- UPDATE
+UPDATE users SET age = 25 WHERE id = 1;
+
+-- DELETE
+DELETE FROM users WHERE id = 1;</code></div>
+        
+        <h3>JOIN-ok (NAGYON FONTOS!)</h3>
+        <div class="code-block"><code>-- INNER JOIN - Csak egyezők
+SELECT * FROM users u
+INNER JOIN orders o ON u.id = o.user_id;
+
+-- LEFT JOIN - Bal tábla összes sora
+SELECT * FROM users u
+LEFT JOIN orders o ON u.id = o.user_id;</code></div>
+        
+        <h3>Aggregáló függvények</h3>
+        <div class="code-block"><code>SELECT COUNT(*) FROM users;
+SELECT SUM(price), AVG(price) FROM orders;
+SELECT city, COUNT(*) FROM users GROUP BY city;
+SELECT city, COUNT(*) FROM users GROUP BY city HAVING COUNT(*) > 10;</code></div>
+        
+        <h3>NoSQL típusok</h3>
+        <p><strong>Dokumentum:</strong> MongoDB | <strong>Kulcs-érték:</strong> Redis | <strong>Gráf:</strong> Neo4j</p>
+      </div>
+    </div>
+
+    <!-- TÉMAKÖR 6: Mobil -->
+    <div class="topic-section" id="topic6">
+      <div class="topic-header" onclick="toggleTopic(6)">
+        <h2>6. Mobil alkalmazásfejlesztés</h2>
+        <span class="questions">1 kérdés</span>
+      </div>
+      <div class="topic-content" id="content6">
+        <h3>Megközelítések</h3>
+        <table class="info-table">
+          <tr><th>Típus</th><th>Technológia</th><th>Jellemző</th></tr>
+          <tr><td>Natív Android</td><td>Java, Kotlin</td><td>Legjobb teljesítmény</td></tr>
+          <tr><td>Natív iOS</td><td>Swift</td><td>Platform-specifikus</td></tr>
+          <tr><td>Cross-platform</td><td>React Native, Flutter</td><td>Egy kódbázis</td></tr>
+          <tr><td>Hibrid</td><td>Ionic, Cordova</td><td>WebView alapú</td></tr>
+          <tr><td>PWA</td><td>Web technológiák</td><td>Telepíthető web app</td></tr>
+        </table>
+        
+        <h3>Android komponensek</h3>
+        <ul>
+          <li><strong>Activity:</strong> Felhasználói felület</li>
+          <li><strong>Fragment:</strong> Újrafelhasználható UI rész</li>
+          <li><strong>Service:</strong> Háttérfolyamat</li>
+          <li><strong>Broadcast Receiver:</strong> Rendszerüzenetek</li>
+        </ul>
+        
+        <h3>Android Activity életciklus</h3>
+        <p>onCreate() → onStart() → onResume() → [Futás] → onPause() → onStop() → onDestroy()</p>
+      </div>
+    </div>
+
+    <!-- TÉMAKÖR 7: Frontend keretrendszerek -->
+    <div class="topic-section" id="topic7">
+      <div class="topic-header" onclick="toggleTopic(7)">
+        <h2>7. Frontend JavaScript keretrendszerek</h2>
+        <span class="questions">2 kérdés</span>
+      </div>
+      <div class="topic-content" id="content7">
+        <h3>Összehasonlítás</h3>
+        <table class="info-table">
+          <tr><th>Tulajdonság</th><th>React</th><th>Vue</th><th>Angular</th></tr>
+          <tr><td>Típus</td><td><strong>Könyvtár!</strong></td><td>Keretrendszer</td><td>Keretrendszer</td></tr>
+          <tr><td>Fejlesztő</td><td>Facebook</td><td>Evan You</td><td>Google</td></tr>
+          <tr><td>Nyelv</td><td>JSX</td><td>Template</td><td>TypeScript</td></tr>
+          <tr><td>Adatkötés</td><td>Egyirányú</td><td>Kétirányú</td><td>Kétirányú</td></tr>
+        </table>
+        
+        <div class="highlight-box">
+          <strong>⚠️ VIZSGA:</strong> A React <strong>KÖNYVTÁR</strong>, nem keretrendszer!
+        </div>
+        
+        <h3>React példa</h3>
+        <div class="code-block"><code>import { useState } from 'react';
+
+function Counter() {
+    const [count, setCount] = useState(0);
+    return (
+        &lt;button onClick={() => setCount(count + 1)}&gt;
+            Count: {count}
+        &lt;/button&gt;
+    );
+}</code></div>
+        
+        <h3>Közös fogalmak</h3>
+        <ul>
+          <li><strong>SPA:</strong> Single Page Application - egy HTML, JS frissít</li>
+          <li><strong>Virtual DOM:</strong> Memóriában tárolt DOM másolat</li>
+          <li><strong>Component:</strong> Újrafelhasználható UI egység</li>
+          <li><strong>Props:</strong> Bemeneti adatok</li>
+          <li><strong>State:</strong> Belső állapot</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- TÉMAKÖR 8: Backend, ORM -->
+    <div class="topic-section" id="topic8">
+      <div class="topic-header" onclick="toggleTopic(8)">
+        <h2>8. Backend nyelvek és keretrendszerek, ORM</h2>
+        <span class="questions">2 kérdés</span>
+      </div>
+      <div class="topic-content" id="content8">
+        <h3>Népszerű backend technológiák</h3>
+        <table class="info-table">
+          <tr><th>Nyelv</th><th>Keretrendszer</th></tr>
+          <tr><td>JavaScript</td><td>Node.js + Express</td></tr>
+          <tr><td>Python</td><td>Django, Flask</td></tr>
+          <tr><td>PHP</td><td>Laravel</td></tr>
+          <tr><td>Java</td><td>Spring Boot</td></tr>
+          <tr><td>C#</td><td>ASP.NET Core</td></tr>
+        </table>
+        
+        <h3>ORM (Object-Relational Mapping)</h3>
+        <p>Objektum-orientált programozás és relációs adatbázis közötti híd.</p>
+        <table class="info-table">
+          <tr><th>Nyelv</th><th>ORM</th></tr>
+          <tr><td>JavaScript</td><td>Sequelize, Prisma, TypeORM</td></tr>
+          <tr><td>Python</td><td>Django ORM, SQLAlchemy</td></tr>
+          <tr><td>PHP</td><td>Eloquent</td></tr>
+        </table>
+        
+        <h3>REST API HTTP metódusok</h3>
+        <table class="info-table">
+          <tr><th>Metódus</th><th>Művelet</th><th>Példa</th></tr>
+          <tr><td>GET</td><td>Olvasás</td><td>GET /users</td></tr>
+          <tr><td>POST</td><td>Létrehozás</td><td>POST /users</td></tr>
+          <tr><td>PUT</td><td>Teljes frissítés</td><td>PUT /users/1</td></tr>
+          <tr><td>PATCH</td><td>Részleges frissítés</td><td>PATCH /users/1</td></tr>
+          <tr><td>DELETE</td><td>Törlés</td><td>DELETE /users/1</td></tr>
+        </table>
+        
+        <h3>HTTP státuszkódok</h3>
+        <p><strong>200</strong> OK | <strong>201</strong> Created | <strong>400</strong> Bad Request | <strong>401</strong> Unauthorized | <strong>404</strong> Not Found | <strong>500</strong> Server Error</p>
+      </div>
+    </div>
+
+    <!-- TÉMAKÖR 9: OOP -->
+    <div class="topic-section" id="topic9">
+      <div class="topic-header" onclick="toggleTopic(9)">
+        <h2>9. Objektum Orientált Programozás (OOP)</h2>
+        <span class="questions">2 kérdés</span>
+      </div>
+      <div class="topic-content" id="content9">
+        <h3>OOP négy alapelve (NAGYON FONTOS!)</h3>
+        <table class="info-table">
+          <tr><th>Elv</th><th>Magyar</th><th>Leírás</th></tr>
+          <tr><td><strong>Encapsulation</strong></td><td>Egységbezárás</td><td>Adatok és metódusok összetartoznak, hozzáférés korlátozása</td></tr>
+          <tr><td><strong>Inheritance</strong></td><td>Öröklődés</td><td>Új osztály meglévőből, kód újrafelhasználás</td></tr>
+          <tr><td><strong>Polymorphism</strong></td><td>Polimorfizmus</td><td>Ugyanaz a metódus különbözőképpen viselkedik</td></tr>
+          <tr><td><strong>Abstraction</strong></td><td>Absztrakció</td><td>Komplexitás elrejtése</td></tr>
+        </table>
+        
+        <h3>JavaScript osztály</h3>
+        <div class="code-block"><code>class Animal {
+    constructor(name) {
+        this.name = name;
+    }
+    speak() {
+        console.log(`${this.name} makes a sound.`);
+    }
+}
+
+class Dog extends Animal {
+    constructor(name, breed) {
+        super(name);  // Szülő konstruktor
+        this.breed = breed;
+    }
+    speak() {
+        console.log(`${this.name} barks.`);  // Felülírás
+    }
+}</code></div>
+        
+        <h3>Property (Getter/Setter)</h3>
+        <div class="code-block"><code>class Person {
+    #age;  // Privát mező
+    
+    get age() { return this.#age; }
+    set age(value) { 
+        if (value >= 0) this.#age = value; 
+    }
+}</code></div>
+        
+        <h3>Static tagok</h3>
+        <p>Osztályhoz tartozik, nem példányhoz. Pl.: <span class="inline-code">Math.PI</span>, <span class="inline-code">Math.random()</span></p>
+      </div>
+    </div>
+
+    <!-- TÉMAKÖR 10: CMS -->
+    <div class="topic-section" id="topic10">
+      <div class="topic-header" onclick="toggleTopic(10)">
+        <h2>10. Tartalomkezelő rendszerek (CMS)</h2>
+        <span class="questions">1 kérdés</span>
+      </div>
+      <div class="topic-content" id="content10">
+        <h3>Mi a CMS?</h3>
+        <p><strong>Content Management System</strong> - Webes tartalom létrehozása és kezelése kód nélkül, WYSIWYG szerkesztés.</p>
+        
+        <h3>Népszerű CMS-ek</h3>
+        <table class="info-table">
+          <tr><th>CMS</th><th>Jellemző</th></tr>
+          <tr><td><strong>WordPress</strong></td><td>Legnépszerűbb (40%+ web), PHP + MySQL</td></tr>
+          <tr><td><strong>Drupal</strong></td><td>Vállalati szintű, erős jogosultságkezelés</td></tr>
+          <tr><td><strong>Joomla</strong></td><td>Közepes komplexitás, többnyelvű</td></tr>
+          <tr><td><strong>Strapi</strong></td><td>Headless, Node.js</td></tr>
+        </table>
+        
+        <h3>Hagyományos vs Headless</h3>
+        <ul>
+          <li><strong>Hagyományos:</strong> Frontend + Backend együtt, témák</li>
+          <li><strong>Headless:</strong> Csak backend, API-n keresztül, rugalmasabb</li>
+        </ul>
+        
+        <h3>WordPress fogalmak</h3>
+        <p>Bejegyzés (Post), Oldal (Page), Téma (Theme), Bővítmény (Plugin), Widget, Menü, Kategória, Címke</p>
+      </div>
+    </div>
+
+    <!-- TÉMAKÖR 11: Tesztelés -->
+    <div class="topic-section" id="topic11">
+      <div class="topic-header" onclick="toggleTopic(11)">
+        <h2>11. Tesztelés</h2>
+        <span class="questions">2 kérdés</span>
+      </div>
+      <div class="topic-content" id="content11">
+        <h3>Tesztelési piramis</h3>
+        <ul>
+          <li><strong>Unit teszt:</strong> Legkisebb egységek (függvények), sok, gyors</li>
+          <li><strong>Integrációs teszt:</strong> Komponensek együttműködése</li>
+          <li><strong>E2E teszt:</strong> Teljes alkalmazás, felhasználói szcenáriók</li>
+        </ul>
+        
+        <h3>Tesztelési módszerek</h3>
+        <table class="info-table">
+          <tr><th>Típus</th><th>Leírás</th></tr>
+          <tr><td>Black-box</td><td>Belső működés ismeretlen, bemenet-kimenet</td></tr>
+          <tr><td>White-box</td><td>Kód ismeretében, lefedettség</td></tr>
+          <tr><td>Gray-box</td><td>Részleges ismeret</td></tr>
+        </table>
+        
+        <h3>TDD (Test-Driven Development)</h3>
+        <ol>
+          <li>Teszt írása (piros - sikertelen)</li>
+          <li>Minimális kód (zöld - sikeres)</li>
+          <li>Refaktorálás</li>
+        </ol>
+        
+        <h3>BDD (Behavior-Driven Development)</h3>
+        <p>Given-When-Then szintaxis, üzleti nyelv</p>
+        
+        <h3>Keretrendszerek</h3>
+        <p><strong>Unit:</strong> Jest, Mocha, Jasmine | <strong>E2E:</strong> Cypress, Playwright, Selenium</p>
+        
+        <h3>Jest példa</h3>
+        <div class="code-block"><code>describe('Calculator', () => {
+    test('adds 1 + 2 to equal 3', () => {
+        expect(add(1, 2)).toBe(3);
+    });
+});</code></div>
+        
+        <h3>Fontos fogalmak</h3>
+        <ul>
+          <li><strong>Mock:</strong> Teljes helyettesítő objektum</li>
+          <li><strong>Stub:</strong> Előre definiált válaszok</li>
+          <li><strong>Spy:</strong> Hívások figyelése</li>
+          <li><strong>Coverage:</strong> Kód lefedettség</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- BÓNUSZ: Emelt szintű témák -->
+    <div class="topic-section" id="topicextra">
+      <div class="topic-header" style="background: linear-gradient(135deg, #dc2626, #991b1b);" onclick="toggleTopic('extra')">
+        <h2>🔥 BÓNUSZ: Emelt szintű OSZTV témák</h2>
+        <span class="questions">Extra felkészülés</span>
+      </div>
+      <div class="topic-content" id="contentextra">
+        <div class="highlight-box">
+          <strong>⚠️ Fontos:</strong> Az OSZTV versenyen előfordulhatnak nehezebb kérdések ezekből a területekből. A versenyszabályzat lehetővé teszi a magasabb szintű kérdéseket!
+        </div>
+        
+        <!-- TypeScript -->
+        <h3>TypeScript alapok</h3>
+        <p>A TypeScript a JavaScript típusos kiterjesztése, ami fordításkor JavaScript kódot generál.</p>
+        
+        <h4>Alaptípusok</h4>
+        <div class="code-block"><code>// Primitív típusok
+let name: string = "János";
+let age: number = 25;
+let isActive: boolean = true;
+let data: any = "bármi";        // Kerülendő!
+let nothing: void = undefined;  // Függvény visszatérési érték
+let impossible: never;          // Soha nem térhet vissza
+
+// Tömbök
+let numbers: number[] = [1, 2, 3];
+let names: Array&lt;string&gt; = ["A", "B"];
+
+// Tuple (fix hosszú, típusos tömb)
+let tuple: [string, number] = ["hello", 10];</code></div>
+        
+        <h4>Interface vs Type</h4>
+        <div class="code-block"><code>// Interface - objektum alakjának leírása
+interface User {
+    id: number;
+    name: string;
+    email?: string;  // Opcionális
+    readonly createdAt: Date;  // Csak olvasható
+}
+
+// Type alias - bármilyen típus
+type ID = string | number;  // Union type
+type Point = { x: number; y: number };
+
+// Különbség: interface bővíthető, type nem
+interface Admin extends User {
+    role: string;
+}</code></div>
+        
+        <h4>Generics (Általánosított típusok)</h4>
+        <div class="code-block"><code>// Generikus függvény
+function identity&lt;T&gt;(arg: T): T {
+    return arg;
+}
+
+// Használat
+let output1 = identity&lt;string&gt;("hello");
+let output2 = identity&lt;number&gt;(42);
+
+// Generikus interface
+interface ApiResponse&lt;T&gt; {
+    data: T;
+    status: number;
+    message: string;
+}
+
+// Használat
+const userResponse: ApiResponse&lt;User&gt; = {
+    data: { id: 1, name: "János" },
+    status: 200,
+    message: "OK"
+};</code></div>
+        
+        <h4>Union és Intersection típusok</h4>
+        <div class="code-block"><code>// Union: VAGY (egyik vagy másik)
+type StringOrNumber = string | number;
+let value: StringOrNumber = "hello";
+value = 42;  // OK
+
+// Intersection: ÉS (mindkettő)
+type Employee = User & { department: string };
+
+// Type Guard
+function printId(id: string | number) {
+    if (typeof id === "string") {
+        console.log(id.toUpperCase());  // string metódusok
+    } else {
+        console.log(id.toFixed(2));     // number metódusok
+    }
+}</code></div>
+        
+        <div class="tip-box">
+          <strong>💡 Vizsga tipp:</strong> A TypeScript <strong>fordításkor</strong> ellenőrzi a típusokat, futáskor már tiszta JavaScript fut!
+        </div>
+
+        <!-- Számrendszerek -->
+        <h3>Számrendszerek közti átváltás</h3>
+        
+        <h4>Alapvető számrendszerek</h4>
+        <table class="info-table">
+          <tr><th>Számrendszer</th><th>Alap</th><th>Számjegyek</th><th>Használat</th></tr>
+          <tr><td>Bináris</td><td>2</td><td>0, 1</td><td>Számítógép belső működése</td></tr>
+          <tr><td>Oktális</td><td>8</td><td>0-7</td><td>Unix jogosultságok (chmod)</td></tr>
+          <tr><td>Decimális</td><td>10</td><td>0-9</td><td>Hétköznapi használat</td></tr>
+          <tr><td>Hexadecimális</td><td>16</td><td>0-9, A-F</td><td>Memóriacímek, színkódok</td></tr>
+        </table>
+        
+        <h4>Decimálisból más számrendszerbe</h4>
+        <p><strong>Módszer:</strong> Osztás az alappal, maradékok visszafelé olvasása</p>
+        <div class="code-block"><code>// 156₁₀ → bináris (2-es)
+156 ÷ 2 = 78, maradék: 0
+ 78 ÷ 2 = 39, maradék: 0
+ 39 ÷ 2 = 19, maradék: 1
+ 19 ÷ 2 = 9,  maradék: 1
+  9 ÷ 2 = 4,  maradék: 1
+  4 ÷ 2 = 2,  maradék: 0
+  2 ÷ 2 = 1,  maradék: 0
+  1 ÷ 2 = 0,  maradék: 1
+Eredmény: 10011100₂ (alulról felfelé olvasva)
+
+// 255₁₀ → hexadecimális (16-os)
+255 ÷ 16 = 15, maradék: 15 (F)
+ 15 ÷ 16 = 0,  maradék: 15 (F)
+Eredmény: FF₁₆</code></div>
+        
+        <h4>Más számrendszerből decimálisba</h4>
+        <p><strong>Módszer:</strong> Helyiértékek összeadása (alap hatványai)</p>
+        <div class="code-block"><code>// 10011100₂ → decimális
+1×2⁷ + 0×2⁶ + 0×2⁵ + 1×2⁴ + 1×2³ + 1×2² + 0×2¹ + 0×2⁰
+= 128  +  0   +  0   +  16  +  8   +  4   +  0   +  0
+= 156₁₀
+
+// A3F₁₆ → decimális
+A×16² + 3×16¹ + F×16⁰
+= 10×256 + 3×16 + 15×1
+= 2560 + 48 + 15
+= 2623₁₀</code></div>
+        
+        <h4>Bináris ↔ Hexadecimális (gyors átváltás)</h4>
+        <p><strong>Szabály:</strong> 4 bináris számjegy = 1 hexadecimális számjegy</p>
+        <div class="code-block"><code>// Bináris → Hex: 4-esével csoportosítás
+10011100₂
+= 1001 1100
+=  9    C
+= 9C₁₆
+
+// Hex → Bináris: minden hex számjegy 4 bit
+A3F₁₆
+A = 1010
+3 = 0011
+F = 1111
+= 101000111111₂
+
+// Gyors konverzió táblázat
+0 = 0000    8 = 1000
+1 = 0001    9 = 1001
+2 = 0010    A = 1010
+3 = 0011    B = 1011
+4 = 0100    C = 1100
+5 = 0101    D = 1101
+6 = 0110    E = 1110
+7 = 0111    F = 1111</code></div>
+        
+        <h4>JavaScript átváltás</h4>
+        <div class="code-block"><code>// Decimálisból más számrendszerbe
+(156).toString(2);   // "10011100" (bináris)
+(156).toString(8);   // "234" (oktális)
+(156).toString(16);  // "9c" (hexadecimális)
+
+// Más számrendszerből decimálisba
+parseInt("10011100", 2);  // 156 (binárisból)
+parseInt("234", 8);       // 156 (oktálisból)
+parseInt("9c", 16);       // 156 (hexadecimálisból)
+
+// Prefix jelölések
+0b10011100  // bináris literál = 156
+0o234       // oktális literál = 156
+0x9C        // hexadecimális literál = 156</code></div>
+        
+        <h4>Bináris aritmetika</h4>
+        <div class="code-block"><code>// Összeadás (carry-vel)
+  1011  (11)
++ 0110  (6)
+------
+ 10001  (17)
+
+// Szabályok: 0+0=0, 0+1=1, 1+0=1, 1+1=10 (carry 1)
+
+// Bitműveletek
+AND (&amp;):  1011 &amp; 0110 = 0010  (mindkettő 1 kell)
+OR  (|):  1011 | 0110 = 1111  (legalább egy 1)
+XOR (^):  1011 ^ 0110 = 1101  (pontosan egy 1)
+NOT (~):  ~1011 = 0100        (bitek megfordítása)
+
+// Bit eltolás
+&lt;&lt; (balra): 0011 &lt;&lt; 2 = 1100 (×4)
+&gt;&gt; (jobbra): 1100 &gt;&gt; 2 = 0011 (÷4)</code></div>
+        
+        <div class="highlight-box">
+          <strong>⚠️ Gyakori vizsga kérdések:</strong>
+          <ul>
+            <li>Decimális → bináris átváltás (osztásos módszer)</li>
+            <li>Bináris → hexadecimális (4-es csoportosítás)</li>
+            <li>Hexadecimális színkódok (#FF0000 = piros)</li>
+            <li>Bitműveletek eredményei</li>
+          </ul>
+        </div>
+
+        <!-- Haladó SQL -->
+        <h3>Haladó SQL</h3>
+        
+        <h4>Window Functions (Ablakfüggvények)</h4>
+        <p>Számítások végzése sorok egy "ablakán" keresztül, a GROUP BY-tól eltérően megtartja az összes sort.</p>
+        <div class="code-block"><code>-- ROW_NUMBER: Egyedi sorszám minden sornak
+SELECT 
+    name, 
+    department,
+    salary,
+    ROW_NUMBER() OVER (ORDER BY salary DESC) as rank
+FROM employees;
+
+-- RANK: Rangsorolás (egyenlő értékeknél ugyanaz a rang, utána ugrik)
+SELECT 
+    name,
+    salary,
+    RANK() OVER (ORDER BY salary DESC) as salary_rank
+FROM employees;
+-- Ha 2 ember keres 100000-et: 1, 1, 3 (nem 1, 1, 2!)
+
+-- DENSE_RANK: Sűrű rangsorolás (nem ugrik)
+-- Eredmény: 1, 1, 2 (nem hagy ki számot)
+
+-- PARTITION BY: Csoportokon belüli ablak
+SELECT 
+    name,
+    department,
+    salary,
+    ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) as dept_rank
+FROM employees;
+-- Minden részlegen újrakezdődik a számozás</code></div>
+        
+        <h4>Egyéb hasznos Window Functions</h4>
+        <div class="code-block"><code>-- LAG: Előző sor értéke
+-- LEAD: Következő sor értéke
+SELECT 
+    date,
+    sales,
+    LAG(sales, 1) OVER (ORDER BY date) as previous_day,
+    LEAD(sales, 1) OVER (ORDER BY date) as next_day
+FROM daily_sales;
+
+-- SUM() OVER: Futó összeg
+SELECT 
+    date,
+    amount,
+    SUM(amount) OVER (ORDER BY date) as running_total
+FROM transactions;
+
+-- AVG() OVER: Mozgó átlag
+SELECT 
+    date,
+    price,
+    AVG(price) OVER (ORDER BY date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) as week_avg
+FROM stock_prices;</code></div>
+        
+        <h4>Common Table Expressions (CTE)</h4>
+        <div class="code-block"><code>-- Egyszerű CTE
+WITH active_users AS (
+    SELECT * FROM users WHERE status = 'active'
+)
+SELECT * FROM active_users WHERE age > 18;
+
+-- Több CTE
+WITH 
+    dept_salaries AS (
+        SELECT department, AVG(salary) as avg_salary
+        FROM employees
+        GROUP BY department
+    ),
+    high_salary_depts AS (
+        SELECT * FROM dept_salaries WHERE avg_salary > 50000
+    )
+SELECT * FROM high_salary_depts;
+
+-- Rekurzív CTE (hierarchia bejárás)
+WITH RECURSIVE subordinates AS (
+    -- Kiindulási pont
+    SELECT id, name, manager_id, 0 as level
+    FROM employees WHERE id = 1
+    
+    UNION ALL
+    
+    -- Rekurzív rész
+    SELECT e.id, e.name, e.manager_id, s.level + 1
+    FROM employees e
+    INNER JOIN subordinates s ON e.manager_id = s.id
+)
+SELECT * FROM subordinates;</code></div>
+        
+        <h4>Tranzakciók</h4>
+        <div class="code-block"><code>-- Tranzakció kezdése
+BEGIN TRANSACTION;  -- vagy START TRANSACTION;
+
+-- Műveletek
+UPDATE accounts SET balance = balance - 100 WHERE id = 1;
+UPDATE accounts SET balance = balance + 100 WHERE id = 2;
+
+-- Ha minden OK
+COMMIT;
+
+-- Ha hiba történt
+ROLLBACK;
+
+-- SAVEPOINT: Részleges visszaállítás
+BEGIN;
+UPDATE products SET price = price * 1.1;
+SAVEPOINT price_update;
+DELETE FROM products WHERE stock = 0;
+ROLLBACK TO price_update;  -- Csak a DELETE-et vonja vissza
+COMMIT;</code></div>
+        
+        <h4>ACID tulajdonságok</h4>
+        <table class="info-table">
+          <tr><th>Betű</th><th>Jelentés</th><th>Leírás</th></tr>
+          <tr><td><strong>A</strong></td><td>Atomicity</td><td>Minden vagy semmi - a tranzakció egyben hajtódik végre</td></tr>
+          <tr><td><strong>C</strong></td><td>Consistency</td><td>Az adatbázis konzisztens állapotból konzisztensbe kerül</td></tr>
+          <tr><td><strong>I</strong></td><td>Isolation</td><td>A tranzakciók egymástól függetlenek</td></tr>
+          <tr><td><strong>D</strong></td><td>Durability</td><td>A véglegesített változások megmaradnak</td></tr>
+        </table>
+        
+        <h4>Indexek</h4>
+        <div class="code-block"><code>-- Index létrehozása
+CREATE INDEX idx_users_email ON users(email);
+
+-- Unique index
+CREATE UNIQUE INDEX idx_users_username ON users(username);
+
+-- Összetett index
+CREATE INDEX idx_orders_user_date ON orders(user_id, order_date);
+
+-- Index törlése
+DROP INDEX idx_users_email;</code></div>
+        
+        <table class="info-table">
+          <tr><th>Index típus</th><th>Leírás</th><th>Mikor használd</th></tr>
+          <tr><td>B-Tree</td><td>Alapértelmezett, kiegyensúlyozott fa</td><td>Egyenlőség, tartomány lekérdezések</td></tr>
+          <tr><td>Hash</td><td>Hash tábla alapú</td><td>Csak egyenlőség vizsgálat</td></tr>
+          <tr><td>Full-text</td><td>Szöveg keresés</td><td>LIKE '%szó%' helyett</td></tr>
+          <tr><td>Spatial</td><td>Térbeli adatok</td><td>Koordináták, GIS</td></tr>
+        </table>
+
+        <!-- Hálózati ismeretek -->
+        <h3>Hálózati ismeretek</h3>
+        
+        <h4>OSI modell 7 rétege</h4>
+        <table class="info-table">
+          <tr><th>#</th><th>Réteg</th><th>Angol</th><th>Protokollok/Eszközök</th><th>Adategység</th></tr>
+          <tr><td>7</td><td>Alkalmazás</td><td>Application</td><td>HTTP, FTP, SMTP, DNS</td><td>Adat</td></tr>
+          <tr><td>6</td><td>Megjelenítés</td><td>Presentation</td><td>SSL/TLS, JPEG, ASCII</td><td>Adat</td></tr>
+          <tr><td>5</td><td>Viszonylat</td><td>Session</td><td>NetBIOS, RPC</td><td>Adat</td></tr>
+          <tr><td>4</td><td>Szállítás</td><td>Transport</td><td>TCP, UDP</td><td>Szegmens</td></tr>
+          <tr><td>3</td><td>Hálózat</td><td>Network</td><td>IP, ICMP, Router</td><td>Csomag</td></tr>
+          <tr><td>2</td><td>Adatkapcsolat</td><td>Data Link</td><td>Ethernet, Switch, MAC</td><td>Keret</td></tr>
+          <tr><td>1</td><td>Fizikai</td><td>Physical</td><td>Kábel, Hub, Jelszintek</td><td>Bit</td></tr>
+        </table>
+        
+        <div class="tip-box">
+          <strong>💡 Memorizálás:</strong> "All People Seem To Need Data Processing" (Application → Physical)
+        </div>
+        
+        <h4>TCP vs UDP</h4>
+        <table class="info-table">
+          <tr><th>Tulajdonság</th><th>TCP</th><th>UDP</th></tr>
+          <tr><td>Kapcsolat</td><td>Kapcsolat-orientált (3-way handshake)</td><td>Kapcsolat nélküli</td></tr>
+          <tr><td>Megbízhatóság</td><td>Garantált kézbesítés, sorrend</td><td>Nincs garancia</td></tr>
+          <tr><td>Sebesség</td><td>Lassabb (overhead)</td><td>Gyorsabb</td></tr>
+          <tr><td>Hibajavítás</td><td>Újraküldés</td><td>Nincs</td></tr>
+          <tr><td>Használat</td><td>HTTP, FTP, Email, SSH</td><td>DNS, Streaming, Gaming, VoIP</td></tr>
+        </table>
+        
+        <h4>TCP 3-way handshake</h4>
+        <div class="code-block"><code>1. Kliens → Szerver:  SYN (Synchronize)
+2. Szerver → Kliens:  SYN-ACK (Synchronize-Acknowledge)  
+3. Kliens → Szerver:  ACK (Acknowledge)
+→ Kapcsolat létrejött!</code></div>
+        
+        <h4>HTTP/HTTPS</h4>
+        <table class="info-table">
+          <tr><th>HTTP</th><th>HTTPS</th></tr>
+          <tr><td>Port 80</td><td>Port 443</td></tr>
+          <tr><td>Titkosítatlan</td><td>SSL/TLS titkosítás</td></tr>
+          <tr><td>Gyorsabb (minimálisan)</td><td>Biztonságos</td></tr>
+        </table>
+        
+        <h4>Gyakori portok</h4>
+        <table class="info-table">
+          <tr><th>Port</th><th>Szolgáltatás</th></tr>
+          <tr><td>20, 21</td><td>FTP (adat, vezérlés)</td></tr>
+          <tr><td>22</td><td>SSH</td></tr>
+          <tr><td>23</td><td>Telnet</td></tr>
+          <tr><td>25</td><td>SMTP (email küldés)</td></tr>
+          <tr><td>53</td><td>DNS</td></tr>
+          <tr><td>80</td><td>HTTP</td></tr>
+          <tr><td>443</td><td>HTTPS</td></tr>
+          <tr><td>3306</td><td>MySQL</td></tr>
+          <tr><td>5432</td><td>PostgreSQL</td></tr>
+          <tr><td>27017</td><td>MongoDB</td></tr>
+        </table>
+        
+        <h4>DNS (Domain Name System)</h4>
+        <p>Domain nevek IP címekre fordítása.</p>
+        <div class="code-block"><code>Felhasználó beírja: www.google.com
+    ↓
+1. Böngésző cache ellenőrzés
+2. OS cache (hosts fájl)
+3. Router cache
+4. ISP DNS szerver
+5. Root DNS → .com DNS → google.com DNS
+    ↓
+Visszakapott IP: 142.250.185.68</code></div>
+        
+        <h4>IP címzés</h4>
+        <div class="code-block"><code>IPv4: 192.168.1.1 (32 bit, 4 oktett)
+IPv6: 2001:0db8:85a3:0000:0000:8a2e:0370:7334 (128 bit)
+
+Privát IP tartományok:
+- 10.0.0.0 - 10.255.255.255 (Class A)
+- 172.16.0.0 - 172.31.255.255 (Class B)
+- 192.168.0.0 - 192.168.255.255 (Class C)
+
+Speciális címek:
+- 127.0.0.1 - localhost (loopback)
+- 0.0.0.0 - bármely cím
+- 255.255.255.255 - broadcast</code></div>
+        
+        <h4>Subnet mask és CIDR</h4>
+        <div class="code-block"><code>IP: 192.168.1.100
+Subnet mask: 255.255.255.0
+CIDR: 192.168.1.100/24
+
+/24 = 256 cím (254 használható host)
+/25 = 128 cím
+/26 = 64 cím
+/27 = 32 cím
+/28 = 16 cím</code></div>
+        
+        <h4>NAT (Network Address Translation)</h4>
+        <p>Privát IP címek fordítása publikus címre és vissza. Lehetővé teszi, hogy több eszköz osztozzon egy publikus IP-n.</p>
+        
+        <h4>DHCP (Dynamic Host Configuration Protocol)</h4>
+        <p>Automatikus IP cím kiosztás. A DHCP szerver kioszt: IP címet, subnet mask-ot, default gateway-t, DNS szervert.</p>
+
+        <!-- RAID technológiák -->
+        <h3>RAID technológiák</h3>
+        <p><strong>RAID (Redundant Array of Independent Disks):</strong> Több merevlemez kombinálása a teljesítmény és/vagy megbízhatóság növelésére.</p>
+        
+        <h4>RAID szintek összehasonlítása</h4>
+        <table class="info-table">
+          <tr><th>RAID</th><th>Neve</th><th>Min. lemez</th><th>Kapacitás</th><th>Sebesség</th><th>Hibatűrés</th></tr>
+          <tr><td>RAID 0</td><td>Striping</td><td>2</td><td>100%</td><td>Gyors (olvasás+írás)</td><td>Nincs!</td></tr>
+          <tr><td>RAID 1</td><td>Mirroring</td><td>2</td><td>50%</td><td>Gyors olvasás</td><td>1 lemez kieshet</td></tr>
+          <tr><td>RAID 5</td><td>Striping + Parity</td><td>3</td><td>(n-1)/n</td><td>Gyors olvasás</td><td>1 lemez kieshet</td></tr>
+          <tr><td>RAID 6</td><td>Double Parity</td><td>4</td><td>(n-2)/n</td><td>Gyors olvasás</td><td>2 lemez kieshet</td></tr>
+          <tr><td>RAID 10</td><td>1+0 (Mirror+Stripe)</td><td>4</td><td>50%</td><td>Nagyon gyors</td><td>1 lemez/tükör</td></tr>
+        </table>
+        
+        <h4>RAID 0 - Striping (Csíkozás)</h4>
+        <div class="code-block"><code>┌─────────┐  ┌─────────┐
+│ Lemez 1 │  │ Lemez 2 │
+├─────────┤  ├─────────┤
+│ Blokk 1 │  │ Blokk 2 │
+│ Blokk 3 │  │ Blokk 4 │
+│ Blokk 5 │  │ Blokk 6 │
+└─────────┘  └─────────┘
+
+✅ Előny: Maximális sebesség és kapacitás
+❌ Hátrány: Ha 1 lemez meghal, MINDEN adat elvész!
+Használat: Gyors ideiglenes tárhely, videószerkesztés</code></div>
+        
+        <h4>RAID 1 - Mirroring (Tükrözés)</h4>
+        <div class="code-block"><code>┌─────────┐  ┌─────────┐
+│ Lemez 1 │  │ Lemez 2 │
+├─────────┤  ├─────────┤
+│ Blokk 1 │  │ Blokk 1 │  ← Ugyanaz!
+│ Blokk 2 │  │ Blokk 2 │  ← Ugyanaz!
+│ Blokk 3 │  │ Blokk 3 │  ← Ugyanaz!
+└─────────┘  └─────────┘
+
+✅ Előny: Hibatűrő, gyors olvasás (párhuzamosan)
+❌ Hátrány: Kapacitás fele elvész
+Használat: Operációs rendszer lemez, kritikus adatok</code></div>
+        
+        <h4>RAID 5 - Striping + Elosztott paritás</h4>
+        <div class="code-block"><code>┌─────────┐  ┌─────────┐  ┌─────────┐
+│ Lemez 1 │  │ Lemez 2 │  │ Lemez 3 │
+├─────────┤  ├─────────┤  ├─────────┤
+│ Blokk 1 │  │ Blokk 2 │  │ P(1,2)  │  ← Paritás
+│ Blokk 3 │  │ P(3,4)  │  │ Blokk 4 │
+│ P(5,6)  │  │ Blokk 5 │  │ Blokk 6 │
+└─────────┘  └─────────┘  └─────────┘
+
+Paritás = XOR művelet → bármely blokk helyreállítható
+Kapacitás: 3 × 1TB = 2TB hasznos (1TB paritás)
+
+✅ Előny: Jó egyensúly sebesség/kapacitás/biztonság között
+❌ Hátrány: Lassú írás (paritás számítás), rebuild időigényes
+Használat: Fájlszerverek, NAS eszközök</code></div>
+        
+        <h4>RAID 10 (1+0) - Mirror + Stripe kombináció</h4>
+        <div class="code-block"><code>       ┌────────── STRIPE ──────────┐
+       ▼                            ▼
+┌─────────────────┐        ┌─────────────────┐
+│   MIRROR 1      │        │    MIRROR 2     │
+│ ┌─────┐ ┌─────┐ │        │ ┌─────┐ ┌─────┐ │
+│ │  A  │ │  A  │ │        │ │  B  │ │  B  │ │
+│ │  C  │ │  C  │ │        │ │  D  │ │  D  │ │
+│ └─────┘ └─────┘ │        │ └─────┘ └─────┘ │
+└─────────────────┘        └─────────────────┘
+
+4 × 1TB = 2TB hasznos kapacitás
+
+✅ Előny: Legjobb teljesítmény + hibatűrés
+❌ Hátrány: Drága (50% kapacitásvesztés)
+Használat: Adatbázis szerverek, kritikus alkalmazások</code></div>
+        
+        <h4>Hardver vs Szoftver RAID</h4>
+        <table class="info-table">
+          <tr><th>Szempont</th><th>Hardver RAID</th><th>Szoftver RAID</th></tr>
+          <tr><td>Teljesítmény</td><td>Gyorsabb (dedikált chip)</td><td>CPU-t terheli</td></tr>
+          <tr><td>Ár</td><td>Drágább (RAID vezérlő)</td><td>Olcsó/ingyenes</td></tr>
+          <tr><td>Flexibilitás</td><td>Korlátozott</td><td>Rugalmasabb</td></tr>
+          <tr><td>OS függetlenség</td><td>Igen (BIOS szint)</td><td>OS-től függ</td></tr>
+          <tr><td>Példa</td><td>Dell PERC, HP Smart Array</td><td>Windows Storage Spaces, Linux mdadm</td></tr>
+        </table>
+        
+        <div class="danger-box">
+          <strong>⚠️ FONTOS:</strong> A RAID NEM BACKUP! Ha véletlenül törlöd a fájlt, a RAID is törli. Zsarolóvírus esetén a RAID is titkosítva lesz. Mindig legyen külön mentés!
+        </div>
+
+        <!-- Szoftverarchitektúra -->
+        <h3>Szoftverarchitektúra</h3>
+        
+        <h4>MVC (Model-View-Controller)</h4>
+        <div class="code-block"><code>┌─────────────────────────────────────────┐
+│              Controller                  │
+│  (Üzleti logika, kérések feldolgozása)  │
+└────────────┬──────────────┬─────────────┘
+             │              │
+             ▼              ▼
+┌────────────────┐  ┌────────────────┐
+│     Model      │  │      View      │
+│  (Adatok,      │  │  (Megjelenítés,│
+│   adatbázis)   │  │   UI)          │
+└────────────────┘  └────────────────┘</code></div>
+        <ul>
+          <li><strong>Model:</strong> Adatok, üzleti logika, adatbázis kapcsolat</li>
+          <li><strong>View:</strong> Felhasználói felület, megjelenítés</li>
+          <li><strong>Controller:</strong> Közvetítő, kérések feldolgozása</li>
+        </ul>
+        
+        <h4>MVVM (Model-View-ViewModel)</h4>
+        <p>Főleg frontend keretrendszereknél (Angular, Vue, WPF).</p>
+        <ul>
+          <li><strong>Model:</strong> Adatok</li>
+          <li><strong>View:</strong> UI (deklaratív)</li>
+          <li><strong>ViewModel:</strong> View állapota és logikája, kétirányú adatkötés</li>
+        </ul>
+        
+        <h4>Microservices vs Monolith</h4>
+        <table class="info-table">
+          <tr><th>Szempont</th><th>Monolith</th><th>Microservices</th></tr>
+          <tr><td>Struktúra</td><td>Egy nagy alkalmazás</td><td>Sok kis, független szolgáltatás</td></tr>
+          <tr><td>Deploy</td><td>Egyben</td><td>Külön-külön</td></tr>
+          <tr><td>Skálázás</td><td>Teljes alkalmazás</td><td>Szolgáltatásonként</td></tr>
+          <tr><td>Technológia</td><td>Egységes</td><td>Szolgáltatásonként eltérő lehet</td></tr>
+          <tr><td>Komplexitás</td><td>Egyszerűbb kezdetben</td><td>Bonyolultabb (hálózat, orchestration)</td></tr>
+          <tr><td>Hibatűrés</td><td>Egy hiba mindent érinthet</td><td>Izoláltabb hibák</td></tr>
+        </table>
+        
+        <h4>Design Patterns (Tervezési minták)</h4>
+        
+        <p><strong>Singleton</strong> - Egy példány az egész alkalmazásban</p>
+        <div class="code-block"><code>class Database {
+    static #instance = null;
+    
+    static getInstance() {
+        if (!Database.#instance) {
+            Database.#instance = new Database();
+        }
+        return Database.#instance;
+    }
+}
+
+const db1 = Database.getInstance();
+const db2 = Database.getInstance();
+console.log(db1 === db2);  // true</code></div>
+        
+        <p><strong>Factory</strong> - Objektum létrehozás absztrakciója</p>
+        <div class="code-block"><code>class AnimalFactory {
+    static create(type) {
+        switch(type) {
+            case 'dog': return new Dog();
+            case 'cat': return new Cat();
+            default: throw new Error('Unknown type');
+        }
+    }
+}
+
+const pet = AnimalFactory.create('dog');</code></div>
+        
+        <p><strong>Observer</strong> - Esemény-alapú kommunikáció</p>
+        <div class="code-block"><code>class EventEmitter {
+    constructor() {
+        this.listeners = {};
+    }
+    
+    on(event, callback) {
+        if (!this.listeners[event]) this.listeners[event] = [];
+        this.listeners[event].push(callback);
+    }
+    
+    emit(event, data) {
+        if (this.listeners[event]) {
+            this.listeners[event].forEach(cb => cb(data));
+        }
+    }
+}
+
+const emitter = new EventEmitter();
+emitter.on('userLogin', user => console.log(`${user} logged in`));
+emitter.emit('userLogin', 'János');</code></div>
+        
+        <p><strong>Strategy</strong> - Algoritmus cserélhetősége</p>
+        <div class="code-block"><code>// Különböző fizetési stratégiák
+const paymentStrategies = {
+    creditCard: (amount) => `Paid ${amount} with credit card`,
+    paypal: (amount) => `Paid ${amount} with PayPal`,
+    crypto: (amount) => `Paid ${amount} with crypto`
+};
+
+function checkout(amount, method) {
+    return paymentStrategies[method](amount);
+}
+
+checkout(100, 'paypal');  // "Paid 100 with PayPal"</code></div>
+
+        <!-- DevOps -->
+        <h3>DevOps alapok</h3>
+        
+        <h4>CI/CD</h4>
+        <ul>
+          <li><strong>CI (Continuous Integration):</strong> Gyakori kód integráció, automatikus build és teszt</li>
+          <li><strong>CD (Continuous Delivery):</strong> Automatikus deploy staging környezetbe</li>
+          <li><strong>CD (Continuous Deployment):</strong> Automatikus deploy production-be</li>
+        </ul>
+        
+        <div class="code-block"><code>Fejlesztő push-ol
+    ↓
+CI szerver (GitHub Actions, GitLab CI, Jenkins)
+    ↓
+Build → Test → Lint → Security scan
+    ↓
+Ha minden zöld → Deploy staging
+    ↓
+Manuális jóváhagyás (vagy automatikus)
+    ↓
+Deploy production</code></div>
+        
+        <h4>Docker alapok</h4>
+        <p><strong>Docker:</strong> Konténerizációs platform, ami lehetővé teszi az alkalmazások izolált futtatását.</p>
+        
+        <table class="info-table">
+          <tr><th>Fogalom</th><th>Leírás</th></tr>
+          <tr><td>Image</td><td>Csak olvasható sablon (pl. node:18-alpine)</td></tr>
+          <tr><td>Container</td><td>Image futó példánya</td></tr>
+          <tr><td>Dockerfile</td><td>Image építési utasítások</td></tr>
+          <tr><td>Docker Compose</td><td>Több konténer együttes kezelése</td></tr>
+          <tr><td>Volume</td><td>Perzisztens adattárolás</td></tr>
+          <tr><td>Registry</td><td>Image tároló (Docker Hub)</td></tr>
+        </table>
+        
+        <div class="code-block"><code># Dockerfile példa
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+
+# Parancsok
+docker build -t myapp .           # Image építés
+docker run -p 3000:3000 myapp     # Konténer indítás
+docker ps                          # Futó konténerek
+docker stop &lt;container_id&gt;        # Leállítás
+docker images                      # Image-ek listázása</code></div>
+        
+        <h4>GitHub Actions példa</h4>
+        <div class="code-block"><code># .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run tests
+      run: npm test
+    
+    - name: Build
+      run: npm run build</code></div>
+
+        <!-- Felhő technológiák -->
+        <h3>Felhő (Cloud) technológiák</h3>
+        <p>A felhőalapú szolgáltatások interneten keresztül elérhető számítási erőforrásokat biztosítanak.</p>
+        
+        <h4>Szolgáltatási modellek</h4>
+        <table class="info-table">
+          <tr><th>Modell</th><th>Jelentés</th><th>Mit kezel a szolgáltató?</th><th>Példa</th></tr>
+          <tr><td><strong>IaaS</strong></td><td>Infrastructure as a Service</td><td>Hardver, hálózat, virtualizáció</td><td>AWS EC2, Azure VMs, DigitalOcean</td></tr>
+          <tr><td><strong>PaaS</strong></td><td>Platform as a Service</td><td>+ OS, runtime, middleware</td><td>Heroku, Google App Engine, Azure App Service</td></tr>
+          <tr><td><strong>SaaS</strong></td><td>Software as a Service</td><td>+ Alkalmazás</td><td>Google Workspace, Slack, Salesforce</td></tr>
+          <tr><td><strong>FaaS</strong></td><td>Function as a Service</td><td>Serverless futtatás</td><td>AWS Lambda, Azure Functions</td></tr>
+        </table>
+        
+        <h4>Felelősségi modellek vizualizációja</h4>
+        <div class="code-block"><code>              On-Premise    IaaS       PaaS       SaaS
+            ┌───────────┬──────────┬──────────┬──────────┐
+ Alkalmazás │    Te     │    Te    │    Te    │ Szolg.   │
+            ├───────────┼──────────┼──────────┼──────────┤
+ Adatok     │    Te     │    Te    │    Te    │ Szolg.   │
+            ├───────────┼──────────┼──────────┼──────────┤
+ Runtime    │    Te     │    Te    │ Szolg.   │ Szolg.   │
+            ├───────────┼──────────┼──────────┼──────────┤
+ Middleware │    Te     │    Te    │ Szolg.   │ Szolg.   │
+            ├───────────┼──────────┼──────────┼──────────┤
+ OS         │    Te     │    Te    │ Szolg.   │ Szolg.   │
+            ├───────────┼──────────┼──────────┼──────────┤
+ Virtualiz. │    Te     │ Szolg.   │ Szolg.   │ Szolg.   │
+            ├───────────┼──────────┼──────────┼──────────┤
+ Szerverek  │    Te     │ Szolg.   │ Szolg.   │ Szolg.   │
+            ├───────────┼──────────┼──────────┼──────────┤
+ Tárhely    │    Te     │ Szolg.   │ Szolg.   │ Szolg.   │
+            ├───────────┼──────────┼──────────┼──────────┤
+ Hálózat    │    Te     │ Szolg.   │ Szolg.   │ Szolg.   │
+            └───────────┴──────────┴──────────┴──────────┘</code></div>
+        
+        <h4>Telepítési modellek</h4>
+        <table class="info-table">
+          <tr><th>Modell</th><th>Leírás</th><th>Előny</th><th>Hátrány</th></tr>
+          <tr><td>Publikus</td><td>Közös infrastruktúra (AWS, Azure, GCP)</td><td>Olcsó, skálázható</td><td>Kevesebb kontroll</td></tr>
+          <tr><td>Privát</td><td>Dedikált infrastruktúra</td><td>Teljes kontroll, biztonság</td><td>Drága, karbantartás</td></tr>
+          <tr><td>Hibrid</td><td>Publikus + privát kombináció</td><td>Rugalmas, költséghatékony</td><td>Komplex kezelés</td></tr>
+          <tr><td>Multi-cloud</td><td>Több szolgáltató együtt</td><td>Vendor lock-in elkerülése</td><td>Nagyon komplex</td></tr>
+        </table>
+        
+        <h4>Főbb felhőszolgáltatók és szolgáltatásaik</h4>
+        <table class="info-table">
+          <tr><th>Kategória</th><th>AWS</th><th>Azure</th><th>Google Cloud</th></tr>
+          <tr><td>Compute</td><td>EC2</td><td>Virtual Machines</td><td>Compute Engine</td></tr>
+          <tr><td>Serverless</td><td>Lambda</td><td>Functions</td><td>Cloud Functions</td></tr>
+          <tr><td>Tárhely</td><td>S3</td><td>Blob Storage</td><td>Cloud Storage</td></tr>
+          <tr><td>Adatbázis (SQL)</td><td>RDS</td><td>SQL Database</td><td>Cloud SQL</td></tr>
+          <tr><td>NoSQL</td><td>DynamoDB</td><td>CosmosDB</td><td>Firestore</td></tr>
+          <tr><td>Konténer</td><td>ECS, EKS</td><td>AKS</td><td>GKE</td></tr>
+        </table>
+        
+        <h4>Serverless architektúra</h4>
+        <p>A serverless modellben nem kell szervereket kezelni, csak a kódra kell fókuszálni. Fizetés használat alapján.</p>
+        <div class="code-block"><code>// AWS Lambda példa (Node.js)
+exports.handler = async (event) => {
+    const name = event.queryStringParameters?.name || 'World';
+    
+    return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: `Hello, ${name}!` })
+    };
+};
+
+// Trigger-ek:
+// - HTTP kérés (API Gateway)
+// - Fájl feltöltés (S3)
+// - Adatbázis változás (DynamoDB)
+// - Időzített (CloudWatch Events/cron)
+// - Üzenetsor (SQS, SNS)</code></div>
+        
+        <h4>Skálázási stratégiák</h4>
+        <table class="info-table">
+          <tr><th>Típus</th><th>Leírás</th><th>Előny</th><th>Hátrány</th></tr>
+          <tr><td>Vertikális (Scale Up)</td><td>Erősebb gép (több CPU, RAM)</td><td>Egyszerű</td><td>Van felső limit</td></tr>
+          <tr><td>Horizontális (Scale Out)</td><td>Több gép hozzáadása</td><td>Korlátlan skálázás</td><td>Komplexebb architektúra</td></tr>
+          <tr><td>Auto-scaling</td><td>Automatikus méretezés terhelés alapján</td><td>Költséghatékony</td><td>Beállítás igényel</td></tr>
+        </table>
+        
+        <div class="code-block"><code>// Auto-scaling példa (koncepció)
+Auto Scaling Group beállítások:
+- Minimum példány: 2 (mindig fut)
+- Maximum példány: 10 (költségkontroll)
+- Cél CPU használat: 70%
+
+Ha CPU > 70% → új példány indul (scale out)
+Ha CPU < 50% → példány leáll (scale in)
+Cooldown: 300 másodperc (túl gyakori változás ellen)</code></div>
+        
+        <h4>CDN (Content Delivery Network)</h4>
+        <p>Tartalom kiszolgálása a felhasználóhoz legközelebbi szerverről.</p>
+        <div class="code-block"><code>Felhasználó (Budapest)
+        ↓
+CDN Edge Server (Frankfurt) ← Cache-elt tartalom
+        ↓ (csak ha nincs cache)
+Origin Server (USA)
+
+Előnyök:
+✅ Gyorsabb betöltés (alacsonyabb latency)
+✅ Kisebb terhelés az origin szerveren
+✅ DDoS védelem
+✅ HTTPS minden edge-en
+
+Szolgáltatók: Cloudflare, AWS CloudFront, Akamai, Fastly</code></div>
+        
+        <div class="tip-box">
+          <strong>💡 Vizsga tipp:</strong> Ismerd a különbséget az IaaS, PaaS, SaaS között! Gyakori kérdés, hogy melyik szolgáltatás melyik kategóriába tartozik.
+        </div>
+
+        <!-- Biztonság -->
+        <h3>Webbiztonsági alapok</h3>
+        
+        <h4>OWASP Top 10 (leggyakoribb sebezhetőségek)</h4>
+        
+        <p><strong>1. SQL Injection</strong></p>
+        <div class="code-block"><code>// ❌ VESZÉLYES
+const query = `SELECT * FROM users WHERE id = ${userId}`;
+// userId = "1; DROP TABLE users;--"
+
+// ✅ BIZTONSÁGOS - Paraméteres lekérdezés
+const query = "SELECT * FROM users WHERE id = ?";
+db.query(query, [userId]);</code></div>
+        
+        <p><strong>2. XSS (Cross-Site Scripting)</strong></p>
+        <div class="code-block"><code>// ❌ VESZÉLYES - Felhasználói input közvetlen megjelenítése
+element.innerHTML = userInput;
+// userInput = "&lt;script&gt;steal(document.cookie)&lt;/script&gt;"
+
+// ✅ BIZTONSÁGOS - Escape-elés
+element.textContent = userInput;
+// Vagy: DOMPurify.sanitize(userInput)</code></div>
+        
+        <p><strong>3. CSRF (Cross-Site Request Forgery)</strong></p>
+        <p>Támadó ráveszi a felhasználót, hogy végrehajtson egy kérést a nevében.</p>
+        <div class="code-block"><code>// Védelem: CSRF token
+&lt;form&gt;
+    &lt;input type="hidden" name="_csrf" value="random_token_123"&gt;
+    ...
+&lt;/form&gt;
+
+// Szerver ellenőrzi, hogy a token egyezik-e</code></div>
+        
+        <h4>Autentikáció vs Authorizáció</h4>
+        <table class="info-table">
+          <tr><th>Autentikáció (Authentication)</th><th>Authorizáció (Authorization)</th></tr>
+          <tr><td>Ki vagy te?</td><td>Mit tehetsz?</td></tr>
+          <tr><td>Személyazonosság igazolása</td><td>Jogosultságok ellenőrzése</td></tr>
+          <tr><td>Bejelentkezés</td><td>Szerepkörök, engedélyek</td></tr>
+          <tr><td>401 Unauthorized</td><td>403 Forbidden</td></tr>
+        </table>
+        
+        <h4>JWT (JSON Web Token)</h4>
+        <div class="code-block"><code>// JWT struktúra (3 rész, ponttal elválasztva)
+header.payload.signature
+
+// Header (Base64)
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+
+// Payload (Base64) - a tényleges adatok
+{
+  "sub": "1234567890",
+  "name": "János",
+  "iat": 1516239022,
+  "exp": 1516242622
+}
+
+// Signature - aláírás a hamisítás ellen
+HMACSHA256(
+  base64UrlEncode(header) + "." + base64UrlEncode(payload),
+  secret
+)</code></div>
+        
+        <div class="tip-box">
+          <strong>💡 JWT fontos:</strong> A payload <strong>NEM titkosított</strong>, csak Base64 kódolt! Bárki olvashatja. A signature csak a hitelességet garantálja.
+        </div>
+        
+        <h4>OAuth 2.0 flow</h4>
+        <div class="code-block"><code>1. Felhasználó → App: "Bejelentkezés Google-lel"
+2. App → Google: Átirányítás az auth oldalra
+3. Felhasználó → Google: Bejelentkezés, engedélyezés
+4. Google → App: Authorization code (callback URL-en)
+5. App → Google: Code cseréje access tokenre (szerver oldal)
+6. Google → App: Access token (és refresh token)
+7. App → Google API: Kérések az access tokennel</code></div>
+        
+        <h4>CORS (Cross-Origin Resource Sharing)</h4>
+        <p>Böngésző biztonsági mechanizmus, ami korlátozza a cross-origin kéréseket.</p>
+        <div class="code-block"><code>// Szerver oldali CORS header-ek
+Access-Control-Allow-Origin: https://example.com
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE
+Access-Control-Allow-Headers: Content-Type, Authorization
+Access-Control-Allow-Credentials: true
+
+// Express.js példa
+const cors = require('cors');
+app.use(cors({
+    origin: 'https://example.com',
+    credentials: true
+}));</code></div>
+        
+        <h4>HTTPS és SSL/TLS</h4>
+        <ul>
+          <li><strong>SSL (Secure Sockets Layer):</strong> Elavult, de a név megmaradt</li>
+          <li><strong>TLS (Transport Layer Security):</strong> Az SSL utódja, ez a tényleges protokoll</li>
+          <li><strong>Működés:</strong> Aszimmetrikus titkosítás a kulcscsere során, szimmetrikus a kommunikációban</li>
+          <li><strong>Tanúsítvány:</strong> Igazolja a szerver identitását (Let's Encrypt = ingyenes)</li>
+        </ul>
+
+        <!-- Algoritmusok -->
+        <h3>Algoritmusok és komplexitás</h3>
+        
+        <h4>Big O jelölés</h4>
+        <p>Az algoritmus időbeli vagy térbeli komplexitásának mérése a bemenet méretének függvényében.</p>
+        
+        <table class="info-table">
+          <tr><th>Jelölés</th><th>Név</th><th>Példa</th><th>n=1000</th></tr>
+          <tr><td>O(1)</td><td>Konstans</td><td>Tömb elem elérés index alapján</td><td>1</td></tr>
+          <tr><td>O(log n)</td><td>Logaritmikus</td><td>Bináris keresés</td><td>~10</td></tr>
+          <tr><td>O(n)</td><td>Lineáris</td><td>Egyszerű ciklus</td><td>1000</td></tr>
+          <tr><td>O(n log n)</td><td>Linearitmikus</td><td>Quick sort, Merge sort</td><td>~10000</td></tr>
+          <tr><td>O(n²)</td><td>Négyzetes</td><td>Beágyazott ciklus, Bubble sort</td><td>1000000</td></tr>
+          <tr><td>O(2ⁿ)</td><td>Exponenciális</td><td>Rekurzív Fibonacci</td><td>Végtelen</td></tr>
+        </table>
+        
+        <h4>Keresési algoritmusok</h4>
+        
+        <p><strong>Lineáris keresés - O(n)</strong></p>
+        <div class="code-block"><code>function linearSearch(arr, target) {
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] === target) return i;
+    }
+    return -1;
+}</code></div>
+        
+        <p><strong>Bináris keresés - O(log n)</strong> (RENDEZETT tömbön!)</p>
+        <div class="code-block"><code>function binarySearch(arr, target) {
+    let left = 0;
+    let right = arr.length - 1;
+    
+    while (left <= right) {
+        const mid = Math.floor((left + right) / 2);
+        
+        if (arr[mid] === target) return mid;
+        if (arr[mid] < target) left = mid + 1;
+        else right = mid - 1;
+    }
+    return -1;
+}</code></div>
+        
+        <h4>Rendezési algoritmusok</h4>
+        
+        <p><strong>Bubble Sort - O(n²)</strong></p>
+        <div class="code-block"><code>function bubbleSort(arr) {
+    const n = arr.length;
+    for (let i = 0; i < n - 1; i++) {
+        for (let j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                // Csere
+                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+            }
+        }
+    }
+    return arr;
+}</code></div>
+        
+        <p><strong>Selection Sort - O(n²)</strong></p>
+        <div class="code-block"><code>function selectionSort(arr) {
+    const n = arr.length;
+    for (let i = 0; i < n - 1; i++) {
+        let minIdx = i;
+        for (let j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIdx]) minIdx = j;
+        }
+        if (minIdx !== i) {
+            [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
+        }
+    }
+    return arr;
+}</code></div>
+        
+        <p><strong>Quick Sort - O(n log n) átlagosan</strong></p>
+        <div class="code-block"><code>function quickSort(arr) {
+    if (arr.length <= 1) return arr;
+    
+    const pivot = arr[Math.floor(arr.length / 2)];
+    const left = arr.filter(x => x < pivot);
+    const middle = arr.filter(x => x === pivot);
+    const right = arr.filter(x => x > pivot);
+    
+    return [...quickSort(left), ...middle, ...quickSort(right)];
+}</code></div>
+        
+        <h4>Adatszerkezetek</h4>
+        
+        <table class="info-table">
+          <tr><th>Adatszerkezet</th><th>Elérés</th><th>Keresés</th><th>Beszúrás</th><th>Törlés</th></tr>
+          <tr><td>Array</td><td>O(1)</td><td>O(n)</td><td>O(n)</td><td>O(n)</td></tr>
+          <tr><td>Linked List</td><td>O(n)</td><td>O(n)</td><td>O(1)</td><td>O(1)</td></tr>
+          <tr><td>Stack</td><td>O(n)</td><td>O(n)</td><td>O(1)</td><td>O(1)</td></tr>
+          <tr><td>Queue</td><td>O(n)</td><td>O(n)</td><td>O(1)</td><td>O(1)</td></tr>
+          <tr><td>Hash Table</td><td>N/A</td><td>O(1)*</td><td>O(1)*</td><td>O(1)*</td></tr>
+          <tr><td>Binary Search Tree</td><td>O(log n)*</td><td>O(log n)*</td><td>O(log n)*</td><td>O(log n)*</td></tr>
+        </table>
+        <p><small>* átlagos eset</small></p>
+        
+        <p><strong>Stack (Verem) - LIFO</strong></p>
+        <div class="code-block"><code>class Stack {
+    constructor() {
+        this.items = [];
+    }
+    push(item) { this.items.push(item); }
+    pop() { return this.items.pop(); }
+    peek() { return this.items[this.items.length - 1]; }
+    isEmpty() { return this.items.length === 0; }
+}
+// Használat: undo/redo, böngésző history, függvényhívások</code></div>
+        
+        <p><strong>Queue (Sor) - FIFO</strong></p>
+        <div class="code-block"><code>class Queue {
+    constructor() {
+        this.items = [];
+    }
+    enqueue(item) { this.items.push(item); }
+    dequeue() { return this.items.shift(); }
+    front() { return this.items[0]; }
+    isEmpty() { return this.items.length === 0; }
+}
+// Használat: nyomtatási sor, task queue, BFS</code></div>
+        
+        <div class="success-box">
+          <strong>🎯 Összefoglalás:</strong> Ha ezeket a bónusz témákat is átnézed, nagyon jól felkészült leszel az OSZTV-re! Ne feledd: a verseny a KKK követelményeknél magasabb szintet is megkövetelhet.
+        </div>
+      </div>
+    </div>
+
+    <!-- Tippek -->
+    <div class="exam-info">
+      <h2>💡 Vizsga tippek</h2>
+      <ol>
+        <li><strong>Olvasd figyelmesen a kérdést</strong> - Sok hiba félreértésből adódik</li>
+        <li><strong>Időgazdálkodás</strong> - 45 perc / 20 kérdés = 2,25 perc/kérdés</li>
+        <li><strong>Ha nem tudod, tippelj</strong> - Nincs pontlevonás</li>
+        <li><strong>Próbatesztek</strong> - Gyakorolj az infojegyzet.hu oldalon</li>
+        <li><strong>Terminológia</strong> - Ismerd a magyar és angol szakkifejezéseket is</li>
+      </ol>
+      
+      <div class="success-box" style="margin-top: var(--space-4);">
+        <strong>🎯 Sok sikert a versenyhez!</strong><br>
+        Versenydátum: 2026. január 19.
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 NorszStudy - OSZTV Tananyag. Minden jog fenntartva.</p>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // Téma kezelés
+    (function() {
+      const btn = document.getElementById('theme-toggle');
+      const root = document.documentElement;
+      const STORAGE_KEY = 'theme';
+
+      function applyTheme(theme) {
+        root.setAttribute('data-theme', theme);
+        btn.setAttribute('aria-pressed', String(theme === 'dark'));
+      }
+
+      function init() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved === 'light' || saved === 'dark') {
+          applyTheme(saved);
+        } else {
+          applyTheme(root.getAttribute('data-theme') || 'light');
+        }
+      }
+
+      btn.addEventListener('click', function() {
+        const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        try { localStorage.setItem(STORAGE_KEY, next); } catch (e) {}
+      });
+
+      init();
+    })();
+
+    // Mobil navigáció
+    (function() {
+      const toggle = document.getElementById('mobile-nav-toggle');
+      const nav = document.getElementById('main-nav');
+      const dropdownToggle = document.getElementById('subjects-toggle');
+      const dropdown = document.getElementById('subjects-dropdown');
+
+      toggle.addEventListener('click', function() {
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!expanded));
+        nav.classList.toggle('active');
+      });
+
+      dropdownToggle.addEventListener('click', function() {
+        const expanded = dropdownToggle.getAttribute('aria-expanded') === 'true';
+        dropdownToggle.setAttribute('aria-expanded', String(!expanded));
+        dropdown.classList.toggle('active');
+      });
+
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 768) {
+          nav.classList.remove('active');
+          dropdown.classList.remove('active');
+        }
+      });
+    })();
+
+    // Témakör toggle
+    function toggleTopic(id) {
+      const content = document.getElementById('content' + id);
+      if (content) {
+        content.classList.toggle('active');
+      }
+    }
+
+    // Témakör megnyitás (navigációból)
+    function openTopic(id) {
+      const content = document.getElementById('content' + id);
+      const section = document.getElementById('topic' + id);
+      if (content && section) {
+        content.classList.add('active');
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    // Összes témakör bezárása
+    function closeAllTopics() {
+      document.querySelectorAll('.topic-content').forEach(el => {
+        el.classList.remove('active');
+      });
+    }
+  </script>
+</body>
+</html>
